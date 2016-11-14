@@ -248,6 +248,515 @@
             
               
                 
+                <a class="post-title-link" href="/2016/11/06/SpringMVC映射请求参数的方式（参数绑定方式）/" itemprop="url">
+                  SpringMVC映射请求参数的方式（参数绑定方式）
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-11-06T12:08:22+08:00" content="2016-11-06">
+              2016-11-06
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/SpringMVC/" itemprop="url" rel="index">
+                    <span itemprop="name">SpringMVC</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2016/11/06/SpringMVC映射请求参数的方式（参数绑定方式）/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/11/06/SpringMVC映射请求参数的方式（参数绑定方式）/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>　　 SpringMVC通过分析处理方法的签名，可以将HTTP请求信息绑定到处理方法的相应参数中。</p>
+<h2 id="使用-RequestParam绑定请求参数值"><a href="#使用-RequestParam绑定请求参数值" class="headerlink" title="使用@RequestParam绑定请求参数值"></a>使用@RequestParam绑定请求参数值</h2><p>　　在处理方法参数处使用@RequestParam可以把请求参数传递给请求方法，其中：<br><strong>– value</strong>：请求参数的参数名<br><strong>– required</strong>：该参数是否必须，默认为true,<br><strong>– defaultValue</strong>：请求参数的默认值，表示请求参数中必须包含对应的参数，若不存在，将抛出异常。</p>
+<p>例如：</p>
+<p>jsp：<br><figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">&lt;form action="springmvc/test?userName=Jack" method="post"&gt;</div><div class="line">		&lt;input type="submit" value="submit"&gt;</div><div class="line">	&lt;/form&gt;</div></pre></td></tr></table></figure></p>
+<p>控制器：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@Controller</span></div><div class="line"><span class="meta">@RequestMapping</span>(<span class="string">"/springmvc"</span>)</div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SpringMVCTest</span> </span>&#123;</div><div class="line">	</div><div class="line">	<span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> String SUCCESS = <span class="string">"success"</span>;  </div><div class="line"></div><div class="line">	<span class="meta">@RequestMapping</span>(<span class="string">"/test"</span>)</div><div class="line">	<span class="function"><span class="keyword">public</span> String <span class="title">testRequestParam</span><span class="params">(@RequestParam(value=<span class="string">"userName"</span>)</span> String username) </span>&#123;</div><div class="line">		System.out.println(username);</div><div class="line">		<span class="keyword">return</span> SUCCESS;</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>　　控制器中的方法也可写为：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@RequestMapping</span>(<span class="string">"/test"</span>)</div><div class="line"><span class="function"><span class="keyword">public</span> String <span class="title">testRequestParam</span><span class="params">(String userName)</span> </span>&#123;</div><div class="line">	System.out.println(userName);</div><div class="line">	<span class="keyword">return</span> SUCCESS;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>　　<strong>此时方法的参数名必须与页面传来的参数名一致（都为userName），否则会获取不到。</strong>
+　　</p>
+<h2 id="使用-RequestHeader绑定请求报头的属性值，使用-CookieValue绑定请求中的Cookie值（不常用，了解即可）"><a href="#使用-RequestHeader绑定请求报头的属性值，使用-CookieValue绑定请求中的Cookie值（不常用，了解即可）" class="headerlink" title="使用@RequestHeader绑定请求报头的属性值，使用@CookieValue绑定请求中的Cookie值（不常用，了解即可）"></a>使用@RequestHeader绑定请求报头的属性值，使用@CookieValue绑定请求中的Cookie值（不常用，了解即可）</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//使用@RequestHeader绑定请求报头的属性值</span></div><div class="line"><span class="meta">@RequestMapping</span>(<span class="string">"/testRequestHeader"</span>)  </div><div class="line"><span class="function"><span class="keyword">public</span> String <span class="title">testRequestHeader</span><span class="params">(  </span></span></div><div class="line">        @RequestHeader(value = <span class="string">"Accept-Language"</span>) String al) &#123;  </div><div class="line">    System.out.println(<span class="string">"testRequestHeader, Accept-Language: "</span> + al);  </div><div class="line">    <span class="keyword">return</span> SUCCESS;  </div><div class="line">&#125;  </div><div class="line"></div><div class="line"><span class="comment">//使用@CookieValue绑定请求中的Cookie值</span></div><div class="line"> <span class="meta">@RequestMapping</span>(<span class="string">"/testCookieValue"</span>)  </div><div class="line"><span class="function"><span class="keyword">public</span> String <span class="title">testCookieValue</span><span class="params">(@CookieValue(<span class="string">"JSESSIONID"</span>)</span> String sessionId) </span>&#123;  </div><div class="line">    System.out.println(<span class="string">"testCookieValue: sessionId: "</span> + sessionId);  </div><div class="line">    <span class="keyword">return</span> SUCCESS;  </div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="使用POJO对象绑定请求参数值（用于传递对象）"><a href="#使用POJO对象绑定请求参数值（用于传递对象）" class="headerlink" title="使用POJO对象绑定请求参数值（用于传递对象）"></a>使用POJO对象绑定请求参数值（用于传递对象）</h2><p>　　SpringMVC会按请求参数名和POJO属性名进行自动匹配，自动为该对象填充属性值。支持级联属性。如：dept.deptId、dept.address.tel等，例如：<br>　　<br>POJO：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">User</span> </span>&#123;  </div><div class="line">    <span class="keyword">private</span> String userName;  </div><div class="line">    <span class="keyword">private</span> <span class="keyword">int</span> age;  </div><div class="line">    <span class="keyword">private</span> Address address;  </div><div class="line">    <span class="comment">//get,set,toString方法略</span></div><div class="line">    &#125;</div><div class="line">    </div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Address</span></span>&#123;  </div><div class="line">    <span class="keyword">private</span> String province;  </div><div class="line">    <span class="keyword">private</span> String city;  </div><div class="line">    <span class="comment">//get,set,toString方法略</span></div><div class="line">    &#125;</div></pre></td></tr></table></figure></p>
+<p>控制器：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@Controller</span>  </div><div class="line"><span class="meta">@RequestMapping</span>(<span class="string">"springmvc"</span>)  </div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SpringMVCTest</span> </span>&#123;  </div><div class="line">  </div><div class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> String SUCCESS = <span class="string">"success"</span>;  </div><div class="line">    <span class="meta">@RequestMapping</span>(<span class="string">"/testPOJO"</span>)  </div><div class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">testPOJO</span><span class="params">(User user)</span></span>&#123;  </div><div class="line">        System.out.println(user);  </div><div class="line">        <span class="keyword">return</span> SUCCESS;  </div><div class="line">    &#125;&#125;</div></pre></td></tr></table></figure></p>
+<p>jsp:<br><figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">&lt;form action="springmvc/testPOJO" method="post"&gt;  </div><div class="line">        username:&lt;input type="text" name="userName"&gt;&lt;br&gt;&lt;br&gt;  </div><div class="line">        age:&lt;input type="text" name="age"&gt;&lt;br&gt;&lt;br&gt;  </div><div class="line">        province:&lt;input type="text" name="address.province"&gt;&lt;br&gt;&lt;br&gt;  </div><div class="line">        city:&lt;input type="text" name="address.city"&gt;&lt;br&gt;&lt;br&gt;  </div><div class="line">        &lt;input type="submit" value="Submit"&gt;  </div><div class="line">    &lt;/form&gt;</div></pre></td></tr></table></figure></p>
+<p>　　<strong>注意，jsp中form表单数据的name值需要与POJO的字段值一致。</strong></p>
+<h2 id="使用ServletAPI作为参数"><a href="#使用ServletAPI作为参数" class="headerlink" title="使用ServletAPI作为参数"></a>使用ServletAPI作为参数</h2><p>　　MVC 的Handler 方法可以接受如下ServletAPI类型的参数:<br>　　<br>　　 • HttpServletRequest<br>　　 • HttpServletResponse<br>　　 • HttpSession<br>　　 • Java.security.Principal•Locale<br>　　 • InputStream<br>　　 • OutputStream<br>　　 • Reader<br>　　 • Writer<br>　　<br>　　例如：<br>　　<br>jsp：<br><figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">&lt;a href="springmvc/testServletAPI"&gt;Test ServletAPI&lt;/a&gt;</div></pre></td></tr></table></figure></p>
+<p>控制器：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">    <span class="meta">@RequestMapping</span>(<span class="string">"/testServletAPI"</span>)  </div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">testServletAPI</span><span class="params">(HttpServletRequest request,  </span></span></div><div class="line">            HttpServletResponse response, Writer out) <span class="keyword">throws</span> IOException &#123;  </div><div class="line">        System.out.println(<span class="string">"testServletAPI, "</span> + request + <span class="string">", "</span> + response);  </div><div class="line">        out.write(<span class="string">"hello springmvc"</span>);  </div><div class="line"><span class="comment">//        return SUCCESS;  </span></div><div class="line">    &#125;  </div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>点击jsp页面的Test ServletAPI：</p>
+<p><img src="http://static.zybuluo.com/xiangwanpeng/6px3vhji4ns7bdh80gzck6gx/image_1b0rv5de613kekkko9u1kqr5289.png" alt="image_1b0rv5de613kekkko9u1kqr5289.png-11.6kB"></p>
+<p>并在控制台输出：</p>
+<p>testServletAPI, org.apache.catalina.connector.RequestFacade@3277a570, org.apache.catalina.connector.ResponseFacade@4d0e75f2</p>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2016/11/06/关于请求方法为GET的form表单，action属性后不能带参数的问题/" itemprop="url">
+                  关于请求方法为GET的form表单，action属性后不能带参数的问题
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-11-06T11:45:27+08:00" content="2016-11-06">
+              2016-11-06
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/BUG解决/" itemprop="url" rel="index">
+                    <span itemprop="name">BUG解决</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2016/11/06/关于请求方法为GET的form表单，action属性后不能带参数的问题/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/11/06/关于请求方法为GET的form表单，action属性后不能带参数的问题/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>　　若在页面中有如下代码：<br><figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">&lt;form action="XXX?name=Jack&amp;age=10"&gt;</div><div class="line">&lt;input type="text" name="address" value="Beijing"/&gt;</div><div class="line">&lt;input type="hidden" name="sex" value="male"/&gt;</div><div class="line">&lt;input type="submit" value="submit"/&gt;</div><div class="line">&lt;/form&gt;</div></pre></td></tr></table></figure></p>
+<p>　　那么后台无法获取action属性中的name和age参数。这是因为<strong>浏览器会将表单中的数据封装为字符串，例如会将上面的address和sex属性封装为address=Beijing&amp;sex=male，然后将其直接附加在action的URL之后</strong>，URL和封装后的字符串之间会有一个‘?’分隔。<strong>如果在表单的action属性中已经包含了参数，浏览器会直接将其过滤掉，再附加form表单数据</strong>。所以请求方法为GET的表单，其action属性中不能携带参数，如果要实现参数的传递，有如下三种方式：<br>　　1、使用POST方式进行传递，可以在action中添加参数；<br>　　2、如果要用GET方式，那么可以采用上述的方式，通过表单数据进行传递，例如：<br><figure class="highlight jsp"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">&lt;input type=<span class="string">"hidden"</span> name=<span class="string">"name"</span> value=<span class="string">"Jack"</span>/&gt;</div><div class="line">&lt;input type=<span class="string">"text"</span> name=<span class="string">"age"</span> value=<span class="string">"10"</span>/&gt;</div></pre></td></tr></table></figure></p>
+<p>　　3、使用超链接（超链接默认的请求方式为GET）：<br><figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">&lt;a href="XXX?name=Jack&amp;age=10"&gt;提交&lt;/a&gt;</div></pre></td></tr></table></figure></p>
+<p>　　</p>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2016/11/05/在MyEclipse2014环境下搭建SpringMVC并实现HelloWorld/" itemprop="url">
+                  在MyEclipse2014环境下搭建SpringMVC并实现HelloWorld
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-11-05T09:24:24+08:00" content="2016-11-05">
+              2016-11-05
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/SpringMVC/" itemprop="url" rel="index">
+                    <span itemprop="name">SpringMVC</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2016/11/05/在MyEclipse2014环境下搭建SpringMVC并实现HelloWorld/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/11/05/在MyEclipse2014环境下搭建SpringMVC并实现HelloWorld/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="新建项目："><a href="#新建项目：" class="headerlink" title="新建项目："></a>新建项目：</h2><p>　　File — New — Dynamic Web Project — 输入项目名（这里我命名为MySpringMVC-1） — Finish。</p>
+<h2 id="搭建环境："><a href="#搭建环境：" class="headerlink" title="搭建环境："></a>搭建环境：</h2><p>　　右键项目 — MyEclipse — Project Facets[Capabilities] — Install spring Facet：<br>　　<br>　　<img src="http://static.zybuluo.com/xiangwanpeng/ivvu0txg7u9uw4qw24h4r959/image_1b0p2k00f1o691q47m26163rfp39.png" alt="image_1b0p2k00f1o691q47m26163rfp39.png-26.8kB"><br>　　<br>　　点击Next：<br>　　<br>　　<img src="http://static.zybuluo.com/xiangwanpeng/lq1lxg38u4xw1sh87omk5v7a/image_1b0p2u7atob712do15us13ja17e1m.png" alt="image_1b0p2u7atob712do15us13ja17e1m.png-43.6kB"><br>　　<br>　　取消所有勾选，点击Finish。
+　　</p>
+<h2 id="配置web-xml："><a href="#配置web-xml：" class="headerlink" title="配置web.xml："></a>配置web.xml：</h2><p>打开WebRoot/WEB-INF/web.xml，配置为如下形式：</p>
+<p><strong>web.xml：</strong></p>
+<pre><code>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;web-app xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;
+    xmlns=&quot;http://java.sun.com/xml/ns/javaee&quot;
+    xsi:schemaLocation=&quot;http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd&quot;
+    id=&quot;WebApp_ID&quot; version=&quot;2.5&quot;&gt;
+
+    &lt;!-- 配置 DispatcherServlet --&gt;
+    &lt;servlet&gt;
+        &lt;servlet-name&gt;springDispatcherServlet&lt;/servlet-name&gt;
+        &lt;servlet-class&gt;org.springframework.web.servlet.DispatcherServlet&lt;/servlet-class&gt;
+        &lt;!-- 该servlet在项目加载时就被创建，而不是等第一次请求时才创建 --&gt;
+        &lt;load-on-startup&gt;1&lt;/load-on-startup&gt;
+    &lt;/servlet&gt;
+
+    &lt;servlet-mapping&gt;
+        &lt;servlet-name&gt;springDispatcherServlet&lt;/servlet-name&gt;
+        &lt;!-- 可以应答所有请求 --&gt;
+        &lt;url-pattern&gt;/&lt;/url-pattern&gt;
+    &lt;/servlet-mapping&gt;
+&lt;/web-app&gt;
+</code></pre><h2 id="配置SpringMVC的配置文件："><a href="#配置SpringMVC的配置文件：" class="headerlink" title="配置SpringMVC的配置文件："></a>配置SpringMVC的配置文件：</h2><p>　　在WebRoot/WEB-INF目录下新建一个Spring Bean Definition，命名为&lt;servlet-name&gt;-servlet.xml，在我项目的web.xml中，&lt;servlet-name&gt;为springDispatcherServlet，所以此处配置文件名为springDispatcherServlet-servlet.xml：<br>　　<br>　　<img src="http://static.zybuluo.com/xiangwanpeng/pz6sy3gizyeh4k4wh95utuf5/image_1b0p4h55ug85qepacf4kh1ats1t.png" alt="image_1b0p4h55ug85qepacf4kh1ats1t.png-25.5kB"><br>　　<br>　　点击Next：<br>　　<br>　　<img src="http://static.zybuluo.com/xiangwanpeng/7rkmuu422t8r9z953swdgl7o/image_1b0p49b981gtkugr3rh1ah5114j1g.png" alt="image_1b0p49b981gtkugr3rh1ah5114j1g.png-50.4kB"></p>
+<p>　　勾选context和mvc，点击Finish，然后打开springDispatcherServlet-servlet.xml，配置如下：<br>　　<br><strong>springDispatcherServlet-servlet.xml：</strong></p>
+<pre><code>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;beans xmlns=&quot;http://www.springframework.org/schema/beans&quot;
+    xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot; xmlns:context=&quot;http://www.springframework.org/schema/context&quot;
+    xmlns:mvc=&quot;http://www.springframework.org/schema/mvc&quot;
+    xsi:schemaLocation=&quot;http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-3.1.xsd
+        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd&quot;&gt;
+
+
+    &lt;!-- 指定要自动扫描的包 --&gt;
+    &lt;context:component-scan base-package=&quot;com.MySpringMVC&quot;&gt;&lt;/context:component-scan&gt;
+
+    &lt;!-- 配置视图解析器: 如何把 handler 方法返回值解析为实际的物理视图 --&gt;
+    &lt;bean
+        class=&quot;org.springframework.web.servlet.view.InternalResourceViewResolver&quot;&gt;
+        &lt;property name=&quot;prefix&quot; value=&quot;/WEB-INF/views/&quot;&gt;&lt;/property&gt;
+        &lt;property name=&quot;suffix&quot; value=&quot;.jsp&quot;&gt;&lt;/property&gt;
+    &lt;/bean&gt;
+
+&lt;/beans&gt;
+</code></pre><p>　　其中<context:component-scan base-package="com.MySpringMVC"></context:component-scan>指定com.MySpringMVC下的子包和类中的注解将会被扫描到。
+　　</p>
+<h2 id="添加控制器类："><a href="#添加控制器类：" class="headerlink" title="添加控制器类："></a>添加控制器类：</h2><p>　　新建包com.MySpringMVC.controller，并在包下新建类Hello.java，代码如下：</p>
+<p><strong>Hello.java：</strong></p>
+<pre><code>package com.MySpringMVC.controller;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+@Controller
+public class Hello {
+
+    /**
+     * 1. 使用 @RequestMapping 注解来映射请求的 URL
+     * 2. 返回值会通过视图解析器解析为实际的物理视图, 对于 InternalResourceViewResolver 视图解析器, 会做如下的解析:
+     * 通过 prefix + returnVal + 后缀 这样的方式得到实际的物理视图, 然会做转发操作
+     * 
+     * /WEB-INF/views/success.jsp
+     * 
+     * @return
+     */
+    @RequestMapping(&quot;/helloworld&quot;)
+    public String hello(){
+        System.out.println(&quot;hello world!&quot;);
+        return &quot;success&quot;;
+    }
+}
+</code></pre><h2 id="新建页面："><a href="#新建页面：" class="headerlink" title="新建页面："></a>新建页面：</h2><p>　　现在我们来建立页面测试一下：<br>　　<br><strong>index.jsp：</strong> （其中超链接地址“helloworld”对应Hello.java中的“@RequestMapping(“/helloworld”)”）</p>
+<pre><code>&lt;%@ page language=&quot;java&quot; import=&quot;java.util.*&quot; pageEncoding=&quot;UTF-8&quot;%&gt;
+&lt;%
+String path = request.getContextPath();
+String basePath = request.getScheme()+&quot;://&quot;+request.getServerName()+&quot;:&quot;+request.getServerPort()+path+&quot;/&quot;;
+%&gt;
+
+&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.01 Transitional//EN&quot;&gt;
+&lt;html&gt;
+  &lt;head&gt;
+    &lt;base href=&quot;&lt;%=basePath%&gt;&quot;&gt;
+
+    &lt;title&gt;My JSP &apos;index.jsp&apos; starting page&lt;/title&gt;
+    &lt;meta http-equiv=&quot;pragma&quot; content=&quot;no-cache&quot;&gt;
+    &lt;meta http-equiv=&quot;cache-control&quot; content=&quot;no-cache&quot;&gt;
+    &lt;meta http-equiv=&quot;expires&quot; content=&quot;0&quot;&gt;    
+    &lt;meta http-equiv=&quot;keywords&quot; content=&quot;keyword1,keyword2,keyword3&quot;&gt;
+    &lt;meta http-equiv=&quot;description&quot; content=&quot;This is my page&quot;&gt;
+  &lt;/head&gt;
+
+  &lt;body&gt;
+    &lt;a href=&quot;helloworld&quot;&gt;Hello World!&lt;/a&gt;
+  &lt;/body&gt;
+&lt;/html&gt;
+</code></pre><p><strong>/WEB-INF/views/success.jsp：</strong></p>
+<pre><code>&lt;%@ page language=&quot;java&quot; import=&quot;java.util.*&quot; pageEncoding=&quot;UTF-8&quot;%&gt;
+&lt;%
+String path = request.getContextPath();
+String basePath = request.getScheme()+&quot;://&quot;+request.getServerName()+&quot;:&quot;+request.getServerPort()+path+&quot;/&quot;;
+%&gt;
+
+&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.01 Transitional//EN&quot;&gt;
+&lt;html&gt;
+  &lt;head&gt;
+    &lt;base href=&quot;&lt;%=basePath%&gt;&quot;&gt;
+
+    &lt;title&gt;My JSP &apos;success.jsp&apos; starting page&lt;/title&gt;
+
+    &lt;meta http-equiv=&quot;pragma&quot; content=&quot;no-cache&quot;&gt;
+    &lt;meta http-equiv=&quot;cache-control&quot; content=&quot;no-cache&quot;&gt;
+    &lt;meta http-equiv=&quot;expires&quot; content=&quot;0&quot;&gt;    
+    &lt;meta http-equiv=&quot;keywords&quot; content=&quot;keyword1,keyword2,keyword3&quot;&gt;
+    &lt;meta http-equiv=&quot;description&quot; content=&quot;This is my page&quot;&gt;
+
+  &lt;/head&gt;
+
+  &lt;body&gt;
+    &lt;h4&gt;Hello world!&lt;/h4&gt;
+  &lt;/body&gt;
+&lt;/html&gt;
+</code></pre><h2 id="运行测试："><a href="#运行测试：" class="headerlink" title="运行测试："></a>运行测试：</h2><p>　　运行项目：<br>　　<br>　　<img src="http://static.zybuluo.com/xiangwanpeng/1h629jn1usvv475p2ccx2avi/image_1b0p616ha1lc1qgrum51eum18h82a.png" alt="image_1b0p616ha1lc1qgrum51eum18h82a.png-9.9kB"><br>　　<br>　　点击，跳转到了WEB-INF/views/success.jsp：<br>　　<br>　　<img src="http://static.zybuluo.com/xiangwanpeng/iu5944jdpmz8ubc4pkh02xmx/image_1b0p62p3i1kp41em91e71s3vgrf2n.png" alt="image_1b0p62p3i1kp41em91e71s3vgrf2n.png-11.2kB"><br>　　<br>　　并且在控制台输出了hello world！：<br>　　<br>　　<img src="http://static.zybuluo.com/xiangwanpeng/vaykjmx3c7ouho5owtpkfbty/image_1b0p63m9m7ce15v71feg1nsn1ls734.png" alt="image_1b0p63m9m7ce15v71feg1nsn1ls734.png-28.5kB">
+　　
+　　</p>
+<p>　　
+　　</p>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
                 <a class="post-title-link" href="/2016/11/03/JVM的类加载机制/" itemprop="url">
                   JVM的类加载机制
                 </a>
@@ -1375,437 +1884,6 @@ public static void testTenuringThreshold2(){
 
 
     
-      
-
-  
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2016/10/24/如何通过MyEclipse打印GC日志/" itemprop="url">
-                  如何通过MyEclipse打印GC日志
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            <span class="post-meta-item-icon">
-              <i class="fa fa-calendar-o"></i>
-            </span>
-            <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2016-10-24T15:04:45+08:00" content="2016-10-24">
-              2016-10-24
-            </time>
-          </span>
-
-          
-            <span class="post-category" >
-              &nbsp; | &nbsp;
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-              
-                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
-                  <a href="/categories/JVM/" itemprop="url" rel="index">
-                    <span itemprop="name">JVM</span>
-                  </a>
-                </span>
-
-                
-                
-
-              
-            </span>
-          
-
-          
-            
-              <span class="post-comments-count">
-                &nbsp; | &nbsp;
-                <a href="/2016/10/24/如何通过MyEclipse打印GC日志/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/10/24/如何通过MyEclipse打印GC日志/" itemprop="commentsCount"></span>
-                </a>
-              </span>
-            
-          
-
-          
-
-          
-          
-
-          
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p><strong>第一步：</strong>右键项目或文件——Debug As——Debug Configurations。</p>
-<p><strong>第二步：</strong>点击Arguments，在VM arguments中填写-Xloggc:G:/gc.log，点击Apply，最后点击Debug。（可在自己选定目录中生成gc.log，在这里我选择的是G盘目录下）</p>
-<p><img src="http://static.zybuluo.com/xiangwanpeng/95z6xd4v3bktshqeetm2gv4b/image_1avqnnobn15sg19n915ufiabafu9.png" alt="image_1avqnnobn15sg19n915ufiabafu9.png-66.6kB"></p>
-<p><strong>第三步：</strong>进入G盘，这时候会看到在G盘中生成了文件“gc.log”，用记事本打开即可查看该文件运行的GC日志。</p>
-<p><img src="http://static.zybuluo.com/xiangwanpeng/enjjpzumtja6eemhcdgce3xv/image_1avqnv445kpr1rn61q161b3q1vlnm.png" alt="image_1avqnv445kpr1rn61q161b3q1vlnm.png-61.6kB"></p>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2016/10/20/通过JNI实现Java与C++的通信/" itemprop="url">
-                  通过JNI实现Java与C++的通信
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            <span class="post-meta-item-icon">
-              <i class="fa fa-calendar-o"></i>
-            </span>
-            <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2016-10-20T11:16:33+08:00" content="2016-10-20">
-              2016-10-20
-            </time>
-          </span>
-
-          
-            <span class="post-category" >
-              &nbsp; | &nbsp;
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-              
-                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
-                  <a href="/categories/JNI/" itemprop="url" rel="index">
-                    <span itemprop="name">JNI</span>
-                  </a>
-                </span>
-
-                
-                
-
-              
-            </span>
-          
-
-          
-            
-              <span class="post-comments-count">
-                &nbsp; | &nbsp;
-                <a href="/2016/10/20/通过JNI实现Java与C++的通信/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/10/20/通过JNI实现Java与C++的通信/" itemprop="commentsCount"></span>
-                </a>
-              </span>
-            
-          
-
-          
-
-          
-          
-
-          
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p>　　JNI是Java Native Interface的缩写，它提供了若干的API实现了Java和其他语言的通信（主要是C&amp;C++）。使用Java与本地已编译的代码交互，通常会丧失平台可移植性。但是，有些情况下这样做是可以接受的，甚至是必须的。例如，使用一些旧的库，与硬件、操作系统进行交互，或者为了提高程序的性能。下面我们实现一个简单的例子，通过JNI调用C++程序，输出“Hello world！”。
-　　</p>
-<p><strong>1、</strong>创建一个Java类，定义一个本地方法(包名为util，类名为HelloWorld)：</p>
-<pre><code>public native void helloWorld();
-</code></pre><p>我们可以看到，这个方法只有声明，因为它是在本地被实现的。</p>
-<p><strong>2、</strong>在DOS窗口中进入文件src目录，输入命令“javah util.HelloWorld”，其中util为包名，HelloWorld为类名，这会在src目录下生成一个头文件util_HelloWorld.h，用记事本打开它我们可以看到：</p>
-<pre><code>/* DO NOT EDIT THIS FILE - it is machine generated */
-#include &lt;jni.h&gt;
-/* Header for class util_HelloWorld */
-
-#ifndef _Included_util_HelloWorld
-#define _Included_util_HelloWorld
-#ifdef __cplusplus
-extern &quot;C&quot; {
-#endif
-/*
- * Class:     util_HelloWorld
- * Method:    helloWorld
- * Signature: ()V
- */
-JNIEXPORT void JNICALL Java_util_HelloWorld_helloWorld
-  (JNIEnv *, jobject);
-
-#ifdef __cplusplus
-}
-#endif
-#endif
-</code></pre><p>其中，<br>JNIEXPORT void JNICALL Java_util_HelloWorld_helloWorld<br>  (JNIEnv <em>, jobject); 是对本地方法的声明，<em>*在C++程序中定义的方法必须与这个声明完全一致</em></em>，否则可能导致无法加载本地方法。</p>
-<p><strong>3、</strong>现在我们开始编写C++本地代码，并生成DLL动态链接库文件。<br>如果使用VC6.0，则步骤为：文件——新建——Win32 Dynamic-Link Library，在这里我创建了一个名为util的工程，然后添加上面生成的头文件到该工程中，然后创建一个源文件（我在这里命名为MyDLL），include该头文件，并实现头文件中声明的函数：</p>
-<pre><code>#include&lt;iostream.h&gt;
-#include&quot;util_HelloWorld.h&quot;
-JNIEXPORT void JNICALL Java_util_HelloWorld_helloWorld(JNIEnv *, jobject);
-{
-cout&lt;&lt;&quot;hello world!&quot;&lt;&lt;endl;
-}
-</code></pre><p>由于util_HelloWorld.h中引入了jni.h，所以我们需要进入JDK安装目录，将include目录下的jni.h和include/win32目录下的jawt_md.h、jni_md.h复制到VC6.0目录下的include目录中。现在我们就可以构建该工程了，直接按F7，就会在该工程文件下的Debug目录中生成DLL文件（我目录下生成的文件名为util.dll）。</p>
-<p><strong>4、</strong>现在我们将上面得到的DLL文件导入到Java文件的根目录下，在Java程序中加载这个动态链接库文件，然后调用该本地方法：</p>
-<pre><code>public static void main(String[] args) {
-        System.loadLibrary(&quot;util&quot;);
-        new HelloWorld().helloWorld();
-    }
-</code></pre><p>便成功输出了“Hello World！”。</p>
-<p>　　注意，如果你是在64位的操作系统上安装的64位的JDK，那么在加载由VC6.0生成的DLL文件时会报错：Can’t load IA 32-bit .dll on a AMD 64-bit platform。由于VC6.0只能生成32位的DLL文件，我们就需要使用VS来生成64位的DLL文件。具体步骤为打开VS，这里我使用的是VS2012，点击文件——新建——项目——Visual C++——win32项目，输入项目名称，选择应用程序类型为DLL，点击完成，然后选择 生成——配置管理器，选择平台——新建——选择x64,按F7生成即可。（同样我们需要将jni.h、jawt_md.h、jni_md.h等头文件添加到VS目录下的VC/include中，且生成的DLL文件在项目文件下的x64/Debug中）。</p>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2016/10/17/Java中的散列存储/" itemprop="url">
-                  Java中的散列存储
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            <span class="post-meta-item-icon">
-              <i class="fa fa-calendar-o"></i>
-            </span>
-            <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2016-10-17T21:20:54+08:00" content="2016-10-17">
-              2016-10-17
-            </time>
-          </span>
-
-          
-            <span class="post-category" >
-              &nbsp; | &nbsp;
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-              
-                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
-                  <a href="/categories/Java基础/" itemprop="url" rel="index">
-                    <span itemprop="name">Java基础</span>
-                  </a>
-                </span>
-
-                
-                
-
-              
-            </span>
-          
-
-          
-            
-              <span class="post-comments-count">
-                &nbsp; | &nbsp;
-                <a href="/2016/10/17/Java中的散列存储/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/10/17/Java中的散列存储/" itemprop="commentsCount"></span>
-                </a>
-              </span>
-            
-          
-
-          
-
-          
-          
-
-          
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p>　　Java中散列存储的数据结构主要是指HashSet、HashMap、LinkedHashSet、LinkedHashMap以及HashTable等。要理解Java中的散列存储机制，那么我们必须先理解两个方法：equals()和hashCode()。关于equals()方法以及其与“==”关系操作符的区别，我们在<a href="https://xiangwanpeng.github.io/2016/10/17/Java%E4%B8%AD%E2%80%9C==%E2%80%9C%E4%B8%8Eequals%28%29%E7%9A%84%E5%8C%BA%E5%88%AB%EF%BC%8C%E4%BB%A5%E5%8F%8Ahashcode%28%29%E7%9A%84%E4%BD%BF%E7%94%A8/" target="_blank" rel="external">另一篇文章</a>中已经说明了。而对于hashCode()，它是在Object类中定义的一个方法：</p>
-<pre><code>public native int hashCode();
-</code></pre><p>这是一个返回int值的本地方法，在Object类中没有被实现。这个方法主要被应用于使用散列的数据结构中，配合基于散列的集合一起正常运行，例如，在向一个容器(我们假设是HashMap)中插入一个对象时，怎样判断容器中是否已经存在该对象了呢？由于容器中的元素可能成千上万，使用equals()方法依次进行比较是非常低效的。<strong>散列的价值在于速度</strong>，它将键保存在某处，以便能够很快找到。存储一组元素最快的数据结构是数组，所以使用它来存储键的信息（注意是键的信息，而非键本身）。但是因为数组不能调整容量，因此就有一个问题：我们希望在Map中保存数量不确定的值，但是如果键的数量被数组的容量限制了，该怎么办呢？<br>　　答案就是:数组不保存键本身，而是通过键对象生成一个数字，将其作为数组的下标，这个数字就是散列码（hashcode），由定义在Object中的、且可能由你的类覆盖的hashCode()方法生成。为解决数组容量被固定的问题，不同的键可以产生相同的下标，这种现象被称为冲突。于是，在容器中查询一个值的过程是：先通过hashCode()计算待插入对象的散列码，然后使用散列码查询数组。对于冲突的处理，常常是通过外部链接，即数组并不直接保存值，而是保存值的list，然后对list中的值进行线性查询，这部分查询自然会比较慢。但是，如果散列函数足够好的话，数组的每个位置就只有较少的值。因此，散列机制便可以快速地跳到数组的某个位置，只对很少的元素进行比较。这就是HashMap会如此快的原因，我们可以通过HashMap.put()方法体会到：</p>
-<pre><code>public V put(K key, V value) {
-        if (table == EMPTY_TABLE) {
-            inflateTable(threshold);
-        }
-        if (key == null)
-            return putForNullKey(value);
-        int hash = hash(key);
-        int i = indexFor(hash, table.length);
-        for (Entry&lt;K,V&gt; e = table[i]; e != null; e = e.next) {
-            Object k;
-            if (e.hash == hash &amp;&amp; ((k = e.key) == key || key.equals(k))) {
-                V oldValue = e.value;
-                e.value = value;
-                e.recordAccess(this);
-                return oldValue;
-            }
-        }
-
-        modCount++;
-        addEntry(hash, key, value, i);
-        return null;
-    }
-</code></pre><p>其主要思想便是：在键不为空时，根据键对象获取到散列码hash，然后通过散列码得到数组的下标i。在table[i]所表示的list中进行迭代，通过equals()判断该键是否存在，如果存在，则用新的值更新旧的值，返回旧的值；否则将新的键值对添加到HashMap中。从这里可以看出，hashCode方法的存在是为了减少equals方法的调用次数，从而提高程序效率。<br>　　这里我们需要注意到：hashCode()并不需要总是能够返回唯一的标识码，但是equals()方法必须严格地判断两个对象是否相同。</p>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
   </section>
 
   
@@ -1851,7 +1929,7 @@ cout&lt;&lt;&quot;hello world!&quot;&lt;&lt;endl;
         <nav class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">26</span>
+              <span class="site-state-item-count">29</span>
               <span class="site-state-item-name">日志</span>
             </a>
           </div>
@@ -1868,7 +1946,7 @@ cout&lt;&lt;&quot;hello world!&quot;&lt;&lt;endl;
           
             <div class="site-state-item site-state-tags">
               <a href="/tags">
-                <span class="site-state-item-count">44</span>
+                <span class="site-state-item-count">46</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>

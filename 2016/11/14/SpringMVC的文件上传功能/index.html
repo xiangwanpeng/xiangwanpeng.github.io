@@ -1,0 +1,674 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/VEN/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/VEN/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="SpringMVC,文件上传," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.1" />
+
+
+
+
+
+
+<meta name="description" content="spring MVC为文件上传提供了直接的支持，这种支持是通过即插即用的MultipartResolver（接口）实现的。Spring 用Jakarta Commons FileUpload技术实现了一个MultipartResolver实现类：CommonsMultipartResovler。　　Spring MVC 上下文中默认没有装配MultipartResovler，因此默认情况下不能">
+<meta property="og:type" content="article">
+<meta property="og:title" content="SpringMVC的文件上传功能">
+<meta property="og:url" content="http://yoursite.com/2016/11/14/SpringMVC的文件上传功能/index.html">
+<meta property="og:site_name" content="向万鹏的独立博客">
+<meta property="og:description" content="spring MVC为文件上传提供了直接的支持，这种支持是通过即插即用的MultipartResolver（接口）实现的。Spring 用Jakarta Commons FileUpload技术实现了一个MultipartResolver实现类：CommonsMultipartResovler。　　Spring MVC 上下文中默认没有装配MultipartResovler，因此默认情况下不能">
+<meta property="og:image" content="http://static.zybuluo.com/xiangwanpeng/8u6jr9gu2ns8pvhmzva866gp/image_1b1g674tqj56o151iba18fu137r9.png">
+<meta property="og:image" content="http://static.zybuluo.com/xiangwanpeng/oxa7590t74g67yww9kuvg5l1/image_1b1g6gesri3q1dsp50svkapq2m.png">
+<meta property="og:image" content="http://static.zybuluo.com/xiangwanpeng/0ee87ic4w5n2n84oli89tdro/image_1b1g6j1e71b9tiaepd1fs0142c13.png">
+<meta property="og:image" content="http://static.zybuluo.com/xiangwanpeng/r5vntfjkiv5y1a1jejrnxn2l/image_1b1g6k63212tci7e145h19gu1f5h1g.png">
+<meta property="og:updated_time" content="2016-11-14T01:19:56.566Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="SpringMVC的文件上传功能">
+<meta name="twitter:description" content="spring MVC为文件上传提供了直接的支持，这种支持是通过即插即用的MultipartResolver（接口）实现的。Spring 用Jakarta Commons FileUpload技术实现了一个MultipartResolver实现类：CommonsMultipartResovler。　　Spring MVC 上下文中默认没有装配MultipartResovler，因此默认情况下不能">
+<meta name="twitter:image" content="http://static.zybuluo.com/xiangwanpeng/8u6jr9gu2ns8pvhmzva866gp/image_1b1g674tqj56o151iba18fu137r9.png">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"always"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 0,
+      author: '博主'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2016/11/14/SpringMVC的文件上传功能/"/>
+
+  <title> SpringMVC的文件上传功能 | 向万鹏的独立博客 </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">向万鹏的独立博客</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle"></p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                SpringMVC的文件上传功能
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-11-14T09:02:09+08:00" content="2016-11-14">
+              2016-11-14
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/SpringMVC/" itemprop="url" rel="index">
+                    <span itemprop="name">SpringMVC</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2016/11/14/SpringMVC的文件上传功能/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/11/14/SpringMVC的文件上传功能/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>　　spring MVC为文件上传提供了直接的支持，这种支持是通过即插即用的<strong>MultipartResolver（接口）</strong>实现的。Spring 用Jakarta Commons FileUpload技术实现了一个MultipartResolver实现类：<strong>CommonsMultipartResovler</strong>。<br>　　Spring MVC 上下文中<strong>默认没有装配MultipartResovler</strong>，因此默认情况下不能处理文件的上传工作，如果想使用Spring 的文件上传功能，需先在上下文中配置MultipartResolver。<br>　　下面展示如何配置CommonsMultipartResovler，以及如何使用上传文件功能：<br>　　<br>　　<br>导入jar包：</p>
+<p><img src="http://static.zybuluo.com/xiangwanpeng/8u6jr9gu2ns8pvhmzva866gp/image_1b1g674tqj56o151iba18fu137r9.png" alt="image_1b1g674tqj56o151iba18fu137r9.png-4.4kB"><br>配置CommonsMultipartResovler:<br><figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">"multipartResolver"</span></span></div><div class="line">		<span class="attr">class</span>=<span class="string">"org.springframework.web.multipart.commons.CommonsMultipartResolver"</span>&gt;</div><div class="line">		<span class="comment">&lt;!-- defaultEncoding: 必须和用户JSP 的pageEncoding属性一致，以便正确解析表单的内容 --&gt;</span></div><div class="line">		<span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"defaultEncoding"</span> <span class="attr">value</span>=<span class="string">"UTF-8"</span>&gt;</span><span class="tag">&lt;/<span class="name">property</span>&gt;</span></div><div class="line">		<span class="comment">&lt;!-- 指定上传的文件最大不能超过1000KB --&gt;</span></div><div class="line">		<span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"maxInMemorySize"</span> <span class="attr">value</span>=<span class="string">"1024000"</span>&gt;</span><span class="tag">&lt;/<span class="name">property</span>&gt;</span></div><div class="line">		<span class="comment">&lt;!-- 还可以指定其他属性... --&gt;</span></div><div class="line">	<span class="tag">&lt;/<span class="name">bean</span>&gt;</span></div></pre></td></tr></table></figure></p>
+<p>上传示例：</p>
+<hr>
+<p>index.jsp<br><figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">&lt;form action="testUpload" method="post" enctype="multipart/form-data"&gt;</div><div class="line">		File:&lt;input type="file" name="file" /&gt; </div><div class="line">		Description:&lt;input type="text" name="des" /&gt; </div><div class="line">		&lt;input type="submit" value="Upload" /&gt;</div><div class="line">	&lt;/form&gt;</div></pre></td></tr></table></figure></p>
+<hr>
+<p>controller<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@RequestMapping</span>(<span class="string">"/testUpload"</span>)</div><div class="line">	<span class="function"><span class="keyword">public</span> String <span class="title">testUpload</span><span class="params">(@RequestParam(<span class="string">"file"</span>)</span> MultipartFile file, @<span class="title">RequestParam</span><span class="params">(<span class="string">"des"</span>)</span> String des)</span></div><div class="line">			<span class="keyword">throws</span> IllegalStateException, IOException &#123;</div><div class="line">		<span class="keyword">if</span> (!file.isEmpty()) &#123;</div><div class="line">			System.out.println(<span class="string">"des : "</span> + des);</div><div class="line">			file.transferTo(<span class="keyword">new</span> File(<span class="string">"G:/UploadTest/"</span> + file.getOriginalFilename()));</div><div class="line">		&#125;</div><div class="line">		<span class="keyword">return</span> SUCCESS;</div><div class="line">	&#125;</div></pre></td></tr></table></figure></p>
+<hr>
+<p>运行程序：</p>
+<p><img src="http://static.zybuluo.com/xiangwanpeng/oxa7590t74g67yww9kuvg5l1/image_1b1g6gesri3q1dsp50svkapq2m.png" alt="image_1b1g6gesri3q1dsp50svkapq2m.png-11.4kB"></p>
+<p>在index.jsp选择一个文本文件test.txt，文本中输入MY TEXT,点击Upload：</p>
+<p>控制台输出：<br><img src="http://static.zybuluo.com/xiangwanpeng/0ee87ic4w5n2n84oli89tdro/image_1b1g6j1e71b9tiaepd1fs0142c13.png" alt="image_1b1g6j1e71b9tiaepd1fs0142c13.png-2.7kB"></p>
+<p>且 G:/UploadTest/ 目录下获取到了该文件：</p>
+<p><img src="http://static.zybuluo.com/xiangwanpeng/r5vntfjkiv5y1a1jejrnxn2l/image_1b1g6k63212tci7e145h19gu1f5h1g.png" alt="image_1b1g6k63212tci7e145h19gu1f5h1g.png-10.3kB"></p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/SpringMVC/" rel="tag">#SpringMVC</a>
+          
+            <a href="/tags/文件上传/" rel="tag">#文件上传</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/11/13/关于SpringMVC中的国际化/" rel="next" title="关于SpringMVC中的国际化">
+                <i class="fa fa-chevron-left"></i> 关于SpringMVC中的国际化
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/11/14/深入理解SpringMVC中的拦截器/" rel="prev" title="深入理解SpringMVC中的拦截器">
+                深入理解SpringMVC中的拦截器 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2016/11/14/SpringMVC的文件上传功能/"
+           data-title="SpringMVC的文件上传功能" data-url="http://yoursite.com/2016/11/14/SpringMVC的文件上传功能/">
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/image/avatar.png"
+               alt="Alan" />
+          <p class="site-author-name" itemprop="name">Alan</p>
+          <p class="site-description motion-element" itemprop="description">Better late than never.</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">29</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">6</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">46</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/xiangwanpeng" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/u/2810288024/home" target="_blank" title="weibo">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  weibo
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <p class="post-toc-empty">此文章未包含目录</p>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2016</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Alan</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Pisces
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/VEN/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/VEN/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/VEN/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/VEN/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/VEN/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/VEN/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.1"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.0.1"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.1"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"xiangwanpeng"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+    
+    <script src="/VEN/ua-parser-js/dist/ua-parser.min.js?v=0.7.9"></script>
+    <script src="/js/src/hook-duoshuo.js"></script>
+  
+
+
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

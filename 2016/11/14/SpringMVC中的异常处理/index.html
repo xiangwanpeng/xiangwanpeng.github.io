@@ -1,0 +1,719 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/VEN/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/VEN/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="异常处理,SpringMVC," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.1" />
+
+
+
+
+
+
+<meta name="description" content="Spring MVC通过HandlerExceptionResolver处理程序的异常，包括Handler 映射、数据绑定以及目标方法执行时发生的异常。在Eclipse中可以查看到HandleExceptionResolver接口的实现类：　　　　
+　　如果我们没有在springmvc配置文件中配置&amp;lt;mvc:annotation-driven/&amp;gt;，那么DispatcherServl">
+<meta property="og:type" content="article">
+<meta property="og:title" content="SpringMVC中的异常处理">
+<meta property="og:url" content="http://yoursite.com/2016/11/14/SpringMVC中的异常处理/index.html">
+<meta property="og:site_name" content="向万鹏的独立博客">
+<meta property="og:description" content="Spring MVC通过HandlerExceptionResolver处理程序的异常，包括Handler 映射、数据绑定以及目标方法执行时发生的异常。在Eclipse中可以查看到HandleExceptionResolver接口的实现类：　　　　
+　　如果我们没有在springmvc配置文件中配置&amp;lt;mvc:annotation-driven/&amp;gt;，那么DispatcherServl">
+<meta property="og:image" content="http://static.zybuluo.com/xiangwanpeng/8592cvf1zunbe7npyd3excw9/image_1b1gosocup6i1ugoq3p119qdta9.png">
+<meta property="og:image" content="http://static.zybuluo.com/xiangwanpeng/3idb7dwhyzptck6qqh1su3gv/image_1b1gqo9gavuv47c1s4lq8r1je9m.png">
+<meta property="og:image" content="http://static.zybuluo.com/xiangwanpeng/ljj8q7gx7db1lukvxzdtqrwy/image_1b1gqpbg41slr1e5dccbvk91oju13.png">
+<meta property="og:image" content="http://static.zybuluo.com/xiangwanpeng/x4ypffz9mmoz7jzzmtjjxiro/image_1b1hdanpd1bqcb3sdc215gporm1g.png">
+<meta property="og:image" content="http://static.zybuluo.com/xiangwanpeng/v31hiu7t9r566r3893tyhl90/image_1b1hfd8r917su1p7i1viie55ac1t.png">
+<meta property="og:image" content="http://static.zybuluo.com/xiangwanpeng/ua782sezjdtrh0eryojen0kq/image_1b1hg7ludgi3dqeadvea917mq2a.png">
+<meta property="og:image" content="http://static.zybuluo.com/xiangwanpeng/kdjejuwwsqazp2i0q2peh453/image_1b1hg8ssm5goidn1f5m1rjqjm42n.png">
+<meta property="og:image" content="http://static.zybuluo.com/xiangwanpeng/d9zmg6mz82n1z8xt2x8qlgqj/image_1b1hi0jq9bnd76gji918aa1pe234.png">
+<meta property="og:updated_time" content="2016-11-14T14:05:50.040Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="SpringMVC中的异常处理">
+<meta name="twitter:description" content="Spring MVC通过HandlerExceptionResolver处理程序的异常，包括Handler 映射、数据绑定以及目标方法执行时发生的异常。在Eclipse中可以查看到HandleExceptionResolver接口的实现类：　　　　
+　　如果我们没有在springmvc配置文件中配置&amp;lt;mvc:annotation-driven/&amp;gt;，那么DispatcherServl">
+<meta name="twitter:image" content="http://static.zybuluo.com/xiangwanpeng/8592cvf1zunbe7npyd3excw9/image_1b1gosocup6i1ugoq3p119qdta9.png">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"always"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 0,
+      author: '博主'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2016/11/14/SpringMVC中的异常处理/"/>
+
+  <title> SpringMVC中的异常处理 | 向万鹏的独立博客 </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">向万鹏的独立博客</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle"></p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                SpringMVC中的异常处理
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-11-14T14:34:08+08:00" content="2016-11-14">
+              2016-11-14
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/SpringMVC/" itemprop="url" rel="index">
+                    <span itemprop="name">SpringMVC</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2016/11/14/SpringMVC中的异常处理/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/11/14/SpringMVC中的异常处理/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>　　Spring MVC通过HandlerExceptionResolver处理程序的异常，包括Handler 映射、数据绑定以及目标方法执行时发生的异常。在Eclipse中可以查看到HandleExceptionResolver接口的实现类：<br>　　<br>　　<img src="http://static.zybuluo.com/xiangwanpeng/8592cvf1zunbe7npyd3excw9/image_1b1gosocup6i1ugoq3p119qdta9.png" alt="image_1b1gosocup6i1ugoq3p119qdta9.png-34.4kB"></p>
+<p>　　如果我们没有在springmvc配置文件中配置&lt;mvc:annotation-driven/&gt;，那么DispatcherServlet会默认装配AnnotationMethodHandlerExceptionResolver、DefaultHandlerExceptionResolver和ResponseStatusException三种解析器，但是其中AnnotationMethodHandlerExceptionResolver已经过期了。所以我们配置&lt;mvc:annotation-driven/&gt;，将会把AnnotationMethodHandlerExceptionResolver替换为ExceptionHandlerExceptionResolver。<br>　　下面的例子中，我们都默认已经在spring配置文件中配置了&lt;mvc:annotation-driven/&gt;。</p>
+<h2 id="ExceptionHandlerExceptionResolver"><a href="#ExceptionHandlerExceptionResolver" class="headerlink" title="ExceptionHandlerExceptionResolver"></a>ExceptionHandlerExceptionResolver</h2><p>　　ExceptionHandlerExceptionResolver主要用于处理Handler 中用@ExceptionHandler注解标记的方法，示例如下：</p>
+<hr>
+<p>页面<br>index.jsp<br><figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">&lt;a href="testExceptionHandlerExceptionResolver?i=0"&gt;</div><div class="line">Test ExceptionHandlerExceptionResolver&lt;/a&gt;</div></pre></td></tr></table></figure></p>
+<p>error.jsp<br><figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">&lt;h4&gt;Error Page&lt;/h4&gt;</div><div class="line">$&#123;exception &#125;</div></pre></td></tr></table></figure></p>
+<hr>
+<p>控制器<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">private</span> <span class="keyword">final</span> <span class="keyword">static</span> String ERROR = <span class="string">"error"</span>;</div><div class="line"></div><div class="line">    <span class="comment">//异常处理器</span></div><div class="line">    <span class="comment">//value = ArithmeticException.class声明捕获数学异常</span></div><div class="line">	<span class="meta">@ExceptionHandler</span>(value = ArithmeticException.class) </div><div class="line">	<span class="function"><span class="keyword">public</span> ModelAndView <span class="title">handleArithmeticException</span><span class="params">(Exception ex)</span> </span>&#123;</div><div class="line">		ModelAndView mv = <span class="keyword">new</span> ModelAndView(ERROR);</div><div class="line">		System.out.println(<span class="string">"出异常了："</span> + ex);</div><div class="line">		mv.addObject(<span class="string">"exception"</span>, ex);</div><div class="line">		<span class="keyword">return</span> mv;</div><div class="line">	&#125;</div><div class="line"></div><div class="line">    <span class="comment">//定义一个可以抛出ArithmeticException异常的方法</span></div><div class="line">	<span class="meta">@RequestMapping</span>(<span class="string">"/testExceptionHandlerExceptionResolver"</span>)</div><div class="line">	<span class="function"><span class="keyword">public</span> String <span class="title">testExceptionHandlerExceptionResolver</span><span class="params">(@RequestParam(<span class="string">"i"</span>)</span> <span class="keyword">int</span> i) </span>&#123;</div><div class="line">		System.out.println(<span class="string">"result:"</span> + <span class="number">10</span> / i);</div><div class="line">		<span class="keyword">return</span> SUCCESS;</div><div class="line">	&#125;</div></pre></td></tr></table></figure></p>
+<hr>
+<p>运行程序：<br>点击index.jsp中的超链接，异常处理器会捕获到异常，在控制台输出：</p>
+<p><img src="http://static.zybuluo.com/xiangwanpeng/3idb7dwhyzptck6qqh1su3gv/image_1b1gqo9gavuv47c1s4lq8r1je9m.png" alt="image_1b1gqo9gavuv47c1s4lq8r1je9m.png-13.7kB"></p>
+<p>并跳转到error.jsp，且在该页面打印了异常信息：</p>
+<p><img src="http://static.zybuluo.com/xiangwanpeng/ljj8q7gx7db1lukvxzdtqrwy/image_1b1gqpbg41slr1e5dccbvk91oju13.png" alt="image_1b1gqpbg41slr1e5dccbvk91oju13.png-12.6kB"></p>
+<hr>
+<p>需要注意的是：</p>
+<ol>
+<li>@ExceptionHandler标记的方法的入参中不能传入Map。 若希望把异常信息传导页面上, 需要使用 ModelAndView 作为返回值。</li>
+<li>@ExceptionHandler 方法标记的异常有优先级的问题。如果我们在上面的例子中同时声明了可以捕获ArithmeticException异常和RuntimeException异常的两个异常处理器，那么会使用匹配度更高的，即捕获ArithmeticException异常的异常处理器。</li>
+<li>通过以上方式创建的异常处理器只能处理该控制器类内部的异常，若需要统一配置可以捕获所有控制器类抛出的异常，可以新建一个异常处理器类，在类的声明处用@ControllerAdvice注解标记即可。如果在当前 控制器类 中找不到 @ExceptionHandler 方法来处理当前方法出现的异常, 则将去 @ControllerAdvice 标记的类中查找 @ExceptionHandler 标记的方法来处理异常。例如，我们现在创建一个异常处理器类，并在其中定义一个可以处理数学异常的方法：<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@ControllerAdvice</span></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SpringMVCTestExceptionHandler</span> </span>&#123;</div><div class="line">	</div><div class="line">	<span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> String ERROR = <span class="string">"error"</span>;</div><div class="line">	</div><div class="line">	<span class="meta">@ExceptionHandler</span>(value=ArithmeticException.class)</div><div class="line">	<span class="function"><span class="keyword">public</span> ModelAndView <span class="title">handleArithmeticException1</span><span class="params">(Exception ex)</span></span>&#123;</div><div class="line">		ModelAndView mv = <span class="keyword">new</span> ModelAndView(ERROR);</div><div class="line">		System.out.println(<span class="string">"[出异常了]："</span>+ex);</div><div class="line">		mv.addObject(<span class="string">"exception"</span>,ex);</div><div class="line">		<span class="keyword">return</span> mv;</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</li>
+</ol>
+<p>注释掉之前定义的handleArithmeticException方法，运行程序，与之前的例子类似，仍然跳转到error.jsp，但是在控制台输出：</p>
+<p><img src="http://static.zybuluo.com/xiangwanpeng/x4ypffz9mmoz7jzzmtjjxiro/image_1b1hdanpd1bqcb3sdc215gporm1g.png" alt="image_1b1hdanpd1bqcb3sdc215gporm1g.png-26.6kB"></p>
+<p>表示执行的是我们新定义的handleArithmeticException1方法，注意，如果不注释掉handleArithmeticException方法，那么会优先执行handleArithmeticException方法，因为handleArithmeticException方法和抛出异常的testExceptionHandlerExceptionResolver方法定义在同一个控制器类中，testExceptionHandlerExceptionResolver方法抛出异常后会先在当前 控制器类 中找 @ExceptionHandler方法来处理当前方法出现的异常,如果找不到，才会去 @ControllerAdvice 标记的类中查找 @ExceptionHandler 标记的方法来处理异常。</p>
+<h2 id="ResponseStatusExceptionResolver"><a href="#ResponseStatusExceptionResolver" class="headerlink" title="ResponseStatusExceptionResolver"></a>ResponseStatusExceptionResolver</h2><p>　　ResponseStatusExceptionResolver的作用是在异常及异常父类中找到@ResponseStatus注解，然后使用这个注解的属性进行处理。下面举例说明：</p>
+<hr>
+<p>页面<br><figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">&lt;a href="testResponseStatusExceptionResolver?i=13"&gt;</div><div class="line">Test ResponseStatusExceptionResolver&lt;/a&gt;</div></pre></td></tr></table></figure></p>
+<hr>
+<p>定义一个异常类<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@ResponseStatus</span>(value=HttpStatus.FORBIDDEN,reason=<span class="string">"用户名和密码不匹配"</span>)</div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">UserNameNotMatchPasswordException</span> <span class="keyword">extends</span> <span class="title">RuntimeException</span></span>&#123;</div><div class="line"></div><div class="line">	<span class="comment">/**</span></div><div class="line">	 * </div><div class="line">	 */</div><div class="line">	<span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">long</span> serialVersionUID = <span class="number">1L</span>;</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<hr>
+<p>模拟一个可以抛出上述异常的方法<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">  <span class="comment">//定义一个可以抛出UserNameNotMatchPasswordException异常的方法</span></div><div class="line"><span class="meta">@RequestMapping</span>(<span class="string">"/testResponseStatusExceptionResolver"</span>)</div><div class="line"><span class="function"><span class="keyword">public</span> String <span class="title">testResponseStatusExceptionResolver</span><span class="params">(@RequestParam(<span class="string">"i"</span>)</span> <span class="keyword">int</span> i) </span>&#123;</div><div class="line">	<span class="keyword">if</span>(i==<span class="number">13</span>)</div><div class="line">		<span class="keyword">throw</span> <span class="keyword">new</span> UserNameNotMatchPasswordException();</div><div class="line">	<span class="keyword">return</span> SUCCESS;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<hr>
+<p>运行程序，由于抛出了异常，并且我们没有定义任何异常处理器对该异常进行处理，那么会出现我们定制的异常页面：</p>
+<p><img src="http://static.zybuluo.com/xiangwanpeng/v31hiu7t9r566r3893tyhl90/image_1b1hfd8r917su1p7i1viie55ac1t.png" alt="image_1b1hfd8r917su1p7i1viie55ac1t.png-28.8kB"></p>
+<p>此外，@ResponseStatus注解还可以用来标记方法：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@ResponseStatus</span>(reason=<span class="string">"测试"</span>,value=HttpStatus.NOT_FOUND) </div><div class="line">		<span class="meta">@RequestMapping</span>(<span class="string">"/testResponseStatusExceptionResolver"</span>)</div><div class="line">		<span class="function"><span class="keyword">public</span> String <span class="title">testResponseStatusExceptionResolver</span><span class="params">(@RequestParam(<span class="string">"i"</span>)</span> <span class="keyword">int</span> i) </span>&#123;</div><div class="line">			<span class="keyword">if</span>(i==<span class="number">13</span>)</div><div class="line">				<span class="keyword">throw</span> <span class="keyword">new</span> UserNameNotMatchPasswordException();</div><div class="line">			System.out.println(<span class="string">"testResponseStatusExceptionResolver..."</span>);</div><div class="line">			<span class="keyword">return</span> SUCCESS;</div><div class="line">		&#125;</div></pre></td></tr></table></figure></p>
+<p>现在，我们在浏览器中令i=10，这样方法是不会抛出UserNameNotMatchPasswordException异常的，结果程序跳转到了如下页面：</p>
+<p><img src="http://static.zybuluo.com/xiangwanpeng/ua782sezjdtrh0eryojen0kq/image_1b1hg7ludgi3dqeadvea917mq2a.png" alt="image_1b1hg7ludgi3dqeadvea917mq2a.png-23.5kB"></p>
+<p>但是控制台上输出了如下信息，说明这个方法被正常地执行了：</p>
+<p><img src="http://static.zybuluo.com/xiangwanpeng/kdjejuwwsqazp2i0q2peh453/image_1b1hg8ssm5goidn1f5m1rjqjm42n.png" alt="image_1b1hg8ssm5goidn1f5m1rjqjm42n.png-27.9kB"></p>
+<h2 id="DefaultHandlerExceptionResolver"><a href="#DefaultHandlerExceptionResolver" class="headerlink" title="DefaultHandlerExceptionResolver"></a>DefaultHandlerExceptionResolver</h2><p>　　对一些特殊的异常进行处理，比如NoSuchRequestHandlingMethodException、HttpRequestMethodNotSupportedException等，具体处理哪些异常可以在DefaultHandlerExceptionResolver源码中查看doResolveException()方法。</p>
+<h2 id="SimpleMappingExceptionResolver"><a href="#SimpleMappingExceptionResolver" class="headerlink" title="SimpleMappingExceptionResolver"></a>SimpleMappingExceptionResolver</h2><p>　　SimpleMappingExceptionResolver可以将异常类名映射为视图名，即发生异常时使用对应的视图报告异常。下面进行测试：</p>
+<hr>
+<p>页面</p>
+<p>index.jsp<br><figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">&lt;a href="testSimpleMappingExceptionResolver?i=21"&gt;</div><div class="line">Test SimpleMappingExceptionResolver&lt;/a&gt;</div></pre></td></tr></table></figure></p>
+<p>error.jsp<br><figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">&lt;h4&gt;Error Page&lt;/h4&gt;</div><div class="line">$&#123;exception &#125;</div></pre></td></tr></table></figure></p>
+<hr>
+<p>控制器<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// 定义一个可以抛出ArrayIndexOutOfBoundsException异常的方法</span></div><div class="line">	<span class="meta">@RequestMapping</span>(<span class="string">"/testSimpleMappingExceptionResolver"</span>)</div><div class="line">	<span class="function"><span class="keyword">public</span> String <span class="title">testSimpleMappingExceptionResolver</span><span class="params">(@RequestParam(<span class="string">"i"</span>)</span> <span class="keyword">int</span> i) </span>&#123;</div><div class="line">		<span class="keyword">int</span>[] values = <span class="keyword">new</span> <span class="keyword">int</span>[<span class="number">20</span>];</div><div class="line">		System.out.println(values[i]);</div><div class="line">		<span class="keyword">return</span> SUCCESS;</div><div class="line">	&#125;</div></pre></td></tr></table></figure></p>
+<hr>
+<p>spring配置文件<br><figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="comment">&lt;!-- 配置使用 SimpleMappingExceptionResolver 来映射异常 --&gt;</span></div><div class="line">	<span class="tag">&lt;<span class="name">bean</span></span></div><div class="line">		<span class="attr">class</span>=<span class="string">"org.springframework.web.servlet.handler.SimpleMappingExceptionResolver"</span>&gt;</div><div class="line">		<span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"exceptionMappings"</span>&gt;</span></div><div class="line">			<span class="tag">&lt;<span class="name">props</span>&gt;</span></div><div class="line">				<span class="tag">&lt;<span class="name">prop</span> <span class="attr">key</span>=<span class="string">"java.lang.ArrayIndexOutOfBoundsException"</span>&gt;</span>error<span class="tag">&lt;/<span class="name">prop</span>&gt;</span></div><div class="line">			<span class="tag">&lt;/<span class="name">props</span>&gt;</span></div><div class="line">		<span class="tag">&lt;/<span class="name">property</span>&gt;</span></div><div class="line">	<span class="tag">&lt;/<span class="name">bean</span>&gt;</span></div></pre></td></tr></table></figure></p>
+<hr>
+<p>运行程序：</p>
+<p><img src="http://static.zybuluo.com/xiangwanpeng/d9zmg6mz82n1z8xt2x8qlgqj/image_1b1hi0jq9bnd76gji918aa1pe234.png" alt="image_1b1hi0jq9bnd76gji918aa1pe234.png-14.7kB"></p>
+<p>由于目标方法抛出了数组下标越界异常，程序跳转到了error.jsp页面，并且在页面上打印了异常信息，这是因为在SimpleMappingExceptionResolver中有一个String类型的属性exceptionAttribute，其默认值为exception，所以我们在error.jsp中通过${exception }可以获取到。也可以在配置文件中配置exceptionAttribute的值，例如：<br><figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="comment">&lt;!-- 配置使用 SimpleMappingExceptionResolver 来映射异常 --&gt;</span></div><div class="line">	<span class="tag">&lt;<span class="name">bean</span></span></div><div class="line">		<span class="attr">class</span>=<span class="string">"org.springframework.web.servlet.handler.SimpleMappingExceptionResolver"</span>&gt;</div><div class="line">		<span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"exceptionAttribute"</span> <span class="attr">value</span>=<span class="string">"ex"</span>&gt;</span><span class="tag">&lt;/<span class="name">property</span>&gt;</span>  </div><div class="line">		<span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"exceptionMappings"</span>&gt;</span></div><div class="line">			<span class="tag">&lt;<span class="name">props</span>&gt;</span></div><div class="line">				<span class="tag">&lt;<span class="name">prop</span> <span class="attr">key</span>=<span class="string">"java.lang.ArrayIndexOutOfBoundsException"</span>&gt;</span>error<span class="tag">&lt;/<span class="name">prop</span>&gt;</span></div><div class="line">			<span class="tag">&lt;/<span class="name">props</span>&gt;</span></div><div class="line">		<span class="tag">&lt;/<span class="name">property</span>&gt;</span></div><div class="line">	<span class="tag">&lt;/<span class="name">bean</span>&gt;</span></div></pre></td></tr></table></figure></p>
+<p>那么，此时需要在error.jsp中通过如下方式在可以获取到异常信息：<br><figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">&lt;h4&gt;Error Page&lt;/h4&gt;</div><div class="line">$&#123;ex &#125;</div></pre></td></tr></table></figure></p>
+<p>　　
+　　</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/异常处理/" rel="tag">#异常处理</a>
+          
+            <a href="/tags/SpringMVC/" rel="tag">#SpringMVC</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/11/14/深入理解SpringMVC中的拦截器/" rel="next" title="深入理解SpringMVC中的拦截器">
+                <i class="fa fa-chevron-left"></i> 深入理解SpringMVC中的拦截器
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2016/11/14/SpringMVC中的异常处理/"
+           data-title="SpringMVC中的异常处理" data-url="http://yoursite.com/2016/11/14/SpringMVC中的异常处理/">
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/image/avatar.png"
+               alt="Alan" />
+          <p class="site-author-name" itemprop="name">Alan</p>
+          <p class="site-description motion-element" itemprop="description">Better late than never.</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">29</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">6</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">46</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/xiangwanpeng" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/u/2810288024/home" target="_blank" title="weibo">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  weibo
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#ExceptionHandlerExceptionResolver"><span class="nav-number">1.</span> <span class="nav-text">ExceptionHandlerExceptionResolver</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ResponseStatusExceptionResolver"><span class="nav-number">2.</span> <span class="nav-text">ResponseStatusExceptionResolver</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#DefaultHandlerExceptionResolver"><span class="nav-number">3.</span> <span class="nav-text">DefaultHandlerExceptionResolver</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#SimpleMappingExceptionResolver"><span class="nav-number">4.</span> <span class="nav-text">SimpleMappingExceptionResolver</span></a></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2016</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Alan</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Pisces
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/VEN/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/VEN/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/VEN/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/VEN/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/VEN/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/VEN/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.1"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.0.1"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.1"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"xiangwanpeng"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+    
+    <script src="/VEN/ua-parser-js/dist/ua-parser.min.js?v=0.7.9"></script>
+    <script src="/js/src/hook-duoshuo.js"></script>
+  
+
+
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

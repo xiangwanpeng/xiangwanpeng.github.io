@@ -248,6 +248,437 @@
             
               
                 
+                <a class="post-title-link" href="/2016/10/24/如何通过MyEclipse打印GC日志/" itemprop="url">
+                  如何通过MyEclipse打印GC日志
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-10-24T15:04:45+08:00" content="2016-10-24">
+              2016-10-24
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/JVM/" itemprop="url" rel="index">
+                    <span itemprop="name">JVM</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2016/10/24/如何通过MyEclipse打印GC日志/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/10/24/如何通过MyEclipse打印GC日志/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p><strong>第一步：</strong>右键项目或文件——Debug As——Debug Configurations。</p>
+<p><strong>第二步：</strong>点击Arguments，在VM arguments中填写-Xloggc:G:/gc.log，点击Apply，最后点击Debug。（可在自己选定目录中生成gc.log，在这里我选择的是G盘目录下）</p>
+<p><img src="http://static.zybuluo.com/xiangwanpeng/95z6xd4v3bktshqeetm2gv4b/image_1avqnnobn15sg19n915ufiabafu9.png" alt="image_1avqnnobn15sg19n915ufiabafu9.png-66.6kB"></p>
+<p><strong>第三步：</strong>进入G盘，这时候会看到在G盘中生成了文件“gc.log”，用记事本打开即可查看该文件运行的GC日志。</p>
+<p><img src="http://static.zybuluo.com/xiangwanpeng/enjjpzumtja6eemhcdgce3xv/image_1avqnv445kpr1rn61q161b3q1vlnm.png" alt="image_1avqnv445kpr1rn61q161b3q1vlnm.png-61.6kB"></p>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2016/10/20/通过JNI实现Java与C++的通信/" itemprop="url">
+                  通过JNI实现Java与C++的通信
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-10-20T11:16:33+08:00" content="2016-10-20">
+              2016-10-20
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/JNI/" itemprop="url" rel="index">
+                    <span itemprop="name">JNI</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2016/10/20/通过JNI实现Java与C++的通信/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/10/20/通过JNI实现Java与C++的通信/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>　　JNI是Java Native Interface的缩写，它提供了若干的API实现了Java和其他语言的通信（主要是C&amp;C++）。使用Java与本地已编译的代码交互，通常会丧失平台可移植性。但是，有些情况下这样做是可以接受的，甚至是必须的。例如，使用一些旧的库，与硬件、操作系统进行交互，或者为了提高程序的性能。下面我们实现一个简单的例子，通过JNI调用C++程序，输出“Hello world！”。
+　　</p>
+<p><strong>1、</strong>创建一个Java类，定义一个本地方法(包名为util，类名为HelloWorld)：</p>
+<pre><code>public native void helloWorld();
+</code></pre><p>我们可以看到，这个方法只有声明，因为它是在本地被实现的。</p>
+<p><strong>2、</strong>在DOS窗口中进入文件src目录，输入命令“javah util.HelloWorld”，其中util为包名，HelloWorld为类名，这会在src目录下生成一个头文件util_HelloWorld.h，用记事本打开它我们可以看到：</p>
+<pre><code>/* DO NOT EDIT THIS FILE - it is machine generated */
+#include &lt;jni.h&gt;
+/* Header for class util_HelloWorld */
+
+#ifndef _Included_util_HelloWorld
+#define _Included_util_HelloWorld
+#ifdef __cplusplus
+extern &quot;C&quot; {
+#endif
+/*
+ * Class:     util_HelloWorld
+ * Method:    helloWorld
+ * Signature: ()V
+ */
+JNIEXPORT void JNICALL Java_util_HelloWorld_helloWorld
+  (JNIEnv *, jobject);
+
+#ifdef __cplusplus
+}
+#endif
+#endif
+</code></pre><p>其中，<br>JNIEXPORT void JNICALL Java_util_HelloWorld_helloWorld<br>  (JNIEnv <em>, jobject); 是对本地方法的声明，<em>*在C++程序中定义的方法必须与这个声明完全一致</em></em>，否则可能导致无法加载本地方法。</p>
+<p><strong>3、</strong>现在我们开始编写C++本地代码，并生成DLL动态链接库文件。<br>如果使用VC6.0，则步骤为：文件——新建——Win32 Dynamic-Link Library，在这里我创建了一个名为util的工程，然后添加上面生成的头文件到该工程中，然后创建一个源文件（我在这里命名为MyDLL），include该头文件，并实现头文件中声明的函数：</p>
+<pre><code>#include&lt;iostream.h&gt;
+#include&quot;util_HelloWorld.h&quot;
+JNIEXPORT void JNICALL Java_util_HelloWorld_helloWorld(JNIEnv *, jobject);
+{
+cout&lt;&lt;&quot;hello world!&quot;&lt;&lt;endl;
+}
+</code></pre><p>由于util_HelloWorld.h中引入了jni.h，所以我们需要进入JDK安装目录，将include目录下的jni.h和include/win32目录下的jawt_md.h、jni_md.h复制到VC6.0目录下的include目录中。现在我们就可以构建该工程了，直接按F7，就会在该工程文件下的Debug目录中生成DLL文件（我目录下生成的文件名为util.dll）。</p>
+<p><strong>4、</strong>现在我们将上面得到的DLL文件导入到Java文件的根目录下，在Java程序中加载这个动态链接库文件，然后调用该本地方法：</p>
+<pre><code>public static void main(String[] args) {
+        System.loadLibrary(&quot;util&quot;);
+        new HelloWorld().helloWorld();
+    }
+</code></pre><p>便成功输出了“Hello World！”。</p>
+<p>　　注意，如果你是在64位的操作系统上安装的64位的JDK，那么在加载由VC6.0生成的DLL文件时会报错：Can’t load IA 32-bit .dll on a AMD 64-bit platform。由于VC6.0只能生成32位的DLL文件，我们就需要使用VS来生成64位的DLL文件。具体步骤为打开VS，这里我使用的是VS2012，点击文件——新建——项目——Visual C++——win32项目，输入项目名称，选择应用程序类型为DLL，点击完成，然后选择 生成——配置管理器，选择平台——新建——选择x64,按F7生成即可。（同样我们需要将jni.h、jawt_md.h、jni_md.h等头文件添加到VS目录下的VC/include中，且生成的DLL文件在项目文件下的x64/Debug中）。</p>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2016/10/17/Java中的散列存储/" itemprop="url">
+                  Java中的散列存储
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-10-17T21:20:54+08:00" content="2016-10-17">
+              2016-10-17
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/Java基础/" itemprop="url" rel="index">
+                    <span itemprop="name">Java基础</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2016/10/17/Java中的散列存储/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/10/17/Java中的散列存储/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>　　Java中散列存储的数据结构主要是指HashSet、HashMap、LinkedHashSet、LinkedHashMap以及HashTable等。要理解Java中的散列存储机制，那么我们必须先理解两个方法：equals()和hashCode()。关于equals()方法以及其与“==”关系操作符的区别，我们在<a href="https://xiangwanpeng.github.io/2016/10/17/Java%E4%B8%AD%E2%80%9C==%E2%80%9C%E4%B8%8Eequals%28%29%E7%9A%84%E5%8C%BA%E5%88%AB%EF%BC%8C%E4%BB%A5%E5%8F%8Ahashcode%28%29%E7%9A%84%E4%BD%BF%E7%94%A8/" target="_blank" rel="external">另一篇文章</a>中已经说明了。而对于hashCode()，它是在Object类中定义的一个方法：</p>
+<pre><code>public native int hashCode();
+</code></pre><p>这是一个返回int值的本地方法，在Object类中没有被实现。这个方法主要被应用于使用散列的数据结构中，配合基于散列的集合一起正常运行，例如，在向一个容器(我们假设是HashMap)中插入一个对象时，怎样判断容器中是否已经存在该对象了呢？由于容器中的元素可能成千上万，使用equals()方法依次进行比较是非常低效的。<strong>散列的价值在于速度</strong>，它将键保存在某处，以便能够很快找到。存储一组元素最快的数据结构是数组，所以使用它来存储键的信息（注意是键的信息，而非键本身）。但是因为数组不能调整容量，因此就有一个问题：我们希望在Map中保存数量不确定的值，但是如果键的数量被数组的容量限制了，该怎么办呢？<br>　　答案就是:数组不保存键本身，而是通过键对象生成一个数字，将其作为数组的下标，这个数字就是散列码（hashcode），由定义在Object中的、且可能由你的类覆盖的hashCode()方法生成。为解决数组容量被固定的问题，不同的键可以产生相同的下标，这种现象被称为冲突。于是，在容器中查询一个值的过程是：先通过hashCode()计算待插入对象的散列码，然后使用散列码查询数组。对于冲突的处理，常常是通过外部链接，即数组并不直接保存值，而是保存值的list，然后对list中的值进行线性查询，这部分查询自然会比较慢。但是，如果散列函数足够好的话，数组的每个位置就只有较少的值。因此，散列机制便可以快速地跳到数组的某个位置，只对很少的元素进行比较。这就是HashMap会如此快的原因，我们可以通过HashMap.put()方法体会到：</p>
+<pre><code>public V put(K key, V value) {
+        if (table == EMPTY_TABLE) {
+            inflateTable(threshold);
+        }
+        if (key == null)
+            return putForNullKey(value);
+        int hash = hash(key);
+        int i = indexFor(hash, table.length);
+        for (Entry&lt;K,V&gt; e = table[i]; e != null; e = e.next) {
+            Object k;
+            if (e.hash == hash &amp;&amp; ((k = e.key) == key || key.equals(k))) {
+                V oldValue = e.value;
+                e.value = value;
+                e.recordAccess(this);
+                return oldValue;
+            }
+        }
+
+        modCount++;
+        addEntry(hash, key, value, i);
+        return null;
+    }
+</code></pre><p>其主要思想便是：在键不为空时，根据键对象获取到散列码hash，然后通过散列码得到数组的下标i。在table[i]所表示的list中进行迭代，通过equals()判断该键是否存在，如果存在，则用新的值更新旧的值，返回旧的值；否则将新的键值对添加到HashMap中。从这里可以看出，hashCode方法的存在是为了减少equals方法的调用次数，从而提高程序效率。<br>　　这里我们需要注意到：hashCode()并不需要总是能够返回唯一的标识码，但是equals()方法必须严格地判断两个对象是否相同。</p>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
                 <a class="post-title-link" href="/2016/10/17/Java中“==“与equals()的区别，以及hashcode()的使用/" itemprop="url">
                   Java中“==”与equals()的区别
                 </a>
@@ -1258,7 +1689,7 @@ public class StaticPolyMorphism {
         <nav class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">26</span>
+              <span class="site-state-item-count">29</span>
               <span class="site-state-item-name">日志</span>
             </a>
           </div>
@@ -1275,7 +1706,7 @@ public class StaticPolyMorphism {
           
             <div class="site-state-item site-state-tags">
               <a href="/tags">
-                <span class="site-state-item-count">44</span>
+                <span class="site-state-item-count">46</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>
