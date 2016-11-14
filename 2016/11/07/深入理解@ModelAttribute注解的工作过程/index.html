@@ -1,0 +1,667 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="SpringMVC,Java Web,Spring源码,注解," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.1" />
+
+
+
+
+
+
+<meta name="description" content="在SpringMVC中，我们可以通过使用@ModelAttribute注解标记方法，实现类似于Struts2中Preparable拦截器的效果，其使用方法我们已经在《SpringMVC中如何处理模型数据》中讲述过了。　　现在我们仍以上篇文章中的更新操作为例，来讨论@ModelAttribute的工作过程。即：有一个User类，有id、userName、email三个属性。现在要完成一个更新操作">
+<meta property="og:type" content="article">
+<meta property="og:title" content="深入理解@ModelAttribute注解的工作过程">
+<meta property="og:url" content="http://yoursite.com/2016/11/07/深入理解@ModelAttribute注解的工作过程/index.html">
+<meta property="og:site_name" content="向万鹏的独立博客">
+<meta property="og:description" content="在SpringMVC中，我们可以通过使用@ModelAttribute注解标记方法，实现类似于Struts2中Preparable拦截器的效果，其使用方法我们已经在《SpringMVC中如何处理模型数据》中讲述过了。　　现在我们仍以上篇文章中的更新操作为例，来讨论@ModelAttribute的工作过程。即：有一个User类，有id、userName、email三个属性。现在要完成一个更新操作">
+<meta property="og:image" content="http://static.zybuluo.com/xiangwanpeng/3lq26obzpz66feqbsouq9zhm/image_1b0v1k02qrkq1ush8p915mj1k639.png">
+<meta property="og:updated_time" content="2016-11-08T05:07:20.934Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="深入理解@ModelAttribute注解的工作过程">
+<meta name="twitter:description" content="在SpringMVC中，我们可以通过使用@ModelAttribute注解标记方法，实现类似于Struts2中Preparable拦截器的效果，其使用方法我们已经在《SpringMVC中如何处理模型数据》中讲述过了。　　现在我们仍以上篇文章中的更新操作为例，来讨论@ModelAttribute的工作过程。即：有一个User类，有id、userName、email三个属性。现在要完成一个更新操作">
+<meta name="twitter:image" content="http://static.zybuluo.com/xiangwanpeng/3lq26obzpz66feqbsouq9zhm/image_1b0v1k02qrkq1ush8p915mj1k639.png">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"always"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 0,
+      author: '博主'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2016/11/07/深入理解@ModelAttribute注解的工作过程/"/>
+
+  <title> 深入理解@ModelAttribute注解的工作过程 | 向万鹏的独立博客 </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">向万鹏的独立博客</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle"></p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                深入理解@ModelAttribute注解的工作过程
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-11-07T16:38:32+08:00" content="2016-11-07">
+              2016-11-07
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/SpringMVC/" itemprop="url" rel="index">
+                    <span itemprop="name">SpringMVC</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2016/11/07/深入理解@ModelAttribute注解的工作过程/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/11/07/深入理解@ModelAttribute注解的工作过程/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>　　在SpringMVC中，我们可以通过使用@ModelAttribute注解标记方法，实现类似于Struts2中Preparable拦截器的效果，其使用方法我们已经在<a href="http://blog.csdn.net/xiangwanpeng/article/details/53057104" target="_blank" rel="external">《SpringMVC中如何处理模型数据》</a>中讲述过了。<br>　　现在我们仍以上篇文章中的更新操作为例，来讨论@ModelAttribute的工作过程。即：有一个User类，有id、userName、email三个属性。现在要完成一个更新操作，但是其中有一项属性不能被修改，例如id，那么只能修改两项属性，userName和email，所以从form表单传递的信息就只能有这两项，我们是通过@ModelAttribute注解标记方法来实现的：（其中数据库相关的操作仅采用模拟的方式）<br>　　<br>index.jsp：<br><figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">　&lt;!--  </div><div class="line">		模拟修改操作</div><div class="line">		1. 原始数据为: 1,Jack,Jack@163.com</div><div class="line">		2. 将username和email修改为Mike、Mike@qq.com，id不能被修改.</div><div class="line">		3. 表单回显, 模拟操作直接在表单填写对应的属性值</div><div class="line">	--&gt;</div><div class="line">&lt;form action="springmvc/testModelAttribute" method="Post"&gt;</div><div class="line">		username: &lt;input type="text" name="username" value="Jack"/&gt;</div><div class="line">		&lt;br&gt;</div><div class="line">		email: &lt;input type="text" name="email" value="Jack@163.com"/&gt;</div><div class="line">		&lt;br&gt;</div><div class="line">		&lt;input type="submit" value="Submit"/&gt;</div><div class="line">	&lt;/form&gt;</div></pre></td></tr></table></figure></p>
+<p>　　<br>controller：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@ModelAttribute</span></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">getUser</span><span class="params">(Map&lt;String, Object&gt; map)</span> </span>&#123;</div><div class="line">		System.out.println(<span class="string">"modelAttribute method"</span>);</div><div class="line">			<span class="comment">// 模拟从数据库中获取对象</span></div><div class="line">			User user = <span class="keyword">new</span> User(<span class="number">1</span>,<span class="string">"Jack"</span>, <span class="string">"Jack@163.com"</span>);</div><div class="line">			System.out.println(<span class="string">"从数据库中获取一个对象: "</span> + user);</div><div class="line">			map.put(<span class="string">"user"</span>, user);</div><div class="line">	&#125;</div><div class="line">	</div><div class="line">	<span class="meta">@RequestMapping</span>(<span class="string">"/testModelAttribute"</span>)</div><div class="line">	<span class="function"><span class="keyword">public</span> String <span class="title">testModelAttribute</span><span class="params">(User user)</span></span>&#123;</div><div class="line">		System.out.println(<span class="string">"修改: "</span> + user);</div><div class="line">		<span class="keyword">return</span> SUCCESS;</div><div class="line">	&#125;</div></pre></td></tr></table></figure></p>
+<p>运行后，在控制台输出：</p>
+<p><img src="http://static.zybuluo.com/xiangwanpeng/3lq26obzpz66feqbsouq9zhm/image_1b0v1k02qrkq1ush8p915mj1k639.png" alt="image_1b0u4nqt51qsb1b4019hq1fme1h5cm.png-21kB"></p>
+<p>　　在这个例子中，SpringMVC通过映射请求调用目标处理方法testModelAttribute方法<strong>之前</strong>，做了下面三件事情：<br>　　<strong>第1步：</strong> 执行 @ModelAttribute 注解修饰的方法： 从数据库中取出对象，把对象放入到了 Map 中，键为：user。<br>　　<strong>第2步：</strong> SpringMVC 从 Map 中取出 User 对象 user， 并把表单的请求参数赋给 user 的对应属性。<br>　　<strong>第3步：</strong> SpringMVC 把上述对象作为参数传入目标方法testModelAttribute(User user)。<br>　　<br>　　通过阅读SpringMVC的源码，我了解了这三个步骤具体是这样实现的：<br>　　<br>　　<strong>第1步：</strong> 执行 @ModelAttribute 注解修饰的方法，<strong>实际上把 @ModelAttribute 方法中 Map 中的数据user放在了 implicitModel（这是一个BindingAwareModelMap类型的对象，BindingAwareModelMap类型实现了Map接口） 中</strong>。<br>　　<br>　　<strong>第2步：</strong>核心的功能都在第2步实现，这一步主要做了三件事，其中核心步骤是前两件事，即 2.1 和 2.2 ：<br>　　<br>　　　<strong>2.1（第一件事）：确定查找键值对所需要的键（key）：</strong><br>　　　<br>　　　　<strong>2.1.1：</strong>若目标方法的 POJO 类型的参数<strong>没有使用 @ModelAttribute 作为修饰</strong>, 则 key 为 POJO <strong>类名第一个字母的小写</strong>；<br>　　　　<strong>2.1.2：</strong>若目标方法的 POJO 类型的参数<strong>使用了@ModelAttribute 来修饰</strong>, 则 key 为 <strong>@ModelAttribute 注解的 value 属性值</strong>。<br>　　在上面的例子中，目标方法testModelAttribute(User user)中的入参没有被@ModelAttribute修饰，所以key值为POJO 类名第一个字母的小写形式，即“user”。<br>　　<br>　　　<strong>2.2（第二件事）：在 implicitModel（即map） 中查找 key 对应的对象：</strong><br>　　　<br>　　　　<strong>2.2.1：</strong>若 @ModelAttribute 标记的方法在 Map 中<strong>保存过</strong>这样一个键值对, <strong>其 key 和 2.1 确定的 key 一致</strong>, 则会获取到key对应的键值对的value值；<br>　　　　<strong>2.2.2：</strong>若 implicitModel 中<strong>不存在</strong> key 对应的对象，则检查当前的<strong>控制器类是否被@SessionAttributes注解修饰</strong>，<strong>如果使用了@SessionAttributes注解修饰</strong>，<strong>且@SessionAttributes注解的value值中包含了key</strong>，则尝试从HttpSession中获取key所对应的value值，<strong>如果value值存在则获取到</strong>，<strong>如果value值不存在则抛出异常</strong>。<br>　　　　<strong>2.2.3：</strong>如果<strong>没有使用@SessionAttributes注解修饰该控制器类</strong>，或者<strong>使用了，但是@SessionAttributes注解中的value值不包含key</strong>，则SpringMVC会<strong>通过反射来创建一个POJO类型的对象</strong>。<br>　　　　<br>　　　<strong>2.3（第三件事）：</strong>，用表单中传递过来的参数值去更新2.2确定的value值（或通过反射建立的对象）。<br>　　　　<br>　　<strong>第3步：</strong>同上面的第3步描述的一样，即SpringMVC 把上述对象作为参数传入目标方法。<br>　　<br>　　以上就是@ModelAttribute注解的工作流程，我们了解了流程之后，就会发现，在2.2.2中有这样一种情况：如果：<br>　　①在 implicitModel 中不存在 key 对应的对象；<br>　　②控制器类有标记了@SessionAttributes注解；<br>　　③@SessionAttributes注解的value值中包含key；<br>　　④HttpSession域中不存在该key值对应的value值。<br>　　当同时满足这4种情况时，就会抛出异常，解决方法有两种：<br>　　1、通过@ModelAttribute注解修饰目标方法的入参，确定一个key值，使其不被包含在@SessionAttributes注解的value值中。<br>　　2、使用@ModelAttribute方法，在目标方法调用之前，将key对应的键值对放入implicitModel 中。
+　　</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/SpringMVC/" rel="tag">#SpringMVC</a>
+          
+            <a href="/tags/Java-Web/" rel="tag">#Java Web</a>
+          
+            <a href="/tags/Spring源码/" rel="tag">#Spring源码</a>
+          
+            <a href="/tags/注解/" rel="tag">#注解</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/11/06/SpringMVC中如何处理模型数据/" rel="next" title="SpringMVC中如何处理模型数据">
+                <i class="fa fa-chevron-left"></i> SpringMVC中如何处理模型数据
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/11/11/在JSP中引用JS文件的三种方法/" rel="prev" title="在JSP中引用JS文件的三种方法">
+                在JSP中引用JS文件的三种方法 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2016/11/07/深入理解@ModelAttribute注解的工作过程/"
+           data-title="深入理解@ModelAttribute注解的工作过程" data-url="http://yoursite.com/2016/11/07/深入理解@ModelAttribute注解的工作过程/">
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/image/avatar.png"
+               alt="Alan" />
+          <p class="site-author-name" itemprop="name">Alan</p>
+          <p class="site-description motion-element" itemprop="description">Better late than never.</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">26</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">6</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">44</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/xiangwanpeng" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/u/2810288024/home" target="_blank" title="weibo">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  weibo
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <p class="post-toc-empty">此文章未包含目录</p>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2016</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Alan</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Pisces
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.1"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.0.1"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.1"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"xiangwanpeng"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+    
+    <script src="/vendors/ua-parser-js/dist/ua-parser.min.js?v=0.7.9"></script>
+    <script src="/js/src/hook-duoshuo.js"></script>
+  
+
+
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

@@ -1,0 +1,797 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="SpringMVC,Java,J2EE," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.1" />
+
+
+
+
+
+
+<meta name="description" content="新建项目：　　File — New — Dynamic Web Project — 输入项目名（这里我命名为MySpringMVC-1） — Finish。
+搭建环境：　　右键项目 — MyEclipse — Project Facets[Capabilities] — Install spring Facet：　　　　　　　　点击Next：　　　　　　　　取消所有勾选，点击Finish。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="在MyEclipse2014环境下搭建SpringMVC并实现HelloWorld">
+<meta property="og:url" content="http://yoursite.com/2016/11/05/在MyEclipse2014环境下搭建SpringMVC并实现HelloWorld/index.html">
+<meta property="og:site_name" content="向万鹏的独立博客">
+<meta property="og:description" content="新建项目：　　File — New — Dynamic Web Project — 输入项目名（这里我命名为MySpringMVC-1） — Finish。
+搭建环境：　　右键项目 — MyEclipse — Project Facets[Capabilities] — Install spring Facet：　　　　　　　　点击Next：　　　　　　　　取消所有勾选，点击Finish。">
+<meta property="og:image" content="http://static.zybuluo.com/xiangwanpeng/ivvu0txg7u9uw4qw24h4r959/image_1b0p2k00f1o691q47m26163rfp39.png">
+<meta property="og:image" content="http://static.zybuluo.com/xiangwanpeng/lq1lxg38u4xw1sh87omk5v7a/image_1b0p2u7atob712do15us13ja17e1m.png">
+<meta property="og:image" content="http://static.zybuluo.com/xiangwanpeng/pz6sy3gizyeh4k4wh95utuf5/image_1b0p4h55ug85qepacf4kh1ats1t.png">
+<meta property="og:image" content="http://static.zybuluo.com/xiangwanpeng/7rkmuu422t8r9z953swdgl7o/image_1b0p49b981gtkugr3rh1ah5114j1g.png">
+<meta property="og:image" content="http://static.zybuluo.com/xiangwanpeng/1h629jn1usvv475p2ccx2avi/image_1b0p616ha1lc1qgrum51eum18h82a.png">
+<meta property="og:image" content="http://static.zybuluo.com/xiangwanpeng/iu5944jdpmz8ubc4pkh02xmx/image_1b0p62p3i1kp41em91e71s3vgrf2n.png">
+<meta property="og:image" content="http://static.zybuluo.com/xiangwanpeng/vaykjmx3c7ouho5owtpkfbty/image_1b0p63m9m7ce15v71feg1nsn1ls734.png">
+<meta property="og:updated_time" content="2016-11-05T03:46:31.335Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="在MyEclipse2014环境下搭建SpringMVC并实现HelloWorld">
+<meta name="twitter:description" content="新建项目：　　File — New — Dynamic Web Project — 输入项目名（这里我命名为MySpringMVC-1） — Finish。
+搭建环境：　　右键项目 — MyEclipse — Project Facets[Capabilities] — Install spring Facet：　　　　　　　　点击Next：　　　　　　　　取消所有勾选，点击Finish。">
+<meta name="twitter:image" content="http://static.zybuluo.com/xiangwanpeng/ivvu0txg7u9uw4qw24h4r959/image_1b0p2k00f1o691q47m26163rfp39.png">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"always"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 0,
+      author: '博主'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2016/11/05/在MyEclipse2014环境下搭建SpringMVC并实现HelloWorld/"/>
+
+  <title> 在MyEclipse2014环境下搭建SpringMVC并实现HelloWorld | 向万鹏的独立博客 </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">向万鹏的独立博客</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle"></p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                在MyEclipse2014环境下搭建SpringMVC并实现HelloWorld
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-11-05T09:24:24+08:00" content="2016-11-05">
+              2016-11-05
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/SpringMVC/" itemprop="url" rel="index">
+                    <span itemprop="name">SpringMVC</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2016/11/05/在MyEclipse2014环境下搭建SpringMVC并实现HelloWorld/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/11/05/在MyEclipse2014环境下搭建SpringMVC并实现HelloWorld/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="新建项目："><a href="#新建项目：" class="headerlink" title="新建项目："></a>新建项目：</h2><p>　　File — New — Dynamic Web Project — 输入项目名（这里我命名为MySpringMVC-1） — Finish。</p>
+<h2 id="搭建环境："><a href="#搭建环境：" class="headerlink" title="搭建环境："></a>搭建环境：</h2><p>　　右键项目 — MyEclipse — Project Facets[Capabilities] — Install spring Facet：<br>　　<br>　　<img src="http://static.zybuluo.com/xiangwanpeng/ivvu0txg7u9uw4qw24h4r959/image_1b0p2k00f1o691q47m26163rfp39.png" alt="image_1b0p2k00f1o691q47m26163rfp39.png-26.8kB"><br>　　<br>　　点击Next：<br>　　<br>　　<img src="http://static.zybuluo.com/xiangwanpeng/lq1lxg38u4xw1sh87omk5v7a/image_1b0p2u7atob712do15us13ja17e1m.png" alt="image_1b0p2u7atob712do15us13ja17e1m.png-43.6kB"><br>　　<br>　　取消所有勾选，点击Finish。
+　　</p>
+<h2 id="配置web-xml："><a href="#配置web-xml：" class="headerlink" title="配置web.xml："></a>配置web.xml：</h2><p>打开WebRoot/WEB-INF/web.xml，配置为如下形式：</p>
+<p><strong>web.xml：</strong></p>
+<pre><code>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;web-app xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;
+    xmlns=&quot;http://java.sun.com/xml/ns/javaee&quot;
+    xsi:schemaLocation=&quot;http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd&quot;
+    id=&quot;WebApp_ID&quot; version=&quot;2.5&quot;&gt;
+
+    &lt;!-- 配置 DispatcherServlet --&gt;
+    &lt;servlet&gt;
+        &lt;servlet-name&gt;springDispatcherServlet&lt;/servlet-name&gt;
+        &lt;servlet-class&gt;org.springframework.web.servlet.DispatcherServlet&lt;/servlet-class&gt;
+        &lt;!-- 该servlet在项目加载时就被创建，而不是等第一次请求时才创建 --&gt;
+        &lt;load-on-startup&gt;1&lt;/load-on-startup&gt;
+    &lt;/servlet&gt;
+
+    &lt;servlet-mapping&gt;
+        &lt;servlet-name&gt;springDispatcherServlet&lt;/servlet-name&gt;
+        &lt;!-- 可以应答所有请求 --&gt;
+        &lt;url-pattern&gt;/&lt;/url-pattern&gt;
+    &lt;/servlet-mapping&gt;
+&lt;/web-app&gt;
+</code></pre><h2 id="配置SpringMVC的配置文件："><a href="#配置SpringMVC的配置文件：" class="headerlink" title="配置SpringMVC的配置文件："></a>配置SpringMVC的配置文件：</h2><p>　　在WebRoot/WEB-INF目录下新建一个Spring Bean Definition，命名为&lt;servlet-name&gt;-servlet.xml，在我项目的web.xml中，&lt;servlet-name&gt;为springDispatcherServlet，所以此处配置文件名为springDispatcherServlet-servlet.xml：<br>　　<br>　　<img src="http://static.zybuluo.com/xiangwanpeng/pz6sy3gizyeh4k4wh95utuf5/image_1b0p4h55ug85qepacf4kh1ats1t.png" alt="image_1b0p4h55ug85qepacf4kh1ats1t.png-25.5kB"><br>　　<br>　　点击Next：<br>　　<br>　　<img src="http://static.zybuluo.com/xiangwanpeng/7rkmuu422t8r9z953swdgl7o/image_1b0p49b981gtkugr3rh1ah5114j1g.png" alt="image_1b0p49b981gtkugr3rh1ah5114j1g.png-50.4kB"></p>
+<p>　　勾选context和mvc，点击Finish，然后打开springDispatcherServlet-servlet.xml，配置如下：<br>　　<br><strong>springDispatcherServlet-servlet.xml：</strong></p>
+<pre><code>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;beans xmlns=&quot;http://www.springframework.org/schema/beans&quot;
+    xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot; xmlns:context=&quot;http://www.springframework.org/schema/context&quot;
+    xmlns:mvc=&quot;http://www.springframework.org/schema/mvc&quot;
+    xsi:schemaLocation=&quot;http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-3.1.xsd
+        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd&quot;&gt;
+
+
+    &lt;!-- 指定要自动扫描的包 --&gt;
+    &lt;context:component-scan base-package=&quot;com.MySpringMVC&quot;&gt;&lt;/context:component-scan&gt;
+
+    &lt;!-- 配置视图解析器: 如何把 handler 方法返回值解析为实际的物理视图 --&gt;
+    &lt;bean
+        class=&quot;org.springframework.web.servlet.view.InternalResourceViewResolver&quot;&gt;
+        &lt;property name=&quot;prefix&quot; value=&quot;/WEB-INF/views/&quot;&gt;&lt;/property&gt;
+        &lt;property name=&quot;suffix&quot; value=&quot;.jsp&quot;&gt;&lt;/property&gt;
+    &lt;/bean&gt;
+
+&lt;/beans&gt;
+</code></pre><p>　　其中<context:component-scan base-package="com.MySpringMVC"></context:component-scan>指定com.MySpringMVC下的子包和类中的注解将会被扫描到。
+　　</p>
+<h2 id="添加控制器类："><a href="#添加控制器类：" class="headerlink" title="添加控制器类："></a>添加控制器类：</h2><p>　　新建包com.MySpringMVC.controller，并在包下新建类Hello.java，代码如下：</p>
+<p><strong>Hello.java：</strong></p>
+<pre><code>package com.MySpringMVC.controller;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+@Controller
+public class Hello {
+
+    /**
+     * 1. 使用 @RequestMapping 注解来映射请求的 URL
+     * 2. 返回值会通过视图解析器解析为实际的物理视图, 对于 InternalResourceViewResolver 视图解析器, 会做如下的解析:
+     * 通过 prefix + returnVal + 后缀 这样的方式得到实际的物理视图, 然会做转发操作
+     * 
+     * /WEB-INF/views/success.jsp
+     * 
+     * @return
+     */
+    @RequestMapping(&quot;/helloworld&quot;)
+    public String hello(){
+        System.out.println(&quot;hello world!&quot;);
+        return &quot;success&quot;;
+    }
+}
+</code></pre><h2 id="新建页面："><a href="#新建页面：" class="headerlink" title="新建页面："></a>新建页面：</h2><p>　　现在我们来建立页面测试一下：<br>　　<br><strong>index.jsp：</strong> （其中超链接地址“helloworld”对应Hello.java中的“@RequestMapping(“/helloworld”)”）</p>
+<pre><code>&lt;%@ page language=&quot;java&quot; import=&quot;java.util.*&quot; pageEncoding=&quot;UTF-8&quot;%&gt;
+&lt;%
+String path = request.getContextPath();
+String basePath = request.getScheme()+&quot;://&quot;+request.getServerName()+&quot;:&quot;+request.getServerPort()+path+&quot;/&quot;;
+%&gt;
+
+&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.01 Transitional//EN&quot;&gt;
+&lt;html&gt;
+  &lt;head&gt;
+    &lt;base href=&quot;&lt;%=basePath%&gt;&quot;&gt;
+
+    &lt;title&gt;My JSP &apos;index.jsp&apos; starting page&lt;/title&gt;
+    &lt;meta http-equiv=&quot;pragma&quot; content=&quot;no-cache&quot;&gt;
+    &lt;meta http-equiv=&quot;cache-control&quot; content=&quot;no-cache&quot;&gt;
+    &lt;meta http-equiv=&quot;expires&quot; content=&quot;0&quot;&gt;    
+    &lt;meta http-equiv=&quot;keywords&quot; content=&quot;keyword1,keyword2,keyword3&quot;&gt;
+    &lt;meta http-equiv=&quot;description&quot; content=&quot;This is my page&quot;&gt;
+  &lt;/head&gt;
+
+  &lt;body&gt;
+    &lt;a href=&quot;helloworld&quot;&gt;Hello World!&lt;/a&gt;
+  &lt;/body&gt;
+&lt;/html&gt;
+</code></pre><p><strong>/WEB-INF/views/success.jsp：</strong></p>
+<pre><code>&lt;%@ page language=&quot;java&quot; import=&quot;java.util.*&quot; pageEncoding=&quot;UTF-8&quot;%&gt;
+&lt;%
+String path = request.getContextPath();
+String basePath = request.getScheme()+&quot;://&quot;+request.getServerName()+&quot;:&quot;+request.getServerPort()+path+&quot;/&quot;;
+%&gt;
+
+&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.01 Transitional//EN&quot;&gt;
+&lt;html&gt;
+  &lt;head&gt;
+    &lt;base href=&quot;&lt;%=basePath%&gt;&quot;&gt;
+
+    &lt;title&gt;My JSP &apos;success.jsp&apos; starting page&lt;/title&gt;
+
+    &lt;meta http-equiv=&quot;pragma&quot; content=&quot;no-cache&quot;&gt;
+    &lt;meta http-equiv=&quot;cache-control&quot; content=&quot;no-cache&quot;&gt;
+    &lt;meta http-equiv=&quot;expires&quot; content=&quot;0&quot;&gt;    
+    &lt;meta http-equiv=&quot;keywords&quot; content=&quot;keyword1,keyword2,keyword3&quot;&gt;
+    &lt;meta http-equiv=&quot;description&quot; content=&quot;This is my page&quot;&gt;
+
+  &lt;/head&gt;
+
+  &lt;body&gt;
+    &lt;h4&gt;Hello world!&lt;/h4&gt;
+  &lt;/body&gt;
+&lt;/html&gt;
+</code></pre><h2 id="运行测试："><a href="#运行测试：" class="headerlink" title="运行测试："></a>运行测试：</h2><p>　　运行项目：<br>　　<br>　　<img src="http://static.zybuluo.com/xiangwanpeng/1h629jn1usvv475p2ccx2avi/image_1b0p616ha1lc1qgrum51eum18h82a.png" alt="image_1b0p616ha1lc1qgrum51eum18h82a.png-9.9kB"><br>　　<br>　　点击，跳转到了WEB-INF/views/success.jsp：<br>　　<br>　　<img src="http://static.zybuluo.com/xiangwanpeng/iu5944jdpmz8ubc4pkh02xmx/image_1b0p62p3i1kp41em91e71s3vgrf2n.png" alt="image_1b0p62p3i1kp41em91e71s3vgrf2n.png-11.2kB"><br>　　<br>　　并且在控制台输出了hello world！：<br>　　<br>　　<img src="http://static.zybuluo.com/xiangwanpeng/vaykjmx3c7ouho5owtpkfbty/image_1b0p63m9m7ce15v71feg1nsn1ls734.png" alt="image_1b0p63m9m7ce15v71feg1nsn1ls734.png-28.5kB">
+　　
+　　</p>
+<p>　　
+　　</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/SpringMVC/" rel="tag">#SpringMVC</a>
+          
+            <a href="/tags/Java/" rel="tag">#Java</a>
+          
+            <a href="/tags/J2EE/" rel="tag">#J2EE</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/11/03/JVM的类加载机制/" rel="next" title="JVM的类加载机制">
+                <i class="fa fa-chevron-left"></i> JVM的类加载机制
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/11/06/关于请求方法为GET的form表单，action属性后不能带参数的问题/" rel="prev" title="关于请求方法为GET的form表单，action属性后不能带参数的问题">
+                关于请求方法为GET的form表单，action属性后不能带参数的问题 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2016/11/05/在MyEclipse2014环境下搭建SpringMVC并实现HelloWorld/"
+           data-title="在MyEclipse2014环境下搭建SpringMVC并实现HelloWorld" data-url="http://yoursite.com/2016/11/05/在MyEclipse2014环境下搭建SpringMVC并实现HelloWorld/">
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/image/avatar.png"
+               alt="Alan" />
+          <p class="site-author-name" itemprop="name">Alan</p>
+          <p class="site-description motion-element" itemprop="description">Better late than never.</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">26</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">6</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">44</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/xiangwanpeng" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/u/2810288024/home" target="_blank" title="weibo">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  weibo
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#新建项目："><span class="nav-number">1.</span> <span class="nav-text">新建项目：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#搭建环境："><span class="nav-number">2.</span> <span class="nav-text">搭建环境：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#配置web-xml："><span class="nav-number">3.</span> <span class="nav-text">配置web.xml：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#配置SpringMVC的配置文件："><span class="nav-number">4.</span> <span class="nav-text">配置SpringMVC的配置文件：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#添加控制器类："><span class="nav-number">5.</span> <span class="nav-text">添加控制器类：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#新建页面："><span class="nav-number">6.</span> <span class="nav-text">新建页面：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#运行测试："><span class="nav-number">7.</span> <span class="nav-text">运行测试：</span></a></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2016</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Alan</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Pisces
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.1"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.0.1"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.1"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"xiangwanpeng"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+    
+    <script src="/vendors/ua-parser-js/dist/ua-parser.min.js?v=0.7.9"></script>
+    <script src="/js/src/hook-duoshuo.js"></script>
+  
+
+
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

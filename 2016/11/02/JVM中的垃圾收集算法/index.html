@@ -1,0 +1,670 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Java,JVM,GC,垃圾收集算法," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.1" />
+
+
+
+
+
+
+<meta name="description" content="1、标记-清除算法：　　标记-清除算法是最基础的垃圾收集算法，它分为“标记”和“清除”两个阶段：首先标记出所有需要回收的对象，在标记完成之后统一回收掉所有被标记的对象。关于标记过程，我们在《对象死亡的过程》中已经叙述过。之所以说它是最基础的收集算法，是因为后续的收集算法都是基于这种思路并对其缺点进行改进而得到的。此种算法有两个不足之处：一是效率问题，标记和清除两个过程效率都不高；二是空间问题，标记">
+<meta property="og:type" content="article">
+<meta property="og:title" content="JVM中的垃圾收集算法">
+<meta property="og:url" content="http://yoursite.com/2016/11/02/JVM中的垃圾收集算法/index.html">
+<meta property="og:site_name" content="向万鹏的独立博客">
+<meta property="og:description" content="1、标记-清除算法：　　标记-清除算法是最基础的垃圾收集算法，它分为“标记”和“清除”两个阶段：首先标记出所有需要回收的对象，在标记完成之后统一回收掉所有被标记的对象。关于标记过程，我们在《对象死亡的过程》中已经叙述过。之所以说它是最基础的收集算法，是因为后续的收集算法都是基于这种思路并对其缺点进行改进而得到的。此种算法有两个不足之处：一是效率问题，标记和清除两个过程效率都不高；二是空间问题，标记">
+<meta property="og:image" content="http://static.zybuluo.com/xiangwanpeng/vefogetw3uqvrls5bpsoehc0/image_1b0i6md5a1vavd01akg1vkso9b9.png">
+<meta property="og:image" content="http://static.zybuluo.com/xiangwanpeng/32k8mghsukdaqx6h708a3k8c/image_1b0ie1a66ehl1cgvme256b12fb1g.png">
+<meta property="og:image" content="http://static.zybuluo.com/xiangwanpeng/v4mdu3wi86qm3ze0le5e2kmy/image_1b0idfjif1vi31ug617nk140eb1d13.png">
+<meta property="og:updated_time" content="2016-11-02T12:03:03.749Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="JVM中的垃圾收集算法">
+<meta name="twitter:description" content="1、标记-清除算法：　　标记-清除算法是最基础的垃圾收集算法，它分为“标记”和“清除”两个阶段：首先标记出所有需要回收的对象，在标记完成之后统一回收掉所有被标记的对象。关于标记过程，我们在《对象死亡的过程》中已经叙述过。之所以说它是最基础的收集算法，是因为后续的收集算法都是基于这种思路并对其缺点进行改进而得到的。此种算法有两个不足之处：一是效率问题，标记和清除两个过程效率都不高；二是空间问题，标记">
+<meta name="twitter:image" content="http://static.zybuluo.com/xiangwanpeng/vefogetw3uqvrls5bpsoehc0/image_1b0i6md5a1vavd01akg1vkso9b9.png">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"always"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 0,
+      author: '博主'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2016/11/02/JVM中的垃圾收集算法/"/>
+
+  <title> JVM中的垃圾收集算法 | 向万鹏的独立博客 </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">向万鹏的独立博客</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle"></p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                JVM中的垃圾收集算法
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-11-02T17:33:50+08:00" content="2016-11-02">
+              2016-11-02
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/JVM/" itemprop="url" rel="index">
+                    <span itemprop="name">JVM</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2016/11/02/JVM中的垃圾收集算法/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/11/02/JVM中的垃圾收集算法/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="1、标记-清除算法："><a href="#1、标记-清除算法：" class="headerlink" title="1、标记-清除算法："></a>1、标记-清除算法：</h2><p>　　标记-清除算法是最基础的垃圾收集算法，它分为“标记”和“清除”两个阶段：首先标记出所有需要回收的对象，在标记完成之后统一回收掉所有被标记的对象。关于标记过程，我们在<a href="http://blog.csdn.net/xiangwanpeng/article/details/52929462" target="_blank" rel="external">《对象死亡的过程》</a>中已经叙述过。之所以说它是最基础的收集算法，是因为后续的收集算法都是基于这种思路并对其缺点进行改进而得到的。此种算法有两个不足之处：一是效率问题，标记和清除两个过程效率都不高；二是空间问题，标记清除之后会产生大量的<strong>不连续</strong>的内存碎片，空间碎片太多会导致当程序需要为较大对象分配内存时无法找到足够的连续内存而不得不提前触发另一次垃圾收集动作。标记-清除算法的执行过程如图1所示：<br>　　<img src="http://static.zybuluo.com/xiangwanpeng/vefogetw3uqvrls5bpsoehc0/image_1b0i6md5a1vavd01akg1vkso9b9.png" alt="image_1b0i6md5a1vavd01akg1vkso9b9.png-39.1kB"><br>　　<br>　　　　　　　　　　　　　　　图1：标记-清除算法
+　　　　　　　　　　　　　　　</p>
+<h2 id="2、复制算法："><a href="#2、复制算法：" class="headerlink" title="2、复制算法："></a>2、复制算法：</h2><p>　　为了提高效率，复制算法便出现了，它的基本思想是：将可用内存按容量划分为大小相等的两块，每次只使用其中的一块。当这一块的内存用完了，就将还存活着的对象复制到另外一块上面，然后再把已使用过的内存空间一次清理掉。由于每次只对一个半区进行回收，内存分配时也就不用考虑内存碎片等复杂情况，只要移动堆顶指针，按顺序分配内存即可。这种算法实现简单，运行高效，缺点也显而易见：可使用的内存降为了原来的一半。它的执行流程如图2所示：<br>　　<img src="http://static.zybuluo.com/xiangwanpeng/32k8mghsukdaqx6h708a3k8c/image_1b0ie1a66ehl1cgvme256b12fb1g.png" alt="image_1b0ie1a66ehl1cgvme256b12fb1g.png-36.2kB"><br>　　<br>　　　　　　　　　　　　　　　图2：复制算法<br>　　　　　　　　　　　　　　　<br>　　复制算法主要用于新生代对象的回收，这是因为新生代中的对象98%是朝生夕死的，所以我们并不需要按照1∶1的比例来划分内存空间，而是将内存分为一块较大的Eden空间和两块较小的Survivor空间，每次使用Eden和其中的一块Survivor。当回收时，将Eden和Survivor中还存活着的对象一次性地拷贝到另外一块Survivor空间上，最后清理掉Eden和刚才用过的Survivor的空间。HotSpot虚拟机默认Eden和Survivor的大小比例是8∶1，也就是每次新生代中可用内存空间为整个新生代容量的90%（80%+10%），只有10%的内存是会被“浪费”的。当然，我们无法保证每次回收都只有不多于10%的对象存活，这就需要其他内存（这里指老年代）在Survivor空间不够用的情况下进行分配担保。内存的分配担保是指：如果另外一块Survivor空间没有足够的空间存放上一次新生代收集下来的存活对象，这些对象将直接通过分配担保机制进入老年代。
+　　</p>
+<h2 id="3、标记-整理算法："><a href="#3、标记-整理算法：" class="headerlink" title="3、标记-整理算法："></a>3、标记-整理算法：</h2><p>　　当对象存活率较高时，复制算法便需要进行较多次的复制操作，效率会降低。更关键的是，如果不想浪费50%的空间，就需要有额外的空间进行分配担保，以应对被使用的内存中所有对象都100%存活的极端情况，所以在老年代一般不能直接选用这种算法。根据老年代的特点，有人提出了另外一种“标记-整理”算法，其主要思想是：标记过程仍然与“标记-清除”算法一样，但后续步骤不是直接对可回收对象进行清理，而是让所有存活的对象都向一端移动，然后直接清理掉端边界以外的内存，“标记-整理”算法的执行流程如图3所示：<br>　　<img src="http://static.zybuluo.com/xiangwanpeng/v4mdu3wi86qm3ze0le5e2kmy/image_1b0idfjif1vi31ug617nk140eb1d13.png" alt="image_1b0idfjif1vi31ug617nk140eb1d13.png-40.2kB"><br>　　<br>　　　　　　　　　　　　　　　图3：标记-整理算法<br>　　　　　　　　　　　　　　　<br>　　补充一点，为什么新生代不使用标记-整理算法呢？这是因为一致性问题，由于在整理的过程中，标记不能变动，这就相当于虚拟机要暂停，等待内存整理完毕再运行，而整理过程还是挺耗时的。但是，如果对象存活的时间很长，存活率很高，每次清理都只有少部分对象死亡（这正是老年代的特点），那么，这种算法消耗的时间会大大减少。
+　　</p>
+<h2 id="4、分代收集算法："><a href="#4、分代收集算法：" class="headerlink" title="4、分代收集算法："></a>4、分代收集算法：</h2><p>　　分代收集算法不是什么新的思想，只是根据我们上面的叙述，对新生代和老年代的对象采取不同的收集算法而已。在新生代中，每次垃圾收集时都发现有大批对象死去，只有少量存活，那就选用复制算法，只需要付出少量存活对象的复制成本就可以完成收集。而老年代中因为对象存活率高、没有额外空间对它进行分配担保，就必须使用“标记-清理”或“标记-整理”算法来进行回收。 </p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Java/" rel="tag">#Java</a>
+          
+            <a href="/tags/JVM/" rel="tag">#JVM</a>
+          
+            <a href="/tags/GC/" rel="tag">#GC</a>
+          
+            <a href="/tags/垃圾收集算法/" rel="tag">#垃圾收集算法</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/11/02/Java内存区域/" rel="next" title="Java内存区域">
+                <i class="fa fa-chevron-left"></i> Java内存区域
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/11/02/JVM垃圾收集器总结/" rel="prev" title="JVM垃圾收集器总结">
+                JVM垃圾收集器总结 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2016/11/02/JVM中的垃圾收集算法/"
+           data-title="JVM中的垃圾收集算法" data-url="http://yoursite.com/2016/11/02/JVM中的垃圾收集算法/">
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/image/avatar.png"
+               alt="Alan" />
+          <p class="site-author-name" itemprop="name">Alan</p>
+          <p class="site-description motion-element" itemprop="description">Better late than never.</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">26</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">6</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">44</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/xiangwanpeng" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/u/2810288024/home" target="_blank" title="weibo">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  weibo
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1、标记-清除算法："><span class="nav-number">1.</span> <span class="nav-text">1、标记-清除算法：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2、复制算法："><span class="nav-number">2.</span> <span class="nav-text">2、复制算法：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3、标记-整理算法："><span class="nav-number">3.</span> <span class="nav-text">3、标记-整理算法：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4、分代收集算法："><span class="nav-number">4.</span> <span class="nav-text">4、分代收集算法：</span></a></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2016</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Alan</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Pisces
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.1"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.0.1"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.1"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"xiangwanpeng"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+    
+    <script src="/vendors/ua-parser-js/dist/ua-parser.min.js?v=0.7.9"></script>
+    <script src="/js/src/hook-duoshuo.js"></script>
+  
+
+
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

@@ -1,0 +1,695 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="SpringMVC,国际化," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.1" />
+
+
+
+
+
+
+<meta name="description" content="国际化概述　　为了让Web项目支持国际化，需要识别每个用户的首选区域，并根据这个区域显示内容。在spring MVC应用程序中，用户的区域是通过区域解析器来识别的，它必须实现LocaleResolver接口。　　Spring MVC提供了几个LocaleResolver的实现，我们可以根据不同的需求来解析区域。如果SpringMVC提供的解析器不能满足需求，我们可以实现LocaleResolver">
+<meta property="og:type" content="article">
+<meta property="og:title" content="关于SpringMVC中的国际化">
+<meta property="og:url" content="http://yoursite.com/2016/11/13/关于SpringMVC中的国际化/index.html">
+<meta property="og:site_name" content="向万鹏的独立博客">
+<meta property="og:description" content="国际化概述　　为了让Web项目支持国际化，需要识别每个用户的首选区域，并根据这个区域显示内容。在spring MVC应用程序中，用户的区域是通过区域解析器来识别的，它必须实现LocaleResolver接口。　　Spring MVC提供了几个LocaleResolver的实现，我们可以根据不同的需求来解析区域。如果SpringMVC提供的解析器不能满足需求，我们可以实现LocaleResolver">
+<meta property="og:updated_time" content="2016-11-13T14:32:41.057Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="关于SpringMVC中的国际化">
+<meta name="twitter:description" content="国际化概述　　为了让Web项目支持国际化，需要识别每个用户的首选区域，并根据这个区域显示内容。在spring MVC应用程序中，用户的区域是通过区域解析器来识别的，它必须实现LocaleResolver接口。　　Spring MVC提供了几个LocaleResolver的实现，我们可以根据不同的需求来解析区域。如果SpringMVC提供的解析器不能满足需求，我们可以实现LocaleResolver">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"always"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 0,
+      author: '博主'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2016/11/13/关于SpringMVC中的国际化/"/>
+
+  <title> 关于SpringMVC中的国际化 | 向万鹏的独立博客 </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">向万鹏的独立博客</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle"></p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                关于SpringMVC中的国际化
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-11-13T19:05:57+08:00" content="2016-11-13">
+              2016-11-13
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/SpringMVC/" itemprop="url" rel="index">
+                    <span itemprop="name">SpringMVC</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2016/11/13/关于SpringMVC中的国际化/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/11/13/关于SpringMVC中的国际化/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="国际化概述"><a href="#国际化概述" class="headerlink" title="国际化概述"></a>国际化概述</h2><p>　　为了让Web项目支持国际化，需要识别每个用户的首选区域，并根据这个区域显示内容。在spring MVC应用程序中，用户的区域是通过区域解析器来识别的，它必须实现LocaleResolver接口。<br>　　Spring MVC提供了几个LocaleResolver的实现，我们可以根据不同的需求来解析区域。如果SpringMVC提供的解析器不能满足需求，我们可以实现LocaleResolver接口，创建自定义的区域解析器。<br>　　要定义一个区域解析器，只需在web应用程序上下文中注册一个LocaleResolver类型的Bean就可以了。必须将区域解析器的Bean名称设置为localeResolver，这样DispatcherServlet才能自动侦测到它。注意，每DispatcherServlet只能注册一个区域解析器。<br>　　<br>　　Spring采用的默认区域解析器是AcceptHeaderLocaleResolver。它通过检验HTTP请求头的accept-language属性来解析区域。
+　　</p>
+<h2 id="默认区域解析器AcceptHeaderLocaleResolver的示例"><a href="#默认区域解析器AcceptHeaderLocaleResolver的示例" class="headerlink" title="默认区域解析器AcceptHeaderLocaleResolver的示例"></a>默认区域解析器AcceptHeaderLocaleResolver的示例</h2><p>　　下面通过两个例子展示默认的区域解析器AcceptHeaderLocaleResolver的效果：<br>　　<br>　　<strong>示例一：在页面上能够根据浏览器语言设置的情况对文本(不是内容), 时间, 数值进行本地化处理。</strong><br>　　<br>　　要实现上述功能，使用 JSTL 的 fmt 标签即可。（假设请求不经过控制器，直接跳转到jsp页面）</p>
+<hr>
+<p><strong>创建国际化资源文件</strong></p>
+<p>i18n_zh_CN.properties：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">i18n.username=\u7528\u6237\u540D</div><div class="line">i18n.password=\u5BC6\u7801</div></pre></td></tr></table></figure></p>
+<p>注：\u7528\u6237\u540D为“用户名”，\u5BC6\u7801为“密码”</p>
+<p>i18n_en_US.properties：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">i18n.username=username</div><div class="line">i18n.password=password</div></pre></td></tr></table></figure></p>
+<hr>
+<p><strong>配置国际化资源文件</strong></p>
+<p>spring配置文件:<br><figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="comment">&lt;!-- 配置国际化资源文件 --&gt;</span></div><div class="line">	<span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">"messageSource"</span></span></div><div class="line">		<span class="attr">class</span>=<span class="string">"org.springframework.context.support.ResourceBundleMessageSource"</span>&gt;</div><div class="line">		<span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"basename"</span> <span class="attr">value</span>=<span class="string">"i18n"</span>&gt;</span><span class="tag">&lt;/<span class="name">property</span>&gt;</span></div><div class="line">	<span class="tag">&lt;/<span class="name">bean</span>&gt;</span></div><div class="line">	</div><div class="line"><span class="comment">&lt;!--同时配置jsp页面的直接跳转--&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">mvc:view-controller</span> <span class="attr">path</span>=<span class="string">"/i18n"</span> <span class="attr">view-name</span>=<span class="string">"i18n"</span>/&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">mvc:view-controller</span> <span class="attr">path</span>=<span class="string">"/i18n2"</span> <span class="attr">view-name</span>=<span class="string">"i18n2"</span> /&gt;</span></div></pre></td></tr></table></figure></p>
+<hr>
+<p><strong>页面</strong></p>
+<p>i18n.jsp:<br><figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line">&lt;%@ page language="java" contentType="text/html; charset=UTF-8"</div><div class="line">	pageEncoding="UTF-8"%&gt;</div><div class="line">&lt;%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%&gt;</div><div class="line">&lt;!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd"&gt;</div><div class="line">&lt;html&gt;</div><div class="line">&lt;head&gt;</div><div class="line">&lt;meta http-equiv="Content-Type" content="text/html; charset=UTF-8"&gt;</div><div class="line">&lt;title&gt;Insert title here&lt;/title&gt;</div><div class="line">&lt;/head&gt;</div><div class="line">&lt;body&gt;</div><div class="line">	&lt;fmt:message key="i18n.username"&gt;&lt;/fmt:message&gt;</div><div class="line">	&lt;br&gt;&lt;br&gt;</div><div class="line">	&lt;a href="i18n2"&gt;I18N2 Page&lt;/a&gt;</div><div class="line">&lt;/body&gt;</div><div class="line">&lt;/html&gt;</div></pre></td></tr></table></figure></p>
+<p>i18n2.jsp:<br><figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line">&lt;%@ page language="java" contentType="text/html; charset=UTF-8"</div><div class="line">	pageEncoding="UTF-8"%&gt;</div><div class="line">&lt;%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%&gt;</div><div class="line">&lt;!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd"&gt;</div><div class="line">&lt;html&gt;</div><div class="line">&lt;head&gt;</div><div class="line">&lt;meta http-equiv="Content-Type" content="text/html; charset=UTF-8"&gt;</div><div class="line">&lt;title&gt;Insert title here&lt;/title&gt;</div><div class="line">&lt;/head&gt;</div><div class="line">&lt;body&gt;</div><div class="line">&lt;fmt:message key="i18n.password"&gt;&lt;/fmt:message&gt;</div><div class="line">	&lt;br&gt;&lt;br&gt;</div><div class="line">	&lt;a href="i18n"&gt;I18N Page&lt;/a&gt;</div><div class="line">&lt;/body&gt;</div><div class="line">&lt;/html&gt;</div></pre></td></tr></table></figure></p>
+<hr>
+<p><strong>运行结果：</strong><br>　　当设置浏览器语言为zh-cn时，i18n.jsp显示“用户名”，i18n2.jsp显示“密码”；<br>　　当设置浏览器语言为en-us时，i18n.jsp显示“username”，i18n2.jsp显示“password”。</p>
+<hr>
+<p>　　<strong>示例二：在 bean 中获取国际化资源文件 对应于 Locale 的信息。</strong><br>　　<br>　　要实现上述功能，在 bean 中注入 ResourceBundleMessageSource 的实例, 使用其对应的 getMessage 方法即可：（创建国际化资源文件、配置国际化资源文件同示例一，但是令/i18n映射到控制器，而非直接跳转）</p>
+<hr>
+<p><strong>页面</strong></p>
+<p>index.jsp：<br><figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">&lt;a href="i18n"&gt;I18N Page&lt;/a&gt;</div></pre></td></tr></table></figure></p>
+<hr>
+<p><strong>控制器：</strong><br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@Autowired</span></div><div class="line">	<span class="keyword">private</span> ResourceBundleMessageSource messageSource;</div><div class="line">	</div><div class="line"><span class="meta">@RequestMapping</span>(<span class="string">"/i18n"</span>)</div><div class="line">	<span class="function"><span class="keyword">public</span> String <span class="title">testI18N</span><span class="params">(Locale locale)</span> </span>&#123;</div><div class="line">		String val = messageSource.getMessage(<span class="string">"i18n.username"</span>, <span class="keyword">null</span>, locale);</div><div class="line">		System.out.println(val);</div><div class="line">		<span class="keyword">return</span> <span class="string">"i18n"</span>;</div><div class="line">	&#125;</div></pre></td></tr></table></figure></p>
+<hr>
+<p><strong>运行结果：</strong><br>　　当设置浏览器语言为zh-cn时，点击index.jsp中的超链接，控制台输出“用户名”；<br>　　当设置浏览器语言为en-us时，点击index.jsp中的超链接，控制台输出“username”。</p>
+<h2 id="使用SessionLocaleResolver实现通过超链接切换-Locale"><a href="#使用SessionLocaleResolver实现通过超链接切换-Locale" class="headerlink" title="使用SessionLocaleResolver实现通过超链接切换 Locale"></a>使用SessionLocaleResolver实现通过超链接切换 Locale</h2><p>　　<strong>示例三：现在我们希望可以通过超链接切换 Locale, 而不再依赖于浏览器的语言设置情况</strong><br>　　<br>　　实现方法为配置 SessionLocalResolver 和 LocaleChangeInterceptor。（创建、配置国际化资源文件同上面的例子）</p>
+<hr>
+<p><strong>配置SessionLocaleResolver和LocaleChangeInterceptor</strong></p>
+<p>spring配置文件：<br><figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">mvc:interceptors</span>&gt;</span></div><div class="line">		<span class="comment">&lt;!-- 配置 LocaleChanceInterceptor 拦截器 </span></div><div class="line">		     作用： 获取name=locale的请求参数 --&gt;</div><div class="line">		<span class="tag">&lt;<span class="name">bean</span> <span class="attr">class</span>=<span class="string">"org.springframework.web.servlet.i18n.LocaleChangeInterceptor"</span>&gt;</span><span class="tag">&lt;/<span class="name">bean</span>&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">mvc:interceptors</span>&gt;</span></div><div class="line"></div><div class="line"><span class="comment">&lt;!-- 配置 SessionLocalResolver</span></div><div class="line">     作用：将Locale对象设置为session的属性；从session中获取Locale对象 --&gt;</div><div class="line">	<span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">"localeResolver"</span></span></div><div class="line">		<span class="attr">class</span>=<span class="string">"org.springframework.web.servlet.i18n.SessionLocaleResolver"</span>&gt;<span class="tag">&lt;/<span class="name">bean</span>&gt;</span></div></pre></td></tr></table></figure></p>
+<hr>
+<p><strong>页面：</strong><br><figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">&lt;a href="i18n?locale=zh_CN"&gt;Chinese&lt;/a&gt;</div><div class="line">	&lt;br&gt;&lt;br&gt;</div><div class="line">	&lt;a href="i18n?locale=en_US"&gt;English&lt;/a&gt;</div></pre></td></tr></table></figure></p>
+<hr>
+<p><strong>控制器：</strong> (同示例二)<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@Autowired</span></div><div class="line">	<span class="keyword">private</span> ResourceBundleMessageSource messageSource;</div><div class="line">	</div><div class="line"><span class="meta">@RequestMapping</span>(<span class="string">"/i18n"</span>)</div><div class="line">	<span class="function"><span class="keyword">public</span> String <span class="title">testI18N</span><span class="params">(Locale locale)</span> </span>&#123;</div><div class="line">		String val = messageSource.getMessage(<span class="string">"i18n.username"</span>, <span class="keyword">null</span>, locale);</div><div class="line">		System.out.println(val);</div><div class="line">		<span class="keyword">return</span> <span class="string">"i18n"</span>;</div><div class="line">	&#125;</div></pre></td></tr></table></figure></p>
+<hr>
+<p><strong>运行结果：</strong><br>　　当点击页面的Chinese时，控制台输出“用户名”；<br>　　当点击页面的English时，控制台输出“username”。
+　　</p>
+<h2 id="SessionLocaleResolver-amp-LocaleChangeInterceptor的工作原理"><a href="#SessionLocaleResolver-amp-LocaleChangeInterceptor的工作原理" class="headerlink" title="SessionLocaleResolver&amp;LocaleChangeInterceptor的工作原理"></a>SessionLocaleResolver&amp;LocaleChangeInterceptor的工作原理</h2><p>　　通过查看源码，我了解到利用SessionLocaleResolver和LocaleChangeInterceptor实现示例三功能的工作流程为：</p>
+<ol>
+<li>在目标方法执行之前，LocaleChangeInterceptor拦截器的preHandle方法会先被调用，该方法获取请求参数中的locale属性，如果locale不为空，则获取到当前的区域解析器（此时为SessionLocaleResolver），然后调用SessionLocaleResolver对象的setLocale方法，其中把 根据locale值生成的Locale对象 作为参数传递到该方法中。</li>
+<li>在SessionLocaleResolver对象的setLocale方法中，会将Locale对象设置到Session中。</li>
+<li>DispatchServlet通过SessionLocaleResolver区域解析器在session中获取到Locale对象，将其传入目标方法，然后即可在目标方法中使用Locale对象。
+　　</li>
+</ol>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/SpringMVC/" rel="tag">#SpringMVC</a>
+          
+            <a href="/tags/国际化/" rel="tag">#国际化</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/11/13/使用HttpMessageConverter处理JSON/" rel="next" title="使用HttpMessageConverter处理JSON">
+                <i class="fa fa-chevron-left"></i> 使用HttpMessageConverter处理JSON
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2016/11/13/关于SpringMVC中的国际化/"
+           data-title="关于SpringMVC中的国际化" data-url="http://yoursite.com/2016/11/13/关于SpringMVC中的国际化/">
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/image/avatar.png"
+               alt="Alan" />
+          <p class="site-author-name" itemprop="name">Alan</p>
+          <p class="site-description motion-element" itemprop="description">Better late than never.</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">26</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">6</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">44</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/xiangwanpeng" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/u/2810288024/home" target="_blank" title="weibo">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  weibo
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#国际化概述"><span class="nav-number">1.</span> <span class="nav-text">国际化概述</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#默认区域解析器AcceptHeaderLocaleResolver的示例"><span class="nav-number">2.</span> <span class="nav-text">默认区域解析器AcceptHeaderLocaleResolver的示例</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#使用SessionLocaleResolver实现通过超链接切换-Locale"><span class="nav-number">3.</span> <span class="nav-text">使用SessionLocaleResolver实现通过超链接切换 Locale</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#SessionLocaleResolver-amp-LocaleChangeInterceptor的工作原理"><span class="nav-number">4.</span> <span class="nav-text">SessionLocaleResolver&LocaleChangeInterceptor的工作原理</span></a></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2016</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Alan</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Pisces
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.1"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.0.1"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.1"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"xiangwanpeng"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+    
+    <script src="/vendors/ua-parser-js/dist/ua-parser.min.js?v=0.7.9"></script>
+    <script src="/js/src/hook-duoshuo.js"></script>
+  
+
+
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

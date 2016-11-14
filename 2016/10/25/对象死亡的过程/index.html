@@ -1,0 +1,705 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="JVM,对象死亡,finalize()," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.1" />
+
+
+
+
+
+
+<meta name="description" content="在《JVM中判断对象是否存活的方法》这篇博文中，我们了解了主流的Java虚拟机都是通过可达性分析算法判断对象是否存活的。其实，即使在可达性分析算法中被判断为不可达的对象，也并非是“非死不可”的，它们此时处于“缓刑”阶段，要真正宣告一个对象的死亡，至少要经历两次标记过程：如果对象在可达性分析算法中被判断为不可达，即不存在任何GC Roots到这个对象的引用链，那么这个对象会被第一次标记，并进行一">
+<meta property="og:type" content="article">
+<meta property="og:title" content="对象死亡的过程">
+<meta property="og:url" content="http://yoursite.com/2016/10/25/对象死亡的过程/index.html">
+<meta property="og:site_name" content="向万鹏的独立博客">
+<meta property="og:description" content="在《JVM中判断对象是否存活的方法》这篇博文中，我们了解了主流的Java虚拟机都是通过可达性分析算法判断对象是否存活的。其实，即使在可达性分析算法中被判断为不可达的对象，也并非是“非死不可”的，它们此时处于“缓刑”阶段，要真正宣告一个对象的死亡，至少要经历两次标记过程：如果对象在可达性分析算法中被判断为不可达，即不存在任何GC Roots到这个对象的引用链，那么这个对象会被第一次标记，并进行一">
+<meta property="og:image" content="http://static.zybuluo.com/xiangwanpeng/nc2yitwa4yrmoo7v7525rnsg/image_1avv8t3n01u7r5f9p4utfb25813.png">
+<meta property="og:updated_time" content="2016-10-26T01:21:03.617Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="对象死亡的过程">
+<meta name="twitter:description" content="在《JVM中判断对象是否存活的方法》这篇博文中，我们了解了主流的Java虚拟机都是通过可达性分析算法判断对象是否存活的。其实，即使在可达性分析算法中被判断为不可达的对象，也并非是“非死不可”的，它们此时处于“缓刑”阶段，要真正宣告一个对象的死亡，至少要经历两次标记过程：如果对象在可达性分析算法中被判断为不可达，即不存在任何GC Roots到这个对象的引用链，那么这个对象会被第一次标记，并进行一">
+<meta name="twitter:image" content="http://static.zybuluo.com/xiangwanpeng/nc2yitwa4yrmoo7v7525rnsg/image_1avv8t3n01u7r5f9p4utfb25813.png">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"always"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 0,
+      author: '博主'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2016/10/25/对象死亡的过程/"/>
+
+  <title> 对象死亡的过程 | 向万鹏的独立博客 </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">向万鹏的独立博客</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle"></p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                对象死亡的过程
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-10-25T22:47:46+08:00" content="2016-10-25">
+              2016-10-25
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/JVM/" itemprop="url" rel="index">
+                    <span itemprop="name">JVM</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2016/10/25/对象死亡的过程/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/10/25/对象死亡的过程/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>　　在<a href="https://xiangwanpeng.github.io/2016/10/24/JVM%E4%B8%AD%E5%88%A4%E6%96%AD%E5%AF%B9%E8%B1%A1%E6%98%AF%E5%90%A6%E5%AD%98%E6%B4%BB%E7%9A%84%E6%96%B9%E6%B3%95/" target="_blank" rel="external">《JVM中判断对象是否存活的方法》</a>这篇博文中，我们了解了主流的Java虚拟机都是通过可达性分析算法判断对象是否存活的。其实，即使在可达性分析算法中被判断为不可达的对象，也并非是“非死不可”的，它们此时处于“缓刑”阶段，要真正宣告一个对象的死亡，至少要经历两次标记过程：如果对象在可达性分析算法中被判断为不可达，即不存在任何GC Roots到这个对象的引用链，那么这个对象会被第一次标记，并进行一次筛选，筛选条件是“<strong>这个对象是否有必要执行finalize()方法</strong>”。若对象没有覆盖finalize()方法，或者该对象的finalize()方法已经被JVM调用过，这两种情况都被视为“没有必要执行”，没有必要执行finalize()方法的对象将被第二次标记，随后便被回收。如果此对象被判定为有必要执行finalize()方法，那么这个对象将被放置在一个叫做F-Queue的队列中，这个队列将被一个由JVM自动建立，低优先级的Finalizer线程去执行。这里的“执行”只意味着JVM会触发对象的finalize()方法，但不承诺会等待它运行结束，因为如果一个对象在finalize()中执行缓慢，或者发生了死循环，这将可能导致F-Queue队列中其他对象永久处于等待，甚至导致整个内存回收系统崩溃。finalize()方法是对象逃脱死亡命运的最后一次机会，稍后GC将对F-Queue中的对象进行第二次标记，如果对象要在finalize()方法中拯救自己，那么它只要重新与引用链上的任意一个对象建立关联即可，譬如通过this关键字把自己赋值给某个类变量或者对象的成员变量，那么在第二次标记时它将被移除出“即将回收”的集合；如果到这个时候对象还没逃脱死亡的命运，它将被第二次标记，那么基本上它就真的可以被回收了。这个过程可以通过下面的流程图来表示：<br><img src="http://static.zybuluo.com/xiangwanpeng/nc2yitwa4yrmoo7v7525rnsg/image_1avv8t3n01u7r5f9p4utfb25813.png" alt="image_1avv8t3n01u7r5f9p4utfb25813.png-62.9kB"></p>
+<p>　　此外，我们可以通过下面的程序看到，一个对象的finalize()方法被执行，但是它仍然可以存活：</p>
+<pre><code>　　public class FinalizeEscapeGC {
+
+    public static FinalizeEscapeGC SAVE_HOOK = null;
+
+    public void isAlive() {
+        System.out.println(&quot;yes, i am still alive :)&quot;);
+    }
+
+    @Override
+    protected void finalize() throws Throwable {
+        super.finalize();
+        System.out.println(&quot;finalize mehtod executed!&quot;);
+        FinalizeEscapeGC.SAVE_HOOK = this;
+    }
+
+    public static void main(String[] args) throws Throwable {
+        SAVE_HOOK = new FinalizeEscapeGC();
+
+        //对象第一次成功拯救自己
+        SAVE_HOOK = null;
+        System.gc();
+        // 因为Finalizer方法优先级很低，暂停0.5秒，以等待它
+        Thread.sleep(500);
+        if (SAVE_HOOK != null) {
+            SAVE_HOOK.isAlive();
+        } else {
+            System.out.println(&quot;no, i am dead :(&quot;);
+        }
+
+        // 下面这段代码与上面的完全相同，但是这次自救却失败了
+        SAVE_HOOK = null;
+        System.gc();
+        // 因为Finalizer方法优先级很低，暂停0.5秒，以等待它
+        Thread.sleep(500);
+        if (SAVE_HOOK != null) {
+            SAVE_HOOK.isAlive();
+        } else {
+            System.out.println(&quot;no, i am dead :(&quot;);
+        }
+    }
+}
+</code></pre><p>运行程序：</p>
+<p>finalize mehtod executed!<br>yes, i am still alive :)<br>no, i am dead :(</p>
+<p>从输出结果的第一、二行我们可以知道，SAVE_HOOK曾引用的对象，其finalize()方法的确被GC触发过，但是它在finalize()中成功拯救了自己，得以不被回收。但是在第三行中，程序中的一段与之前一模一样的代码，执行结果却是“no, i am dead :(”，这是因为<strong>任何一个对象的finalize()方法只会被系统自动调用一次。</strong>如果对象面临下一次回收，它的finalize()方法不会再被执行。<br>　　从上面的程序中，我们再次体会到了，finalize()方法的局限性，它不同于C/C++中的析构函数，它的运行代价高昂，不确定性大，无法保证各个对象的调用顺序，所以建议大家完全可以忘掉Java语言中这个方法的存在，这在<a href="https://xiangwanpeng.github.io/2016/09/06/finalize%28%29%E6%96%B9%E6%B3%95%E7%9A%84%E4%BD%BF%E7%94%A8/" target="_blank" rel="external">《finalize()方法的使用》</a>中我们已经介绍过。</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/JVM/" rel="tag">#JVM</a>
+          
+            <a href="/tags/对象死亡/" rel="tag">#对象死亡</a>
+          
+            <a href="/tags/finalize/" rel="tag">#finalize()</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/10/24/JVM中判断对象是否存活的方法/" rel="next" title="JVM中判断对象是否存活的方法">
+                <i class="fa fa-chevron-left"></i> JVM中判断对象是否存活的方法
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/11/02/Java内存区域/" rel="prev" title="Java内存区域">
+                Java内存区域 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2016/10/25/对象死亡的过程/"
+           data-title="对象死亡的过程" data-url="http://yoursite.com/2016/10/25/对象死亡的过程/">
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/image/avatar.png"
+               alt="Alan" />
+          <p class="site-author-name" itemprop="name">Alan</p>
+          <p class="site-description motion-element" itemprop="description">Better late than never.</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">26</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">6</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">44</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/xiangwanpeng" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/u/2810288024/home" target="_blank" title="weibo">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  weibo
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <p class="post-toc-empty">此文章未包含目录</p>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2016</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Alan</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Pisces
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.1"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.0.1"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.1"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"xiangwanpeng"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+    
+    <script src="/vendors/ua-parser-js/dist/ua-parser.min.js?v=0.7.9"></script>
+    <script src="/js/src/hook-duoshuo.js"></script>
+  
+
+
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

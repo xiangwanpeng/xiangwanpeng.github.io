@@ -1,0 +1,711 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Java," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.1" />
+
+
+
+
+
+
+<meta name="description" content="前言　　在Java中，当对象作为参数传递时，究竟传递的是对象的值，还是对象的引用，这是一个饱受争议的话题。若传的是值，那么函数接收的只是实参的一个副本，函数对形参的操作并不会对实参产生影响；若传的是引用，那么此时对形参的操作则会影响到实参。　　首先我们来看一句代码：
+Object obj = new Object();
+　　这句话的意思是：创建一个Object对象，再创建一个名为obj的引用，让这">
+<meta property="og:type" content="article">
+<meta property="og:title" content="关于Java对象作为参数传递是传值还是传引用的问题">
+<meta property="og:url" content="http://yoursite.com/2016/09/05/关于Java对象作为参数传递是传值还是传引用的问题/index.html">
+<meta property="og:site_name" content="向万鹏的独立博客">
+<meta property="og:description" content="前言　　在Java中，当对象作为参数传递时，究竟传递的是对象的值，还是对象的引用，这是一个饱受争议的话题。若传的是值，那么函数接收的只是实参的一个副本，函数对形参的操作并不会对实参产生影响；若传的是引用，那么此时对形参的操作则会影响到实参。　　首先我们来看一句代码：
+Object obj = new Object();
+　　这句话的意思是：创建一个Object对象，再创建一个名为obj的引用，让这">
+<meta property="og:image" content="http://static.zybuluo.com/xiangwanpeng/m534oudwg6hzbvdhtjfvc081/1.png">
+<meta property="og:image" content="http://static.zybuluo.com/xiangwanpeng/anm3817nrteem689lbd91j5o/2.png">
+<meta property="og:image" content="http://static.zybuluo.com/xiangwanpeng/aho7e9ftz9bf3m25ug2e7exy/3.png">
+<meta property="og:image" content="http://static.zybuluo.com/xiangwanpeng/wjdl6p52tleif0og2ikqdcxs/4.png">
+<meta property="og:image" content="http://static.zybuluo.com/xiangwanpeng/3b6natkftfpqw78eaty73nju/image_1art4suka65r1m4o1a0spgcjr89.png">
+<meta property="og:updated_time" content="2016-09-05T12:25:38.050Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="关于Java对象作为参数传递是传值还是传引用的问题">
+<meta name="twitter:description" content="前言　　在Java中，当对象作为参数传递时，究竟传递的是对象的值，还是对象的引用，这是一个饱受争议的话题。若传的是值，那么函数接收的只是实参的一个副本，函数对形参的操作并不会对实参产生影响；若传的是引用，那么此时对形参的操作则会影响到实参。　　首先我们来看一句代码：
+Object obj = new Object();
+　　这句话的意思是：创建一个Object对象，再创建一个名为obj的引用，让这">
+<meta name="twitter:image" content="http://static.zybuluo.com/xiangwanpeng/m534oudwg6hzbvdhtjfvc081/1.png">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"always"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 0,
+      author: '博主'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2016/09/05/关于Java对象作为参数传递是传值还是传引用的问题/"/>
+
+  <title> 关于Java对象作为参数传递是传值还是传引用的问题 | 向万鹏的独立博客 </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">向万鹏的独立博客</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle"></p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                关于Java对象作为参数传递是传值还是传引用的问题
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-09-05T00:06:53+08:00" content="2016-09-05">
+              2016-09-05
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/Java基础/" itemprop="url" rel="index">
+                    <span itemprop="name">Java基础</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2016/09/05/关于Java对象作为参数传递是传值还是传引用的问题/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/09/05/关于Java对象作为参数传递是传值还是传引用的问题/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>　　在Java中，当对象作为参数传递时，究竟传递的是对象的值，还是对象的引用，这是一个饱受争议的话题。若传的是值，那么函数接收的只是实参的一个副本，函数对形参的操作并不会对实参产生影响；若传的是引用，那么此时对形参的操作则会影响到实参。<br>　　首先我们来看一句代码：</p>
+<pre><code>Object obj = new Object();
+</code></pre><p>　　这句话的意思是：创建一个Object对象，再创建一个名为obj的引用，让这个引用指向这个对象，如下图所示：</p>
+<p>　　<img src="http://static.zybuluo.com/xiangwanpeng/m534oudwg6hzbvdhtjfvc081/1.png" alt="1.png-4.3kB"></p>
+<p>  在有了上面的基础之后，我们便来看下面这组在网上很流行的例子：</p>
+<h2 id="基本数据类型作为参数传递："><a href="#基本数据类型作为参数传递：" class="headerlink" title="基本数据类型作为参数传递："></a><strong>基本数据类型</strong>作为参数传递：</h2><p>  <strong>例1：</strong></p>
+<pre><code>public class test {
+    public static void main(String[] args) {
+        int i = 1;
+        System.out.println(&quot;before change, i = &quot;+i);
+        change(i);
+        System.out.println(&quot;after change, i = &quot;+i);
+    }
+    public static void change(int i){
+        i = 5;
+    }
+}
+</code></pre><p>　　这个例子不难理解，<strong>当基本数据类型作为参数传递时，传递的是实参值的副本，即传的是值，无论在函数中怎么操作这个副本，实参的值是不会被改变的。</strong>所以以上代码执行的结果是：<br>　　<br>　　before change, i = 1<br>　　after change, i = 1
+　　
+　　</p>
+<h2 id="对象作为参数传递："><a href="#对象作为参数传递：" class="headerlink" title=" 对象作为参数传递："></a> <strong>对象</strong>作为参数传递：</h2><p>　　在下面的例２中，我们把StringBuffer对象作为参数传递到change函数。<br>　　<br>　　<strong>例2：</strong></p>
+<pre><code>public class test {
+    public static void main(String[] args) {
+        StringBuffer sb = new StringBuffer(&quot;Hello &quot;);
+        System.out.println(&quot;before change, sb is &quot;+sb.toString());
+        change(sb);
+        System.out.println(&quot;after change, sb is &quot;+sb.toString());
+    }
+    public static void change(StringBuffer stringBuffer){
+        stringBuffer.append(&quot;world !&quot;);
+    }
+}
+</code></pre><p>　　为了方便推理出结论，我们先直接看程序的运行结果：<br>　　<br>　　before change, sb is Hello<br>　　after change, sb is Hello world !<br>　　<br>　　从输出结果中我们可以发现，sb所指向的对象的值被改变了，那么是否我们可以推论出，在Java中，当对象作为参数传递时，传递的是该对象的引用呢？我们再来看下面这个例子：<br>　　<br>　　<strong>例3：</strong></p>
+<pre><code>public class test {
+    public static void main(String[] args) {
+        StringBuffer sb = new StringBuffer(&quot;Hello &quot;);
+        System.out.println(&quot;before change, sb is &quot;+sb.toString());
+        change(sb);
+        System.out.println(&quot;after change, sb is &quot;+sb.toString());
+    }
+    public static void change(StringBuffer stringBuffer){
+        stringBuffer = new StringBuffer(&quot;Hi &quot;);
+        stringBuffer.append(&quot;world !&quot;);
+    }
+}
+</code></pre><p>　　如果上面的推论是正确的，即Java中对象作为参数传递，实际传递的是该对象的引用，那么在调用change函数之后，原对象的值应该是会改变的，变为“Hi world ！”，但是，当我们运行程序后，结果却是如下所示：<br>　　<br>　　before change, sb is Hello<br>　　after change, sb is Hello<br>　　<br>　　原对象的值并没有被改变，这与上面的推论相矛盾！为什么在Java中，当对象作为参数传递时，有的时候实参被改变了，而有的时候实参并未被改变呢？下面让我们来分析一下其中的原因：<br>　　从文章的开头我们知道，当执行StringBuffer sb = new StringBuffer(“Hello “)时，我们创建了一个指向新建对象“new StringBuffer(“Hello “)”的引用“sb”，如下图所示：<br>　　<br>　　<img src="http://static.zybuluo.com/xiangwanpeng/anm3817nrteem689lbd91j5o/2.png" alt="2.png-3.2kB"><br>　　<br>　　在例2中，当我们调用change函数后，实际上，形参stringBuffer也指向了实参sb所指向的对象，即：<br>　　<br>　　<img src="http://static.zybuluo.com/xiangwanpeng/aho7e9ftz9bf3m25ug2e7exy/3.png" alt="3.png-6.3kB"><br>　　<br>　　那么当我们执行stringBuffer.append(“world !”)后，便通过对象的引用“stringBuffer”修改了对象的值，使之变成了“Hello world ！”，即：<br>　　<br>　　<img src="http://static.zybuluo.com/xiangwanpeng/wjdl6p52tleif0og2ikqdcxs/4.png" alt="4.png-6.6kB"><br>　　<br>　　但是，在例3中的change函数中，我们又新建了一个对象“new StringBuffer(“Hi “)”（这实际上在内存中开辟了一块在原对象地址之外的新区域），这让形参stringBuffer实际指向了这个新建的对象，并将新对象的值设置为“Hi world ！”，即：<br>　　<br>　　<img src="http://static.zybuluo.com/xiangwanpeng/3b6natkftfpqw78eaty73nju/image_1art4suka65r1m4o1a0spgcjr89.png" alt="image_1art4suka65r1m4o1a0spgcjr89.png-10.1kB"><br>　　<br>　　那么我们就不难理解，为何在执行完change函数之后，实参的值仍为“Hello”了。
+　　</p>
+<h2 id="结论"><a href="#结论" class="headerlink" title="结论"></a>结论</h2><p>　　综上所述，我们可以得出结论：<strong>在Java中，当对象作为参数传递时，实际上传递的是一份“引用的拷贝”。</strong>
+　　
+　　</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Java/" rel="tag">#Java</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/09/06/finalize()方法的使用/" rel="prev" title="finalize()方法的使用">
+                finalize()方法的使用 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2016/09/05/关于Java对象作为参数传递是传值还是传引用的问题/"
+           data-title="关于Java对象作为参数传递是传值还是传引用的问题" data-url="http://yoursite.com/2016/09/05/关于Java对象作为参数传递是传值还是传引用的问题/">
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/image/avatar.png"
+               alt="Alan" />
+          <p class="site-author-name" itemprop="name">Alan</p>
+          <p class="site-description motion-element" itemprop="description">Better late than never.</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">26</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">6</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">44</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/xiangwanpeng" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/u/2810288024/home" target="_blank" title="weibo">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  weibo
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#基本数据类型作为参数传递："><span class="nav-number">2.</span> <span class="nav-text">基本数据类型作为参数传递：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#对象作为参数传递："><span class="nav-number">3.</span> <span class="nav-text"> 对象作为参数传递：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#结论"><span class="nav-number">4.</span> <span class="nav-text">结论</span></a></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2016</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Alan</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Pisces
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.1"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.0.1"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.1"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"xiangwanpeng"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+    
+    <script src="/vendors/ua-parser-js/dist/ua-parser.min.js?v=0.7.9"></script>
+    <script src="/js/src/hook-duoshuo.js"></script>
+  
+
+
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

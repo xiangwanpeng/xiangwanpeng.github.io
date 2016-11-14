@@ -1,0 +1,704 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="SpringMVC,JSON,HttpMessageConverter," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.1" />
+
+
+
+
+
+
+<meta name="description" content="HttpMessageConverter&amp;lt;T&amp;gt;工作原理：　　HttpMessageConverter&amp;lt;T&amp;gt; 是 Spring3.0 新添加的一个接口，负责将请求信息转换为一个对象（类型为 T）并绑定到处理方法的入参中，或将对象（类型为T）输出为响应信息。对此SpringMVC提供了两种实现途径：
+
+使用@RequestBody/@ResponseBody注解对处理方法进行标">
+<meta property="og:type" content="article">
+<meta property="og:title" content="使用HttpMessageConverter处理JSON">
+<meta property="og:url" content="http://yoursite.com/2016/11/13/使用HttpMessageConverter处理JSON/index.html">
+<meta property="og:site_name" content="向万鹏的独立博客">
+<meta property="og:description" content="HttpMessageConverter&amp;lt;T&amp;gt;工作原理：　　HttpMessageConverter&amp;lt;T&amp;gt; 是 Spring3.0 新添加的一个接口，负责将请求信息转换为一个对象（类型为 T）并绑定到处理方法的入参中，或将对象（类型为T）输出为响应信息。对此SpringMVC提供了两种实现途径：
+
+使用@RequestBody/@ResponseBody注解对处理方法进行标">
+<meta property="og:image" content="http://static.zybuluo.com/xiangwanpeng/6kxdu7mbpllai4yitjihlcze/image_1b1e5tcdhui21hgpn6eqo3ba01t.png">
+<meta property="og:image" content="http://static.zybuluo.com/xiangwanpeng/incfdoz36t2g7cit76b9flgt/image_1b1eccehf393hvg135teo0105o3u.png">
+<meta property="og:image" content="http://static.zybuluo.com/xiangwanpeng/8kfxf49wcxst9qgolmez1vgv/image_1b1e4vo451r1j1pc1qmm1sc5127n9.png">
+<meta property="og:image" content="http://static.zybuluo.com/xiangwanpeng/cee3g4cjvn4xgiwuzuw0mkck/image_1b1ecs9khgn721bln28qrao04b.png">
+<meta property="og:image" content="http://static.zybuluo.com/xiangwanpeng/q7pfjn5vjnoouesjsp8uclbd/image_1b1e5htql1qbvqkm45h1br01pi4m.png">
+<meta property="og:image" content="http://static.zybuluo.com/xiangwanpeng/xffe7s0zlrrrgffv4ybdoh8n/image_1b1e5iuc215auou3m7164dubo13.png">
+<meta property="og:image" content="http://static.zybuluo.com/xiangwanpeng/vcr5c4n7voq3k7m6airegr8x/image_1b1e5j6681i2i1jtk1t71fi010mv1g.png">
+<meta property="og:image" content="http://static.zybuluo.com/xiangwanpeng/2tzf2ba9irb80w5c80gatybh/image_1b1eatgr614ev90sl1a1bvqlo134.png">
+<meta property="og:image" content="http://static.zybuluo.com/xiangwanpeng/59nytp085y0llz3ef2gcficl/image_1b1ea9rkce0gv63gt42mbdum2a.png">
+<meta property="og:image" content="http://static.zybuluo.com/xiangwanpeng/71tjknc0eriwr95o5lp7ehfy/image_1b1eab44h162210eaalel771c802n.png">
+<meta property="og:image" content="http://static.zybuluo.com/xiangwanpeng/lnlqsleholcndisptu7f7dql/image_1b1ec0e011pq61o0v1nipd41j6f3h.png">
+<meta property="og:updated_time" content="2016-11-13T08:35:31.099Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="使用HttpMessageConverter处理JSON">
+<meta name="twitter:description" content="HttpMessageConverter&amp;lt;T&amp;gt;工作原理：　　HttpMessageConverter&amp;lt;T&amp;gt; 是 Spring3.0 新添加的一个接口，负责将请求信息转换为一个对象（类型为 T）并绑定到处理方法的入参中，或将对象（类型为T）输出为响应信息。对此SpringMVC提供了两种实现途径：
+
+使用@RequestBody/@ResponseBody注解对处理方法进行标">
+<meta name="twitter:image" content="http://static.zybuluo.com/xiangwanpeng/6kxdu7mbpllai4yitjihlcze/image_1b1e5tcdhui21hgpn6eqo3ba01t.png">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"always"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 0,
+      author: '博主'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2016/11/13/使用HttpMessageConverter处理JSON/"/>
+
+  <title> 使用HttpMessageConverter处理JSON | 向万鹏的独立博客 </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">向万鹏的独立博客</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle"></p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                使用HttpMessageConverter处理JSON
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-11-13T13:37:41+08:00" content="2016-11-13">
+              2016-11-13
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/SpringMVC/" itemprop="url" rel="index">
+                    <span itemprop="name">SpringMVC</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2016/11/13/使用HttpMessageConverter处理JSON/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/11/13/使用HttpMessageConverter处理JSON/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="HttpMessageConverter-lt-T-gt-工作原理："><a href="#HttpMessageConverter-lt-T-gt-工作原理：" class="headerlink" title="HttpMessageConverter&lt;T&gt;工作原理："></a>HttpMessageConverter&lt;T&gt;工作原理：</h2><p>　　HttpMessageConverter&lt;T&gt; 是 Spring3.0 新添加的一个接口，负责将请求信息转换为一个对象（类型为 T）并绑定到处理方法的入参中，或将对象（类型为T）输出为响应信息。对此SpringMVC提供了两种实现途径：</p>
+<ol>
+<li>使用@RequestBody/@ResponseBody注解对处理方法进行标注。</li>
+<li>使用HttpEntity&lt;T&gt;/ResponseEntity&lt;T&gt;作为处理方法的入参或返回值。</li>
+</ol>
+<p>　　当控制器处理方法使用到@RequestBody/@ResponseBody 或者 HttpEntity&lt;T&gt;/ResponseEntity&lt;T&gt;时，Spring首先根据请求头或响应头的Accept属性选择匹配的HttpMessageConverter，进而根据参数类型或泛型类型的过滤得到匹配的HttpMessageConverter，若找不到可用的HttpMessageConverter将会报错。<br>　　<br>　　下图展示了HttpMessageConverter&lt;T&gt;的工作原理：<br><img src="http://static.zybuluo.com/xiangwanpeng/6kxdu7mbpllai4yitjihlcze/image_1b1e5tcdhui21hgpn6eqo3ba01t.png" alt="image_1b1e5tcdhui21hgpn6eqo3ba01t.png-204.3kB"></p>
+<p>　　DispatcherServlet默认装配了RequestMappingHandlerAdapter，我们查看Spring源码发现RequestMappingHandlerAdapter默认装配了如下的HttpMessageConverter：<br>　　<img src="http://static.zybuluo.com/xiangwanpeng/incfdoz36t2g7cit76b9flgt/image_1b1eccehf393hvg135teo0105o3u.png" alt="image_1b1eccehf393hvg135teo0105o3u.png-210.6kB"></p>
+<h2 id="HttpMessageConverter-lt-T-gt-使用示例"><a href="#HttpMessageConverter-lt-T-gt-使用示例" class="headerlink" title="HttpMessageConverter&lt;T&gt;使用示例"></a>HttpMessageConverter&lt;T&gt;使用示例</h2><p>　　在开始介绍HttpMessageConverter&lt;T&gt;的用法之前，需要先导入jar包：<br>　　<br><img src="http://static.zybuluo.com/xiangwanpeng/8kfxf49wcxst9qgolmez1vgv/image_1b1e4vo451r1j1pc1qmm1sc5127n9.png" alt="image_1b1e4vo451r1j1pc1qmm1sc5127n9.png-3.9kB"></p>
+<p>　　在导入以上jar包后，RequestMappingHandlerAdapter会自动额外装配一个HttpMessageConverter对象，用于在Java对象和JSON对象之间进行转换：<br>　　<img src="http://static.zybuluo.com/xiangwanpeng/cee3g4cjvn4xgiwuzuw0mkck/image_1b1ecs9khgn721bln28qrao04b.png" alt="image_1b1ecs9khgn721bln28qrao04b.png-248.1kB"><br>　　<br>　　下面的三个示例分别展示了@ResponseBody、@RequestBody和ResponseEntity&lt;T&gt;的使用方法，HttpEntity&lt;T&gt;用法类似。<br>　　<br><strong>示例一：</strong>通过@RequestBody注解将目标方法返回的Java对象转为HttpOutputMessage，并在页面中通过AJAX获取：</p>
+<p>jsp：<br><figure class="highlight jsp"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div></pre></td><td class="code"><pre><div class="line">&amp;lt;%@ page language=<span class="string">"java"</span> contentType=<span class="string">"text/html; charset=UTF-8"</span></div><div class="line">	pageEncoding=<span class="string">"UTF-8"</span>%&amp;gt;</div><div class="line">&amp;lt;!DOCTYPE html PUBLIC <span class="string">"-//W3C//DTD HTML 4.01 Transitional//EN"</span> <span class="string">"http://www.w3.org/TR/html4/loose.dtd"</span>&amp;gt;</div><div class="line">&amp;lt;html&amp;gt;</div><div class="line">&amp;lt;head&amp;gt;</div><div class="line">&amp;lt;meta http-equiv=<span class="string">"Content-Type"</span> content=<span class="string">"text/html; charset=UTF-8"</span>&amp;gt;</div><div class="line">&amp;lt;title&amp;gt;index jsp&amp;lt;/title&amp;gt;</div><div class="line">&amp;lt;script type=<span class="string">"text/javascript"</span></div><div class="line">	src=<span class="string">"$&#123;pageContext.request.contextPath &#125;/scripts/jquery-1.9.1.min.js"</span>&amp;gt;&amp;lt;/script&amp;gt;</div><div class="line">&amp;lt;script type=<span class="string">"text/javascript"</span>&amp;gt;</div><div class="line">	$(function() &#123;</div><div class="line">		$(<span class="string">"#testJson"</span>).click(function() &#123;</div><div class="line">			var url = $(<span class="keyword">this</span>).attr(<span class="string">"href"</span>);</div><div class="line">			var arg = &#123;</div><div class="line">				<span class="string">"time"</span> : <span class="keyword">new</span> Date()</div><div class="line">			&#125;;</div><div class="line">			$.get(url, arg, function(data) &#123;</div><div class="line">				<span class="keyword">for</span> (var i = <span class="number">0</span>; i &amp;lt; data.length; i++)</div><div class="line">					alert(data[i].id + <span class="string">":"</span> + data[i].lastName);</div><div class="line">			&#125;);</div><div class="line">			<span class="keyword">return</span> <span class="keyword">false</span>;</div><div class="line">		&#125;);</div><div class="line">	&#125;)</div><div class="line">&amp;lt;/script&amp;gt;</div><div class="line">&amp;lt;/head&amp;gt;</div><div class="line">&amp;lt;body&amp;gt;</div><div class="line">&amp;lt;a href=<span class="string">"testJson"</span> id=<span class="string">"testJson"</span>&amp;gt;Test Json&amp;lt;/a&amp;gt;</div><div class="line">&amp;lt;/body&amp;gt;</div><div class="line">&amp;lt;/html&amp;gt;</div></pre></td></tr></table></figure></p>
+<p>controller:<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@ResponseBody</span></div><div class="line"><span class="meta">@RequestMapping</span>(<span class="string">"/testJson"</span>)</div><div class="line"><span class="keyword">public</span> Collection&amp;lt;Employee&amp;gt; testJson()&#123;</div><div class="line">	<span class="keyword">return</span> employeeDao.getAll();</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>运行后浏览器会依次弹出“data[i].id + “:” + data[i].lastName”的提示信息：<br><img src="http://static.zybuluo.com/xiangwanpeng/q7pfjn5vjnoouesjsp8uclbd/image_1b1e5htql1qbvqkm45h1br01pi4m.png" alt="image_1b1e5htql1qbvqkm45h1br01pi4m.png-8.8kB"><br><img src="http://static.zybuluo.com/xiangwanpeng/xffe7s0zlrrrgffv4ybdoh8n/image_1b1e5iuc215auou3m7164dubo13.png" alt="image_1b1e5iuc215auou3m7164dubo13.png-9.8kB"><br><img src="http://static.zybuluo.com/xiangwanpeng/vcr5c4n7voq3k7m6airegr8x/image_1b1e5j6681i2i1jtk1t71fi010mv1g.png" alt="image_1b1e5j6681i2i1jtk1t71fi010mv1g.png-10.2kB"></p>
+<p>　　　　　　　　　　…<br>　　　　　　　　　　<br><strong>示例二：</strong>通过@RequestBody注解实现实现文件上传的功能：</p>
+<p>jsp：<br><figure class="highlight jsp"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">&amp;lt;form action=<span class="string">"testRequestBody"</span> method=<span class="string">"post"</span> enctype=<span class="string">"multipart/form-data"</span>&amp;gt;</div><div class="line">	File：&amp;lt;input type=<span class="string">"file"</span> name=<span class="string">"file"</span> /&amp;gt;</div><div class="line">	Description：&amp;lt;input type=<span class="string">"text"</span> name=<span class="string">"des"</span> /&amp;gt;</div><div class="line">	&amp;lt;input type=<span class="string">"submit"</span> value=<span class="string">"Submit"</span> /&amp;gt;</div><div class="line">	&amp;lt;/form&amp;gt;</div></pre></td></tr></table></figure></p>
+<p>controller:<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@ResponseBody</span></div><div class="line"><span class="meta">@RequestMapping</span>(<span class="string">"/testRequestBody"</span>)</div><div class="line"><span class="function"><span class="keyword">public</span> String <span class="title">testRequestBody</span><span class="params">(@RequestBody String body)</span></span>&#123;</div><div class="line">	System.out.println(body);</div><div class="line">	</div><div class="line">	<span class="comment">//return "helloworld!"+new Date()保证了方法执行完后不会匹配任何一个页面</span></div><div class="line">	<span class="keyword">return</span> <span class="string">"helloworld!"</span>+<span class="keyword">new</span> Date();</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>运行程序，我们上传一个test.txt文件，其中存储了某一jsp页面的信息，并在Description中输入文本值“MY TEXT”：</p>
+<p><img src="http://static.zybuluo.com/xiangwanpeng/2tzf2ba9irb80w5c80gatybh/image_1b1eatgr614ev90sl1a1bvqlo134.png" alt="image_1b1eatgr614ev90sl1a1bvqlo134.png-4.4kB"></p>
+<p>提交之后，HttpMessageConverter会把上传的文件和文本值转换为一个String类型的对象，并在控制台输出：</p>
+<p><img src="http://static.zybuluo.com/xiangwanpeng/59nytp085y0llz3ef2gcficl/image_1b1ea9rkce0gv63gt42mbdum2a.png" alt="image_1b1ea9rkce0gv63gt42mbdum2a.png-51.8kB"></p>
+<p>而且浏览器上也显示了helloworld！+时间：</p>
+<p><img src="http://static.zybuluo.com/xiangwanpeng/71tjknc0eriwr95o5lp7ehfy/image_1b1eab44h162210eaalel771c802n.png" alt="image_1b1eab44h162210eaalel771c802n.png-11.8kB"></p>
+<p>  注意，如果在spring的配置文件中注册了CommonsMultipartResolver类型的bean实例，如下：<br><figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">&amp;lt;bean id="multipartResolver"</div><div class="line">		class="org.springframework.web.multipart.commons.CommonsMultipartResolver"&amp;gt;</div><div class="line">	&amp;lt;/bean&amp;gt;</div></pre></td></tr></table></figure></p>
+<p>那么@RequestBody就不能正常将上传的文件类型转换为String类型在控制台输出了，原因暂时我还不太清楚。</p>
+<p><strong>示例三：通过@ResponseEntity&lt;T&gt;实现文件下载的功能：</strong></p>
+<p>jsp：<br><figure class="highlight jsp"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">&amp;lt;a href=<span class="string">"testResponseEntity"</span>&amp;gt;Test ResponseEntity&amp;lt;/a&amp;gt;</div></pre></td></tr></table></figure></p>
+<p>在根目录下的file目录下保存了示例二中的test.txt：</p>
+<p><img src="http://static.zybuluo.com/xiangwanpeng/lnlqsleholcndisptu7f7dql/image_1b1ec0e011pq61o0v1nipd41j6f3h.png" alt="image_1b1ec0e011pq61o0v1nipd41j6f3h.png-3.2kB"></p>
+<p>controller:<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@ResponseBody</span></div><div class="line">	<span class="meta">@RequestMapping</span>(<span class="string">"/testResponseEntity"</span>)</div><div class="line">	<span class="keyword">public</span> ResponseEntity&amp;lt;<span class="keyword">byte</span>[]&amp;gt; testResponseEntity(HttpSession session) <span class="keyword">throws</span> IOException&#123;</div><div class="line">		<span class="keyword">byte</span>[] body = <span class="keyword">null</span>;</div><div class="line">		ServletContext context = session.getServletContext();</div><div class="line">		InputStream in = context.getResourceAsStream(<span class="string">"/file/test.txt"</span>);</div><div class="line">		body = <span class="keyword">new</span> <span class="keyword">byte</span>[in.available()];</div><div class="line">		in.read(body);</div><div class="line">		</div><div class="line">		HttpHeaders headers = <span class="keyword">new</span> HttpHeaders();</div><div class="line">		headers.add(<span class="string">"Content-Disposition"</span>, <span class="string">"attachment;filename=test.txt"</span>);</div><div class="line">		</div><div class="line">		HttpStatus statusCode = HttpStatus.OK;</div><div class="line">		</div><div class="line">		ResponseEntity&amp;lt;<span class="keyword">byte</span>[]&amp;gt; entity = <span class="keyword">new</span> ResponseEntity&amp;lt;<span class="keyword">byte</span>[]&amp;gt;(body, headers, statusCode);</div><div class="line">		</div><div class="line">		<span class="keyword">return</span> entity;</div><div class="line">	&#125;</div></pre></td></tr></table></figure></p>
+<p>运行程序，点击超链接Test ResponseEntity后发现可以正确下载test.txt文件。</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/SpringMVC/" rel="tag">#SpringMVC</a>
+          
+            <a href="/tags/JSON/" rel="tag">#JSON</a>
+          
+            <a href="/tags/HttpMessageConverter/" rel="tag">#HttpMessageConverter</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/11/13/使用SpringMVC实现REST风格的CRUD功能/" rel="next" title="使用SpringMVC实现REST风格的CRUD功能">
+                <i class="fa fa-chevron-left"></i> 使用SpringMVC实现REST风格的CRUD功能
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/11/13/关于SpringMVC中的国际化/" rel="prev" title="关于SpringMVC中的国际化">
+                关于SpringMVC中的国际化 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2016/11/13/使用HttpMessageConverter处理JSON/"
+           data-title="使用HttpMessageConverter处理JSON" data-url="http://yoursite.com/2016/11/13/使用HttpMessageConverter处理JSON/">
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/image/avatar.png"
+               alt="Alan" />
+          <p class="site-author-name" itemprop="name">Alan</p>
+          <p class="site-description motion-element" itemprop="description">Better late than never.</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">26</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">6</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">44</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/xiangwanpeng" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/u/2810288024/home" target="_blank" title="weibo">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  weibo
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#HttpMessageConverter-lt-T-gt-工作原理："><span class="nav-number">1.</span> <span class="nav-text">HttpMessageConverter<T>工作原理：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#HttpMessageConverter-lt-T-gt-使用示例"><span class="nav-number">2.</span> <span class="nav-text">HttpMessageConverter<T>使用示例</span></a></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2016</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Alan</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Pisces
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.1"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.0.1"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.1"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"xiangwanpeng"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+    
+    <script src="/vendors/ua-parser-js/dist/ua-parser.min.js?v=0.7.9"></script>
+    <script src="/js/src/hook-duoshuo.js"></script>
+  
+
+
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

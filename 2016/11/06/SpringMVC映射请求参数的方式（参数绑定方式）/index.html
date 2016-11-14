@@ -1,0 +1,681 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="SpringMVC,Java Web,参数绑定," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.1" />
+
+
+
+
+
+
+<meta name="description" content="SpringMVC通过分析处理方法的签名，可以将HTTP请求信息绑定到处理方法的相应参数中。
+使用@RequestParam绑定请求参数值　　在处理方法参数处使用@RequestParam可以把请求参数传递给请求方法，其中：– value：请求参数的参数名– required：该参数是否必须，默认为true,– defaultValue：请求参数的默认值，表示请求参数中必须包含对应的参数，若">
+<meta property="og:type" content="article">
+<meta property="og:title" content="SpringMVC映射请求参数的方式（参数绑定方式）">
+<meta property="og:url" content="http://yoursite.com/2016/11/06/SpringMVC映射请求参数的方式（参数绑定方式）/index.html">
+<meta property="og:site_name" content="向万鹏的独立博客">
+<meta property="og:description" content="SpringMVC通过分析处理方法的签名，可以将HTTP请求信息绑定到处理方法的相应参数中。
+使用@RequestParam绑定请求参数值　　在处理方法参数处使用@RequestParam可以把请求参数传递给请求方法，其中：– value：请求参数的参数名– required：该参数是否必须，默认为true,– defaultValue：请求参数的默认值，表示请求参数中必须包含对应的参数，若">
+<meta property="og:image" content="http://static.zybuluo.com/xiangwanpeng/6px3vhji4ns7bdh80gzck6gx/image_1b0rv5de613kekkko9u1kqr5289.png">
+<meta property="og:updated_time" content="2016-11-08T04:09:57.189Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="SpringMVC映射请求参数的方式（参数绑定方式）">
+<meta name="twitter:description" content="SpringMVC通过分析处理方法的签名，可以将HTTP请求信息绑定到处理方法的相应参数中。
+使用@RequestParam绑定请求参数值　　在处理方法参数处使用@RequestParam可以把请求参数传递给请求方法，其中：– value：请求参数的参数名– required：该参数是否必须，默认为true,– defaultValue：请求参数的默认值，表示请求参数中必须包含对应的参数，若">
+<meta name="twitter:image" content="http://static.zybuluo.com/xiangwanpeng/6px3vhji4ns7bdh80gzck6gx/image_1b0rv5de613kekkko9u1kqr5289.png">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"always"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 0,
+      author: '博主'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2016/11/06/SpringMVC映射请求参数的方式（参数绑定方式）/"/>
+
+  <title> SpringMVC映射请求参数的方式（参数绑定方式） | 向万鹏的独立博客 </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">向万鹏的独立博客</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle"></p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                SpringMVC映射请求参数的方式（参数绑定方式）
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-11-06T12:08:22+08:00" content="2016-11-06">
+              2016-11-06
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/SpringMVC/" itemprop="url" rel="index">
+                    <span itemprop="name">SpringMVC</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2016/11/06/SpringMVC映射请求参数的方式（参数绑定方式）/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/11/06/SpringMVC映射请求参数的方式（参数绑定方式）/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>　　 SpringMVC通过分析处理方法的签名，可以将HTTP请求信息绑定到处理方法的相应参数中。</p>
+<h2 id="使用-RequestParam绑定请求参数值"><a href="#使用-RequestParam绑定请求参数值" class="headerlink" title="使用@RequestParam绑定请求参数值"></a>使用@RequestParam绑定请求参数值</h2><p>　　在处理方法参数处使用@RequestParam可以把请求参数传递给请求方法，其中：<br><strong>– value</strong>：请求参数的参数名<br><strong>– required</strong>：该参数是否必须，默认为true,<br><strong>– defaultValue</strong>：请求参数的默认值，表示请求参数中必须包含对应的参数，若不存在，将抛出异常。</p>
+<p>例如：</p>
+<p>jsp：<br><figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">&lt;form action="springmvc/test?userName=Jack" method="post"&gt;</div><div class="line">		&lt;input type="submit" value="submit"&gt;</div><div class="line">	&lt;/form&gt;</div></pre></td></tr></table></figure></p>
+<p>控制器：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@Controller</span></div><div class="line"><span class="meta">@RequestMapping</span>(<span class="string">"/springmvc"</span>)</div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SpringMVCTest</span> </span>&#123;</div><div class="line">	</div><div class="line">	<span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> String SUCCESS = <span class="string">"success"</span>;  </div><div class="line"></div><div class="line">	<span class="meta">@RequestMapping</span>(<span class="string">"/test"</span>)</div><div class="line">	<span class="function"><span class="keyword">public</span> String <span class="title">testRequestParam</span><span class="params">(@RequestParam(value=<span class="string">"userName"</span>)</span> String username) </span>&#123;</div><div class="line">		System.out.println(username);</div><div class="line">		<span class="keyword">return</span> SUCCESS;</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>　　控制器中的方法也可写为：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@RequestMapping</span>(<span class="string">"/test"</span>)</div><div class="line"><span class="function"><span class="keyword">public</span> String <span class="title">testRequestParam</span><span class="params">(String userName)</span> </span>&#123;</div><div class="line">	System.out.println(userName);</div><div class="line">	<span class="keyword">return</span> SUCCESS;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>　　<strong>此时方法的参数名必须与页面传来的参数名一致（都为userName），否则会获取不到。</strong>
+　　</p>
+<h2 id="使用-RequestHeader绑定请求报头的属性值，使用-CookieValue绑定请求中的Cookie值（不常用，了解即可）"><a href="#使用-RequestHeader绑定请求报头的属性值，使用-CookieValue绑定请求中的Cookie值（不常用，了解即可）" class="headerlink" title="使用@RequestHeader绑定请求报头的属性值，使用@CookieValue绑定请求中的Cookie值（不常用，了解即可）"></a>使用@RequestHeader绑定请求报头的属性值，使用@CookieValue绑定请求中的Cookie值（不常用，了解即可）</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//使用@RequestHeader绑定请求报头的属性值</span></div><div class="line"><span class="meta">@RequestMapping</span>(<span class="string">"/testRequestHeader"</span>)  </div><div class="line"><span class="function"><span class="keyword">public</span> String <span class="title">testRequestHeader</span><span class="params">(  </span></span></div><div class="line">        @RequestHeader(value = <span class="string">"Accept-Language"</span>) String al) &#123;  </div><div class="line">    System.out.println(<span class="string">"testRequestHeader, Accept-Language: "</span> + al);  </div><div class="line">    <span class="keyword">return</span> SUCCESS;  </div><div class="line">&#125;  </div><div class="line"></div><div class="line"><span class="comment">//使用@CookieValue绑定请求中的Cookie值</span></div><div class="line"> <span class="meta">@RequestMapping</span>(<span class="string">"/testCookieValue"</span>)  </div><div class="line"><span class="function"><span class="keyword">public</span> String <span class="title">testCookieValue</span><span class="params">(@CookieValue(<span class="string">"JSESSIONID"</span>)</span> String sessionId) </span>&#123;  </div><div class="line">    System.out.println(<span class="string">"testCookieValue: sessionId: "</span> + sessionId);  </div><div class="line">    <span class="keyword">return</span> SUCCESS;  </div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="使用POJO对象绑定请求参数值（用于传递对象）"><a href="#使用POJO对象绑定请求参数值（用于传递对象）" class="headerlink" title="使用POJO对象绑定请求参数值（用于传递对象）"></a>使用POJO对象绑定请求参数值（用于传递对象）</h2><p>　　SpringMVC会按请求参数名和POJO属性名进行自动匹配，自动为该对象填充属性值。支持级联属性。如：dept.deptId、dept.address.tel等，例如：<br>　　<br>POJO：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">User</span> </span>&#123;  </div><div class="line">    <span class="keyword">private</span> String userName;  </div><div class="line">    <span class="keyword">private</span> <span class="keyword">int</span> age;  </div><div class="line">    <span class="keyword">private</span> Address address;  </div><div class="line">    <span class="comment">//get,set,toString方法略</span></div><div class="line">    &#125;</div><div class="line">    </div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Address</span></span>&#123;  </div><div class="line">    <span class="keyword">private</span> String province;  </div><div class="line">    <span class="keyword">private</span> String city;  </div><div class="line">    <span class="comment">//get,set,toString方法略</span></div><div class="line">    &#125;</div></pre></td></tr></table></figure></p>
+<p>控制器：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@Controller</span>  </div><div class="line"><span class="meta">@RequestMapping</span>(<span class="string">"springmvc"</span>)  </div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SpringMVCTest</span> </span>&#123;  </div><div class="line">  </div><div class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> String SUCCESS = <span class="string">"success"</span>;  </div><div class="line">    <span class="meta">@RequestMapping</span>(<span class="string">"/testPOJO"</span>)  </div><div class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">testPOJO</span><span class="params">(User user)</span></span>&#123;  </div><div class="line">        System.out.println(user);  </div><div class="line">        <span class="keyword">return</span> SUCCESS;  </div><div class="line">    &#125;&#125;</div></pre></td></tr></table></figure></p>
+<p>jsp:<br><figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">&lt;form action="springmvc/testPOJO" method="post"&gt;  </div><div class="line">        username:&lt;input type="text" name="userName"&gt;&lt;br&gt;&lt;br&gt;  </div><div class="line">        age:&lt;input type="text" name="age"&gt;&lt;br&gt;&lt;br&gt;  </div><div class="line">        province:&lt;input type="text" name="address.province"&gt;&lt;br&gt;&lt;br&gt;  </div><div class="line">        city:&lt;input type="text" name="address.city"&gt;&lt;br&gt;&lt;br&gt;  </div><div class="line">        &lt;input type="submit" value="Submit"&gt;  </div><div class="line">    &lt;/form&gt;</div></pre></td></tr></table></figure></p>
+<p>　　<strong>注意，jsp中form表单数据的name值需要与POJO的字段值一致。</strong></p>
+<h2 id="使用ServletAPI作为参数"><a href="#使用ServletAPI作为参数" class="headerlink" title="使用ServletAPI作为参数"></a>使用ServletAPI作为参数</h2><p>　　MVC 的Handler 方法可以接受如下ServletAPI类型的参数:<br>　　<br>　　 • HttpServletRequest<br>　　 • HttpServletResponse<br>　　 • HttpSession<br>　　 • Java.security.Principal•Locale<br>　　 • InputStream<br>　　 • OutputStream<br>　　 • Reader<br>　　 • Writer<br>　　<br>　　例如：<br>　　<br>jsp：<br><figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">&lt;a href="springmvc/testServletAPI"&gt;Test ServletAPI&lt;/a&gt;</div></pre></td></tr></table></figure></p>
+<p>控制器：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">    <span class="meta">@RequestMapping</span>(<span class="string">"/testServletAPI"</span>)  </div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">testServletAPI</span><span class="params">(HttpServletRequest request,  </span></span></div><div class="line">            HttpServletResponse response, Writer out) <span class="keyword">throws</span> IOException &#123;  </div><div class="line">        System.out.println(<span class="string">"testServletAPI, "</span> + request + <span class="string">", "</span> + response);  </div><div class="line">        out.write(<span class="string">"hello springmvc"</span>);  </div><div class="line"><span class="comment">//        return SUCCESS;  </span></div><div class="line">    &#125;  </div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>点击jsp页面的Test ServletAPI：</p>
+<p><img src="http://static.zybuluo.com/xiangwanpeng/6px3vhji4ns7bdh80gzck6gx/image_1b0rv5de613kekkko9u1kqr5289.png" alt="image_1b0rv5de613kekkko9u1kqr5289.png-11.6kB"></p>
+<p>并在控制台输出：</p>
+<p>testServletAPI, org.apache.catalina.connector.RequestFacade@3277a570, org.apache.catalina.connector.ResponseFacade@4d0e75f2</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/SpringMVC/" rel="tag">#SpringMVC</a>
+          
+            <a href="/tags/Java-Web/" rel="tag">#Java Web</a>
+          
+            <a href="/tags/参数绑定/" rel="tag">#参数绑定</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/11/06/关于请求方法为GET的form表单，action属性后不能带参数的问题/" rel="next" title="关于请求方法为GET的form表单，action属性后不能带参数的问题">
+                <i class="fa fa-chevron-left"></i> 关于请求方法为GET的form表单，action属性后不能带参数的问题
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/11/06/SpringMVC中如何处理模型数据/" rel="prev" title="SpringMVC中如何处理模型数据">
+                SpringMVC中如何处理模型数据 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2016/11/06/SpringMVC映射请求参数的方式（参数绑定方式）/"
+           data-title="SpringMVC映射请求参数的方式（参数绑定方式）" data-url="http://yoursite.com/2016/11/06/SpringMVC映射请求参数的方式（参数绑定方式）/">
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/image/avatar.png"
+               alt="Alan" />
+          <p class="site-author-name" itemprop="name">Alan</p>
+          <p class="site-description motion-element" itemprop="description">Better late than never.</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">26</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">6</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">44</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/xiangwanpeng" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/u/2810288024/home" target="_blank" title="weibo">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  weibo
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#使用-RequestParam绑定请求参数值"><span class="nav-number">1.</span> <span class="nav-text">使用@RequestParam绑定请求参数值</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#使用-RequestHeader绑定请求报头的属性值，使用-CookieValue绑定请求中的Cookie值（不常用，了解即可）"><span class="nav-number">2.</span> <span class="nav-text">使用@RequestHeader绑定请求报头的属性值，使用@CookieValue绑定请求中的Cookie值（不常用，了解即可）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#使用POJO对象绑定请求参数值（用于传递对象）"><span class="nav-number">3.</span> <span class="nav-text">使用POJO对象绑定请求参数值（用于传递对象）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#使用ServletAPI作为参数"><span class="nav-number">4.</span> <span class="nav-text">使用ServletAPI作为参数</span></a></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2016</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Alan</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Pisces
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.1"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.0.1"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.1"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"xiangwanpeng"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+    
+    <script src="/vendors/ua-parser-js/dist/ua-parser.min.js?v=0.7.9"></script>
+    <script src="/js/src/hook-duoshuo.js"></script>
+  
+
+
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

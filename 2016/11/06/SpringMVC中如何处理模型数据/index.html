@@ -1,0 +1,718 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="SpringMVC,Java Web,模型数据," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.1" />
+
+
+
+
+
+
+<meta name="description" content="Spring MVC 提供了以下几种途径输出模型数据：
+
+ModelAndView: 处理方法返回值类型为ModelAndView时, 方法体即可通过该对象添加模型数据
+Map 及Model: 入参为org.springframework.ui.Model、org.springframework.ui.ModelMap或java.util.Map时，处理方法返回时，Map中的数据会自动添加到模">
+<meta property="og:type" content="article">
+<meta property="og:title" content="SpringMVC中如何处理模型数据">
+<meta property="og:url" content="http://yoursite.com/2016/11/06/SpringMVC中如何处理模型数据/index.html">
+<meta property="og:site_name" content="向万鹏的独立博客">
+<meta property="og:description" content="Spring MVC 提供了以下几种途径输出模型数据：
+
+ModelAndView: 处理方法返回值类型为ModelAndView时, 方法体即可通过该对象添加模型数据
+Map 及Model: 入参为org.springframework.ui.Model、org.springframework.ui.ModelMap或java.util.Map时，处理方法返回时，Map中的数据会自动添加到模">
+<meta property="og:image" content="http://static.zybuluo.com/xiangwanpeng/zxwa38fq1mnqxeajsu4m43bc/image_1b0spbdhjovc19ootuc1dgebnp9.png">
+<meta property="og:image" content="http://static.zybuluo.com/xiangwanpeng/w0qpz3im21rctmoa7ub741xa/image_1b0sqenm3154jii6vb21g4a1o1nm.png">
+<meta property="og:image" content="http://static.zybuluo.com/xiangwanpeng/jh0jnjupohmbm0h7vc5v7c5u/image_1b0ssdm811mfs1nt3b3g1td6gvr2a.png">
+<meta property="og:image" content="http://static.zybuluo.com/xiangwanpeng/fhlsnu6akigourmz4vjjdvou/image_1b0ss9u9q1718gft1ctbjgf1lf01t.png">
+<meta property="og:image" content="http://static.zybuluo.com/xiangwanpeng/cgj7k0g7hg0sk8ztr82855xt/image_1b0stovhk9c81hu41fnomvja7k2n.png">
+<meta property="og:image" content="http://static.zybuluo.com/xiangwanpeng/z63dhvkrfjhp2s4tycmlg0rp/image_1b0su1eligi916uo68cdg8rij34.png">
+<meta property="og:image" content="http://static.zybuluo.com/xiangwanpeng/9gpf3e8s6jz3hu90mkalzvh3/image_1b0u4nqt51qsb1b4019hq1fme1h5cm.png">
+<meta property="og:updated_time" content="2016-11-07T01:16:05.107Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="SpringMVC中如何处理模型数据">
+<meta name="twitter:description" content="Spring MVC 提供了以下几种途径输出模型数据：
+
+ModelAndView: 处理方法返回值类型为ModelAndView时, 方法体即可通过该对象添加模型数据
+Map 及Model: 入参为org.springframework.ui.Model、org.springframework.ui.ModelMap或java.util.Map时，处理方法返回时，Map中的数据会自动添加到模">
+<meta name="twitter:image" content="http://static.zybuluo.com/xiangwanpeng/zxwa38fq1mnqxeajsu4m43bc/image_1b0spbdhjovc19ootuc1dgebnp9.png">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"always"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 0,
+      author: '博主'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2016/11/06/SpringMVC中如何处理模型数据/"/>
+
+  <title> SpringMVC中如何处理模型数据 | 向万鹏的独立博客 </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">向万鹏的独立博客</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle"></p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                SpringMVC中如何处理模型数据
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-11-06T19:38:46+08:00" content="2016-11-06">
+              2016-11-06
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/SpringMVC/" itemprop="url" rel="index">
+                    <span itemprop="name">SpringMVC</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2016/11/06/SpringMVC中如何处理模型数据/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/11/06/SpringMVC中如何处理模型数据/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>　　Spring MVC 提供了以下几种途径输出模型数据：</p>
+<ul>
+<li><strong>ModelAndView:</strong> 处理方法<strong>返回值类型</strong>为ModelAndView时, 方法体即可通过该对象添加模型数据</li>
+<li><strong>Map 及Model:</strong> 入参为org.springframework.ui.Model、org.springframework.ui.ModelMap或java.util.Map时，处理方法返回时，Map中的数据会自动添加到模型中。</li>
+<li><strong>@SessionAttributes:</strong> 将模型中的某个属性暂存到HttpSession中，以便多个请求之间可以共享这个属性</li>
+<li><strong>@ModelAttribute:</strong> 方法入参标注该注解后, 入参的对象就会放到数据模型中<br>　　<br>下面对它们依次进行介绍：</li>
+</ul>
+<h2 id="ModelAndView："><a href="#ModelAndView：" class="headerlink" title="ModelAndView："></a>ModelAndView：</h2><p>　　可将控制器处理方法的返回值设为ModelAndView, ModelAndView中<strong>既可存放视图信息，也可存放模型数据信息</strong>。<br>　　<strong>SpringMVC 会把 ModelAndView 的 model 中数据放入到 request 域对象中</strong>。<br>　　<br><strong>ModelAndView设置视图的方法：</strong></p>
+<ul>
+<li>void setView(View view)</li>
+<li>void setViewName(String viewName)</li>
+</ul>
+<p><strong>ModelAndView添加模型数据的方法：</strong></p>
+<ul>
+<li>MoelAndView addObject(String attributeName, Object attributeValue)</li>
+<li>ModelAndView addAllObject(Map<string, ?=""> modelMap)</string,></li>
+</ul>
+<p>下面举例说明：</p>
+<p>index.jsp：<br><figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">&lt;a href="springmvc/testModelAndView"&gt;Test ModelAndView&lt;/a&gt;</div></pre></td></tr></table></figure></p>
+<p>controller：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> String SUCCESS = <span class="string">"success"</span>;</div><div class="line"><span class="comment">/**</span></div><div class="line">	 * 目标方法的返回值可以是 ModelAndView 类型。 </div><div class="line">	 * 其中可以包含视图和模型信息</div><div class="line">	 * SpringMVC 会把 ModelAndView 的 model 中数据放入到 request 域对象中. </div><div class="line">	 * <span class="doctag">@return</span></div><div class="line">	 */</div><div class="line">	<span class="meta">@RequestMapping</span>(<span class="string">"/testModelAndView"</span>)</div><div class="line">	<span class="function"><span class="keyword">public</span> ModelAndView <span class="title">testModelAndView</span><span class="params">()</span></span>&#123;</div><div class="line">		String viewName = SUCCESS;</div><div class="line">		ModelAndView modelAndView = <span class="keyword">new</span> ModelAndView(viewName);</div><div class="line">		</div><div class="line">		<span class="comment">//添加模型数据到 ModelAndView 中.</span></div><div class="line">		modelAndView.addObject(<span class="string">"time"</span>, <span class="keyword">new</span> Date());</div><div class="line">		</div><div class="line">		<span class="keyword">return</span> modelAndView;</div><div class="line">	&#125;</div></pre></td></tr></table></figure></p>
+<p>success.jsp：<br><figure class="highlight jsp"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">time : $&#123;requestScope.time &#125;</div></pre></td></tr></table></figure></p>
+<p>运行会成功跳转到success.jsp并显示当前时间:</p>
+<p><img src="http://static.zybuluo.com/xiangwanpeng/zxwa38fq1mnqxeajsu4m43bc/image_1b0spbdhjovc19ootuc1dgebnp9.png" alt="image_1b0spbdhjovc19ootuc1dgebnp9.png-13kB"></p>
+<h2 id="Map及Model："><a href="#Map及Model：" class="headerlink" title="Map及Model："></a>Map及Model：</h2><p>　　Spring MVC 在调用方法前会创建一个隐含的模型对象作为模型数据的存储容器（事实上这个隐含的模型对象是一个BindingAwareModelMap 类型的对象，通过后面的例子我们可以验证），如果方法的入参为Map、Model或者ModelMap 类型，Spring MVC 会将隐含模型的引用传递给这些入参（因为BindingAwareModelMap 继承或实现了Map、Model或者ModelMap）。在方法体内，开发者可以通过这个入参对象访问到模型中的所有数据，也可以向模型中添加新的属性数据，SpringMVC 也会把 Map 中数据放入到 request 域对象中。<br>　　通常情况下使用的都是Map类型，下面我们以Map为例说明：<br>　　<br>index.jsp：<br><figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">&lt;a href="springmvc/testMap"&gt;Test Map&lt;/a&gt;</div></pre></td></tr></table></figure></p>
+<p>controller：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/**</span></div><div class="line">	 * 目标方法可以添加 Map 类型(实际上也可以是 Model 类型或 ModelMap 类型)的参数.</div><div class="line">	 * </div><div class="line">	 * <span class="doctag">@param</span> map</div><div class="line">	 * <span class="doctag">@return</span></div><div class="line">	 */</div><div class="line">	<span class="meta">@RequestMapping</span>(<span class="string">"/testMap"</span>)</div><div class="line">	<span class="function"><span class="keyword">public</span> String <span class="title">testMap</span><span class="params">(Map&lt;String, Object&gt; map)</span> </span>&#123;</div><div class="line">		System.out.println(map.getClass().getName());</div><div class="line">		map.put(<span class="string">"names"</span>, Arrays.asList(<span class="string">"Tom"</span>, <span class="string">"Jerry"</span>, <span class="string">"Mike"</span>));</div><div class="line">		<span class="keyword">return</span> SUCCESS;</div><div class="line">	&#125;</div></pre></td></tr></table></figure></p>
+<p>success.jsp：<br><figure class="highlight jsp"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">names: $&#123;requestScope.names &#125;</div></pre></td></tr></table></figure></p>
+<p>运行程序成功跳转到success.jsp：</p>
+<p><img src="http://static.zybuluo.com/xiangwanpeng/w0qpz3im21rctmoa7ub741xa/image_1b0sqenm3154jii6vb21g4a1o1nm.png" alt="image_1b0sqenm3154jii6vb21g4a1o1nm.png-12.1kB"></p>
+<p>并且在控制台输出了：</p>
+<p><strong>org.springframework.validation.support.BindingAwareModelMap</strong></p>
+<p>这说明Spring MVC在调用方法前创建的隐含的模型对象是 BindingAwareModelMap 类型。</p>
+<h2 id="SessionAttributes："><a href="#SessionAttributes：" class="headerlink" title="@SessionAttributes："></a>@SessionAttributes：</h2><p>　　上面介绍的两种方式，SpringMVC都是将数据存放在request域对象中，若希望<strong>在多个请求之间共用某个模型属性数据</strong>，则可以在<strong>控制器类</strong>上标注一个@SessionAttributes注解（<strong>该注解只能放在类的上面， 而不能修饰放方法</strong>）, Spring MVC 将把模型中对应的属性暂存到HttpSession中。@SessionAttributes除了可以通过<strong>属性名</strong>指定需要放到会话中的属性外，还可以通过<strong>模型属性的对象类型</strong>指定哪些模型属性需要放到会话中，下面举例说明（User类代码略）：<br><figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">&lt;a href="springmvc/testSessionAttributes"&gt;Test SessionAttributes&lt;/a&gt;</div></pre></td></tr></table></figure></p>
+<p>controller：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/**</span></div><div class="line">	 * <span class="doctag">@SessionAttributes</span> 除了可以通过属性名指定需要放到会话中的属性外(实际上使用的是 value 属性值),</div><div class="line">	 * 还可以通过模型属性的对象类型指定哪些模型属性需要放到会话中(实际上使用的是 types 属性值)</div><div class="line">	 * </div><div class="line">	 * 注意: 该注解只能放在类的上面. 而不能修饰放方法. </div><div class="line">	 */</div><div class="line">	<span class="meta">@RequestMapping</span>(<span class="string">"/testSessionAttributes"</span>)</div><div class="line">	<span class="function"><span class="keyword">public</span> String <span class="title">testSessionAttributes</span><span class="params">(Map&lt;String,Object&gt; map)</span></span>&#123;</div><div class="line">		User user = <span class="keyword">new</span> User(<span class="string">"Jack"</span>,<span class="string">"123456"</span>,<span class="string">"Jack@163.com"</span>,<span class="number">20</span>);</div><div class="line">		map.put(<span class="string">"user"</span>, user);</div><div class="line">		map.put(<span class="string">"school"</span>, <span class="string">"HUST"</span>);</div><div class="line">		<span class="keyword">return</span> SUCCESS;</div><div class="line">	&#125;</div></pre></td></tr></table></figure></p>
+<p>success.jsp：<br><figure class="highlight jsp"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">request user : $&#123;requestScope.user &#125;</div><div class="line">&lt;br&gt;&lt;br&gt;</div><div class="line">session user : $&#123;sessionScope.user &#125;</div><div class="line">&lt;br&gt;&lt;br&gt;</div><div class="line">request school : $&#123;requestScope.school &#125;</div><div class="line">&lt;br&gt;&lt;br&gt;</div><div class="line">session school : $&#123;sessionScope.school &#125;</div><div class="line">&lt;br&gt;&lt;br&gt;</div></pre></td></tr></table></figure></p>
+<p>　　现在，我们<strong>没有在该控制器类上标记@SessionAttributes注解</strong>，运行后跳转到success.jsp，页面显示如下：</p>
+<p><img src="http://static.zybuluo.com/xiangwanpeng/jh0jnjupohmbm0h7vc5v7c5u/image_1b0ssdm811mfs1nt3b3g1td6gvr2a.png" alt="image_1b0ssdm811mfs1nt3b3g1td6gvr2a.png-21.7kB"></p>
+<p>　　即<strong>Map中的数据只被存放到了request域中，而没有被存放到session域中</strong>。现在，我们在该控制器类定义处添加@SessionAttributes注解：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@Controller</span></div><div class="line"><span class="meta">@RequestMapping</span>(<span class="string">"/springmvc"</span>)</div><div class="line"><span class="meta">@SessionAttributes</span>(value=<span class="string">"user"</span>,types=&#123;String.class&#125;)</div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SpringMVCTest</span> </span>&#123;</div><div class="line">        <span class="comment">//...</span></div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>@SessionAttributes(value=”user”,types={String.class})注解指定了属性名为user，<strong>或者</strong>类型为String的属性会被存放到session域中，现在运行程序，发现在success.jsp中既输出了request user和school，也输出了session user和school：</p>
+<p><img src="http://static.zybuluo.com/xiangwanpeng/fhlsnu6akigourmz4vjjdvou/image_1b0ss9u9q1718gft1ctbjgf1lf01t.png" alt="image_1b0ss9u9q1718gft1ctbjgf1lf01t.png-26.4kB"></p>
+<h2 id="ModelAttribute："><a href="#ModelAttribute：" class="headerlink" title="@ModelAttribute："></a>@ModelAttribute：</h2><p>　　@ModelAttribute可以模拟出Struts2中Preparable拦截器的效果，想象这样一种情景：有一个User类，有id、userName、email三个属性。现在要完成一个修改操作，但是其中有一项属性不能被修改，例如id，那么只能修改两项属性，userName和email，所以从form表单传递的信息就只能有这两项，我们通常的处理方法是new一个User对象user，用form表单传递的值给user赋值，然后用user作为参数去更新信息，现在由于form表单无法传递id值，那么user.id此时就为null，便无法满足我们要求的更新操作，如下图：<br>　　<img src="http://static.zybuluo.com/xiangwanpeng/cgj7k0g7hg0sk8ztr82855xt/image_1b0stovhk9c81hu41fnomvja7k2n.png" alt="image_1b0stovhk9c81hu41fnomvja7k2n.png-61.2kB"><br>　　<br>　　解决这种问题的办法是：对于对象user，我们不采取new的方式，而是使用从数据库中直接获取的方式，这样一来，user中的属性值就是原数据库中存储的属性值，那么用form表单传递过来的userName和email值更新user之后，它的id仍然为原来的值，如下图所示:<br>　　<img src="http://static.zybuluo.com/xiangwanpeng/z63dhvkrfjhp2s4tycmlg0rp/image_1b0su1eligi916uo68cdg8rij34.png" alt="image_1b0su1eligi916uo68cdg8rij34.png-71kB"><br>　　<br>　　@ModelAttribute注解为我们提供了这种解决方法的实现：<strong>使用@ModelAttribute注解的方法，会在调用目标处理方法之前被调用</strong>。下面我们根据先前所说的例子来说明，修改数据库中一条user记录，其中id属性不能修改，数据库相关的操作我们仅采用模拟的方式：<br>　　<br>　index.jsp：<br><figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">　&lt;!--  </div><div class="line">		模拟修改操作</div><div class="line">		1. 原始数据为: 1,Jack,Jack@163.com</div><div class="line">		2. 将username和email修改为Mike、Mike@qq.com，id不能被修改.</div><div class="line">		3. 表单回显, 模拟操作直接在表单填写对应的属性值</div><div class="line">	--&gt;</div><div class="line">&lt;form action="springmvc/testModelAttribute" method="Post"&gt;</div><div class="line">		username: &lt;input type="text" name="username" value="Jack"/&gt;</div><div class="line">		&lt;br&gt;</div><div class="line">		email: &lt;input type="text" name="email" value="Jack@163.com"/&gt;</div><div class="line">		&lt;br&gt;</div><div class="line">		&lt;input type="submit" value="Submit"/&gt;</div><div class="line">	&lt;/form&gt;</div></pre></td></tr></table></figure></p>
+<p>　　<br>controller：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@ModelAttribute</span></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">getUser</span><span class="params">(Map&lt;String, Object&gt; map)</span> </span>&#123;</div><div class="line">		System.out.println(<span class="string">"modelAttribute method"</span>);</div><div class="line">			<span class="comment">// 模拟从数据库中获取对象</span></div><div class="line">			User user = <span class="keyword">new</span> User(<span class="number">1</span>,<span class="string">"Jack"</span>, <span class="string">"Jack@163.com"</span>);</div><div class="line">			System.out.println(<span class="string">"从数据库中获取一个对象: "</span> + user);</div><div class="line">			map.put(<span class="string">"user"</span>, user);</div><div class="line">	&#125;</div><div class="line">	</div><div class="line">	<span class="meta">@RequestMapping</span>(<span class="string">"/testModelAttribute"</span>)</div><div class="line">	<span class="function"><span class="keyword">public</span> String <span class="title">testModelAttribute</span><span class="params">(User user)</span></span>&#123;</div><div class="line">		System.out.println(<span class="string">"修改: "</span> + user);</div><div class="line">		<span class="keyword">return</span> SUCCESS;</div><div class="line">	&#125;</div></pre></td></tr></table></figure></p>
+<p>运行后，在控制台输出：</p>
+<p><img src="http://static.zybuluo.com/xiangwanpeng/9gpf3e8s6jz3hu90mkalzvh3/image_1b0u4nqt51qsb1b4019hq1fme1h5cm.png" alt="image_1b0u4nqt51qsb1b4019hq1fme1h5cm.png-21kB"></p>
+<p>　　值得注意的是：<br>　　1、被@ModelAttribute标记的方法<strong>会在SpringMVC调用该控制器中任何目标方法之前被调用</strong>，也就是说，getUser()不仅仅只在调用testModelAttribute(User user)之前被调用，当这个控制器中任何目标方法被调用时，getUser()都会在其之前被调用。<br>　　2、getUser()中放置在map中的键值对的键“user”是testModelAttribute(User user)方法中入参类型“User”的首字母小写形式，这是一种最常用的匹配方式，其实还可以通过@ModelAttribute修饰入参，从而使用另一种匹配方式，这些内容我们将在下一篇文章中，通过阅读SpringMVC的源代码，深入理解@ModelAttribute的工作过程，进行更进一步地讨论。</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/SpringMVC/" rel="tag">#SpringMVC</a>
+          
+            <a href="/tags/Java-Web/" rel="tag">#Java Web</a>
+          
+            <a href="/tags/模型数据/" rel="tag">#模型数据</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/11/06/SpringMVC映射请求参数的方式（参数绑定方式）/" rel="next" title="SpringMVC映射请求参数的方式（参数绑定方式）">
+                <i class="fa fa-chevron-left"></i> SpringMVC映射请求参数的方式（参数绑定方式）
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/11/07/深入理解@ModelAttribute注解的工作过程/" rel="prev" title="深入理解@ModelAttribute注解的工作过程">
+                深入理解@ModelAttribute注解的工作过程 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2016/11/06/SpringMVC中如何处理模型数据/"
+           data-title="SpringMVC中如何处理模型数据" data-url="http://yoursite.com/2016/11/06/SpringMVC中如何处理模型数据/">
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/image/avatar.png"
+               alt="Alan" />
+          <p class="site-author-name" itemprop="name">Alan</p>
+          <p class="site-description motion-element" itemprop="description">Better late than never.</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">26</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">6</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">44</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/xiangwanpeng" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/u/2810288024/home" target="_blank" title="weibo">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  weibo
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#ModelAndView："><span class="nav-number">1.</span> <span class="nav-text">ModelAndView：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Map及Model："><span class="nav-number">2.</span> <span class="nav-text">Map及Model：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#SessionAttributes："><span class="nav-number">3.</span> <span class="nav-text">@SessionAttributes：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ModelAttribute："><span class="nav-number">4.</span> <span class="nav-text">@ModelAttribute：</span></a></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2016</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Alan</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Pisces
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.1"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.0.1"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.1"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"xiangwanpeng"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+    
+    <script src="/vendors/ua-parser-js/dist/ua-parser.min.js?v=0.7.9"></script>
+    <script src="/js/src/hook-duoshuo.js"></script>
+  
+
+
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

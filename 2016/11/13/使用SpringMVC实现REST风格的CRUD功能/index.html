@@ -1,0 +1,754 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="SpringMVC,REST,CRUD," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.1" />
+
+
+
+
+
+
+<meta name="description" content="这篇文章介绍如何使用SpringMVC实现简单的、REST风格的员工信息的增删改查操作。项目源码附在我的github中。
+　　
+需求① 查看所有员工信息：（url:emps，method：GET）
+
+② 添加员工信息，添加后重定向到显示员工信息页面：（url:emp，method：POST）
+
+
+③ 更新员工信息。LastName字段不可修改，要求能够回显表单，更新后重定向到显示员工信息页面：">
+<meta property="og:type" content="article">
+<meta property="og:title" content="使用SpringMVC实现REST风格的CRUD功能">
+<meta property="og:url" content="http://yoursite.com/2016/11/13/使用SpringMVC实现REST风格的CRUD功能/index.html">
+<meta property="og:site_name" content="向万鹏的独立博客">
+<meta property="og:description" content="这篇文章介绍如何使用SpringMVC实现简单的、REST风格的员工信息的增删改查操作。项目源码附在我的github中。
+　　
+需求① 查看所有员工信息：（url:emps，method：GET）
+
+② 添加员工信息，添加后重定向到显示员工信息页面：（url:emp，method：POST）
+
+
+③ 更新员工信息。LastName字段不可修改，要求能够回显表单，更新后重定向到显示员工信息页面：">
+<meta property="og:image" content="http://static.zybuluo.com/xiangwanpeng/6c7llsk0ogkj3kox0v9s2v7i/image_1b1dlbuog1jhq1u2dfi010uf153v9.png">
+<meta property="og:image" content="http://static.zybuluo.com/xiangwanpeng/lj21qmuybagysrnzee7iathi/image_1b1dlh5bik4316kl11kq75jqvi13.png">
+<meta property="og:image" content="http://static.zybuluo.com/xiangwanpeng/m69wzh1bdg2ch9yt0jdgo49i/image_1b1dlfl0q1i2l18751ts2m4c1nldm.png">
+<meta property="og:image" content="http://static.zybuluo.com/xiangwanpeng/blqehoho6ibmn25ee82k0i7l/image_1b1dmlo7b1cnc1f3sn7fv4cb171g.png">
+<meta property="og:image" content="http://static.zybuluo.com/xiangwanpeng/hl7ecxcr3bocje970a2ngjdj/image_1b1doigq71hd01kg01e6cqbd150q2j.png">
+<meta property="og:image" content="http://static.zybuluo.com/xiangwanpeng/6dwjwfovhx3fwixmtq6ylv96/image_1b1dohstp1v2tjt8rstfue1n9o26.png">
+<meta property="og:image" content="http://static.zybuluo.com/xiangwanpeng/hf3nbxsrbu9u4txhewjpb9p2/image_1b1dp9ap5105bn081nmlna5bnj30.png">
+<meta property="og:image" content="http://static.zybuluo.com/xiangwanpeng/y5t8muqjo7qgfqthizj8msdq/image_1b1ds94ej1m5d1c9h2oo118g13vc3t.png">
+<meta property="og:image" content="http://static.zybuluo.com/xiangwanpeng/otoyltxu91jtya4m035h7znf/image_1b1dsabituub1vpsv23grg1f2f4a.png">
+<meta property="og:image" content="http://static.zybuluo.com/xiangwanpeng/wpqhb9q2gbo8btbfo2yjb9ag/image_1b1dsi76s5j875d19k014n2nao4n.png">
+<meta property="og:updated_time" content="2016-11-13T04:30:48.630Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="使用SpringMVC实现REST风格的CRUD功能">
+<meta name="twitter:description" content="这篇文章介绍如何使用SpringMVC实现简单的、REST风格的员工信息的增删改查操作。项目源码附在我的github中。
+　　
+需求① 查看所有员工信息：（url:emps，method：GET）
+
+② 添加员工信息，添加后重定向到显示员工信息页面：（url:emp，method：POST）
+
+
+③ 更新员工信息。LastName字段不可修改，要求能够回显表单，更新后重定向到显示员工信息页面：">
+<meta name="twitter:image" content="http://static.zybuluo.com/xiangwanpeng/6c7llsk0ogkj3kox0v9s2v7i/image_1b1dlbuog1jhq1u2dfi010uf153v9.png">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"always"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 0,
+      author: '博主'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2016/11/13/使用SpringMVC实现REST风格的CRUD功能/"/>
+
+  <title> 使用SpringMVC实现REST风格的CRUD功能 | 向万鹏的独立博客 </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">向万鹏的独立博客</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle"></p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                使用SpringMVC实现REST风格的CRUD功能
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-11-13T09:31:41+08:00" content="2016-11-13">
+              2016-11-13
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/SpringMVC/" itemprop="url" rel="index">
+                    <span itemprop="name">SpringMVC</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2016/11/13/使用SpringMVC实现REST风格的CRUD功能/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/11/13/使用SpringMVC实现REST风格的CRUD功能/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>　　这篇文章介绍如何使用SpringMVC实现简单的、REST风格的员工信息的增删改查操作。<a href="https://github.com/xiangwanpeng/SpringMVC_CRUD_REST" target="_blank" rel="external">项目源码</a>附在我的github中。
+　　</p>
+<h2 id="需求"><a href="#需求" class="headerlink" title="需求"></a>需求</h2><p>① 查看所有员工信息：（url:emps，method：GET）</p>
+<p><img src="http://static.zybuluo.com/xiangwanpeng/6c7llsk0ogkj3kox0v9s2v7i/image_1b1dlbuog1jhq1u2dfi010uf153v9.png" alt="image_1b1dlbuog1jhq1u2dfi010uf153v9.png-49.9kB"></p>
+<p>② 添加员工信息，添加后重定向到显示员工信息页面：（url:emp，method：POST）</p>
+<p><img src="http://static.zybuluo.com/xiangwanpeng/lj21qmuybagysrnzee7iathi/image_1b1dlh5bik4316kl11kq75jqvi13.png" alt="image_1b1dlh5bik4316kl11kq75jqvi13.png-16.4kB"></p>
+<p><img src="http://static.zybuluo.com/xiangwanpeng/m69wzh1bdg2ch9yt0jdgo49i/image_1b1dlfl0q1i2l18751ts2m4c1nldm.png" alt="image_1b1dlfl0q1i2l18751ts2m4c1nldm.png-16.1kB"></p>
+<p>③ 更新员工信息。LastName字段不可修改，要求能够回显表单，更新后重定向到显示员工信息页面：（url:emp/{id}，method：PUT）</p>
+<p>④ 删除员工信息，删除后重定向到显示员工信息页面。（url:emp/{id}，method：DELETE）</p>
+<h2 id="实现"><a href="#实现" class="headerlink" title="实现"></a>实现</h2><p>Employee.java:<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Employee</span> </span>&#123;</div><div class="line"></div><div class="line">	<span class="keyword">private</span> Integer id;</div><div class="line"></div><div class="line">	<span class="meta">@NotEmpty</span></div><div class="line">	<span class="keyword">private</span> String lastName;</div><div class="line"></div><div class="line">	<span class="meta">@Email</span></div><div class="line">	<span class="keyword">private</span> String email;</div><div class="line">	</div><div class="line">	<span class="comment">// 1 male, 0 female</span></div><div class="line">	<span class="keyword">private</span> Integer gender;</div><div class="line"></div><div class="line">	<span class="keyword">private</span> Department department;</div><div class="line">	</div><div class="line">	<span class="comment">//方法略</span></div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>Department.java:<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Department</span> </span>&#123;</div><div class="line"></div><div class="line">	<span class="keyword">private</span> Integer id;</div><div class="line">	<span class="keyword">private</span> String departmentName;</div><div class="line">	</div><div class="line">	<span class="comment">//方法略</span></div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>EmployeeDao.java: (其中关于数据库的操作仅采用模拟方式实现)<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@Repository</span></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">EmployeeDao</span> </span>&#123;</div><div class="line"></div><div class="line">	<span class="keyword">private</span> <span class="keyword">static</span> Map&lt;Integer, Employee&gt; employees = <span class="keyword">null</span>;</div><div class="line">	</div><div class="line">	<span class="meta">@Autowired</span></div><div class="line">	<span class="keyword">private</span> DepartmentDao departmentDao;</div><div class="line">	</div><div class="line">	<span class="keyword">static</span>&#123;</div><div class="line">		employees = <span class="keyword">new</span> HashMap&lt;Integer, Employee&gt;();</div><div class="line"></div><div class="line">		<span class="keyword">try</span> &#123;</div><div class="line">			employees.put(<span class="number">1001</span>, <span class="keyword">new</span> Employee(<span class="number">1001</span>, <span class="string">"E-AA"</span>, <span class="string">"aa@163.com"</span>, <span class="number">1</span>, <span class="keyword">new</span> Department(<span class="number">101</span>, <span class="string">"D-AA"</span>),<span class="keyword">new</span> SimpleDateFormat(<span class="string">"yyyy-MM-dd"</span>).parse(<span class="string">"1994-03-21"</span>)));</div><div class="line">			employees.put(<span class="number">1002</span>, <span class="keyword">new</span> Employee(<span class="number">1002</span>, <span class="string">"E-BB"</span>, <span class="string">"bb@163.com"</span>, <span class="number">1</span>, <span class="keyword">new</span> Department(<span class="number">102</span>, <span class="string">"D-BB"</span>),<span class="keyword">new</span> SimpleDateFormat(<span class="string">"yyyy-MM-dd"</span>).parse(<span class="string">"1994-03-21"</span>)));</div><div class="line">			employees.put(<span class="number">1003</span>, <span class="keyword">new</span> Employee(<span class="number">1003</span>, <span class="string">"E-CC"</span>, <span class="string">"cc@163.com"</span>, <span class="number">0</span>, <span class="keyword">new</span> Department(<span class="number">103</span>, <span class="string">"D-CC"</span>),<span class="keyword">new</span> SimpleDateFormat(<span class="string">"yyyy-MM-dd"</span>).parse(<span class="string">"1994-03-21"</span>)));</div><div class="line">			employees.put(<span class="number">1004</span>, <span class="keyword">new</span> Employee(<span class="number">1004</span>, <span class="string">"E-DD"</span>, <span class="string">"dd@163.com"</span>, <span class="number">0</span>, <span class="keyword">new</span> Department(<span class="number">104</span>, <span class="string">"D-DD"</span>),<span class="keyword">new</span> SimpleDateFormat(<span class="string">"yyyy-MM-dd"</span>).parse(<span class="string">"1994-03-21"</span>)));</div><div class="line">			employees.put(<span class="number">1005</span>, <span class="keyword">new</span> Employee(<span class="number">1005</span>, <span class="string">"E-EE"</span>, <span class="string">"ee@163.com"</span>, <span class="number">1</span>, <span class="keyword">new</span> Department(<span class="number">105</span>, <span class="string">"D-EE"</span>),<span class="keyword">new</span> SimpleDateFormat(<span class="string">"yyyy-MM-dd"</span>).parse(<span class="string">"1994-03-21"</span>)));</div><div class="line">		&#125; <span class="keyword">catch</span> (ParseException e) &#123;</div><div class="line">			<span class="comment">// TODO Auto-generated catch block</span></div><div class="line">			e.printStackTrace();</div><div class="line">		&#125;</div><div class="line">		</div><div class="line">	&#125;</div><div class="line">	</div><div class="line">	<span class="keyword">private</span> <span class="keyword">static</span> Integer initId = <span class="number">1006</span>;</div><div class="line">	</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">save</span><span class="params">(Employee employee)</span></span>&#123;</div><div class="line">		<span class="keyword">if</span>(employee.getId() == <span class="keyword">null</span>)&#123;</div><div class="line">			employee.setId(initId++);</div><div class="line">		&#125;</div><div class="line">		</div><div class="line">		employee.setDepartment(departmentDao.getDepartment(employee.getDepartment().getId()));</div><div class="line">		employees.put(employee.getId(), employee);</div><div class="line">	&#125;</div><div class="line">	</div><div class="line">	<span class="function"><span class="keyword">public</span> Collection&lt;Employee&gt; <span class="title">getAll</span><span class="params">()</span></span>&#123;</div><div class="line">		<span class="keyword">return</span> employees.values();</div><div class="line">	&#125;</div><div class="line">	</div><div class="line">	<span class="function"><span class="keyword">public</span> Employee <span class="title">get</span><span class="params">(Integer id)</span></span>&#123;</div><div class="line">		<span class="keyword">return</span> employees.get(id);</div><div class="line">	&#125;</div><div class="line">	</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">delete</span><span class="params">(Integer id)</span></span>&#123;</div><div class="line">		employees.remove(id);</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>DepartmentDao.java: (其中关于数据库的操作仅采用模拟方式实现)<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@Repository</span></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">DepartmentDao</span> </span>&#123;</div><div class="line"></div><div class="line">	<span class="keyword">private</span> <span class="keyword">static</span> Map&lt;Integer, Department&gt; departments = <span class="keyword">null</span>;</div><div class="line">	</div><div class="line">	<span class="keyword">static</span>&#123;</div><div class="line">		departments = <span class="keyword">new</span> HashMap&lt;Integer, Department&gt;();</div><div class="line">		</div><div class="line">		departments.put(<span class="number">101</span>, <span class="keyword">new</span> Department(<span class="number">101</span>, <span class="string">"D-AA"</span>));</div><div class="line">		departments.put(<span class="number">102</span>, <span class="keyword">new</span> Department(<span class="number">102</span>, <span class="string">"D-BB"</span>));</div><div class="line">		departments.put(<span class="number">103</span>, <span class="keyword">new</span> Department(<span class="number">103</span>, <span class="string">"D-CC"</span>));</div><div class="line">		departments.put(<span class="number">104</span>, <span class="keyword">new</span> Department(<span class="number">104</span>, <span class="string">"D-DD"</span>));</div><div class="line">		departments.put(<span class="number">105</span>, <span class="keyword">new</span> Department(<span class="number">105</span>, <span class="string">"D-EE"</span>));</div><div class="line">	&#125;</div><div class="line">	</div><div class="line">	<span class="function"><span class="keyword">public</span> Collection&lt;Department&gt; <span class="title">getDepartments</span><span class="params">()</span></span>&#123;</div><div class="line">		<span class="keyword">return</span> departments.values();</div><div class="line">	&#125;</div><div class="line">	</div><div class="line">	<span class="function"><span class="keyword">public</span> Department <span class="title">getDepartment</span><span class="params">(Integer id)</span></span>&#123;</div><div class="line">		<span class="keyword">return</span> departments.get(id);</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>控制器EmployeeHandler.java:<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@Controller</span></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">EmployeeHandler</span> </span>&#123;</div><div class="line"></div><div class="line">	<span class="meta">@Autowired</span></div><div class="line">	<span class="keyword">private</span> EmployeeDao employeeDao;</div><div class="line">	<span class="meta">@Autowired</span></div><div class="line">	<span class="keyword">private</span> DepartmentDao departmenDao;</div><div class="line"></div><div class="line">	<span class="meta">@ModelAttribute</span></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">getEmployee</span><span class="params">(@RequestParam(value = <span class="string">"id"</span>, required = <span class="keyword">false</span>)</span> Integer id, Map&lt;String, Object&gt; map) </span>&#123;</div><div class="line">		<span class="keyword">if</span> (id != <span class="keyword">null</span>)</div><div class="line">			map.put(<span class="string">"employee"</span>, employeeDao.get(id));</div><div class="line">	&#125;</div><div class="line">	</div><div class="line"></div><div class="line">	<span class="meta">@RequestMapping</span>(value = <span class="string">"/emp/&#123;id&#125;"</span>, method = RequestMethod.DELETE)</div><div class="line">	<span class="function"><span class="keyword">public</span> String <span class="title">delete</span><span class="params">(@PathVariable(<span class="string">"id"</span>)</span> Integer id) </span>&#123;</div><div class="line">		employeeDao.delete(id);</div><div class="line">		<span class="keyword">return</span> <span class="string">"redirect:/emps"</span>;</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="meta">@RequestMapping</span>(value = <span class="string">"/emp"</span>, method = RequestMethod.PUT)</div><div class="line">	<span class="function"><span class="keyword">public</span> String <span class="title">update</span><span class="params">(Employee employee)</span> </span>&#123;</div><div class="line">		employeeDao.save(employee);</div><div class="line">		<span class="keyword">return</span> <span class="string">"redirect:/emps"</span>;</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="meta">@RequestMapping</span>(value = <span class="string">"/emp"</span>, method = RequestMethod.POST)</div><div class="line">	<span class="function"><span class="keyword">public</span> String <span class="title">save</span><span class="params">(@Valid Employee employee, BindingResult result, Map&lt;String, Object&gt; map)</span> </span>&#123;</div><div class="line">		<span class="keyword">if</span> (result.getErrorCount() &gt; <span class="number">0</span>) &#123;</div><div class="line">			System.out.println(<span class="string">"出错了！"</span>);</div><div class="line">			<span class="keyword">for</span> (FieldError error : result.getFieldErrors()) &#123;</div><div class="line">				System.out.println(error.getField() + <span class="string">":"</span> + error.getDefaultMessage());</div><div class="line">			&#125;</div><div class="line">			map.put(<span class="string">"departments"</span>, departmenDao.getDepartments());</div><div class="line">			<span class="keyword">return</span> <span class="string">"input"</span>;</div><div class="line"></div><div class="line">		&#125;</div><div class="line">		employeeDao.save(employee);</div><div class="line">		<span class="keyword">return</span> <span class="string">"redirect:/emps"</span>;</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="meta">@RequestMapping</span>(value = <span class="string">"/emp"</span>, method = RequestMethod.GET)</div><div class="line">	<span class="function"><span class="keyword">public</span> String <span class="title">input</span><span class="params">(Map&lt;String, Object&gt; map)</span> </span>&#123;</div><div class="line">		map.put(<span class="string">"departments"</span>, departmenDao.getDepartments());</div><div class="line">		<span class="comment">/*</span></div><div class="line">		 * 在input.jsp中使用了SpringMVC的form标签，SpringMVC认为 表单是一定要进行回显的，即便是“第一次来”，</div><div class="line">		 * 所以要new一个 Employee对象放入request域 。</div><div class="line">		 */</div><div class="line">		map.put(<span class="string">"employee"</span>, <span class="keyword">new</span> Employee());</div><div class="line">		<span class="keyword">return</span> <span class="string">"input"</span>;</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="meta">@RequestMapping</span>(value = <span class="string">"/emp/&#123;id&#125;"</span>, method = RequestMethod.GET)</div><div class="line">	<span class="function"><span class="keyword">public</span> String <span class="title">input</span><span class="params">(@PathVariable(<span class="string">"id"</span>)</span> Integer id, Map&lt;String, Object&gt; map) </span>&#123;</div><div class="line">		map.put(<span class="string">"departments"</span>, departmenDao.getDepartments());</div><div class="line">		<span class="comment">/*</span></div><div class="line">		 * 在input.jsp中使用了SpringMVC的form标签，SpringMVC认为</div><div class="line">		 * 表单是一定要进行回显的，即便是“第一次来”，所以要获取一个 Employee对象放入request域 。</div><div class="line">		 */</div><div class="line">		map.put(<span class="string">"employee"</span>, employeeDao.get(id));</div><div class="line">		<span class="keyword">return</span> <span class="string">"input"</span>;</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="meta">@RequestMapping</span>(<span class="string">"/emps"</span>)</div><div class="line">	<span class="function"><span class="keyword">public</span> String <span class="title">list</span><span class="params">(Map&lt;String, Object&gt; map)</span> </span>&#123;</div><div class="line">		map.put(<span class="string">"employees"</span>, employeeDao.getAll());</div><div class="line">		<span class="keyword">return</span> <span class="string">"list"</span>;</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>index.jsp:<br><figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">&lt;%@ page language="java" contentType="text/html; charset=UTF-8"</div><div class="line">	pageEncoding="UTF-8"%&gt;</div><div class="line">&lt;!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd"&gt;</div><div class="line">&lt;html&gt;</div><div class="line">&lt;head&gt;</div><div class="line">&lt;meta http-equiv="Content-Type" content="text/html; charset=UTF-8"&gt;</div><div class="line">&lt;title&gt;index jsp&lt;/title&gt;</div><div class="line">&lt;/head&gt;</div><div class="line">&lt;body&gt;</div><div class="line">	&lt;a href="$&#123;pageContext.request.contextPath &#125;/emps"&gt;List All</div><div class="line">		Employees&lt;/a&gt;</div><div class="line">        &lt;br&gt;&lt;br&gt;</div><div class="line">&lt;/body&gt;</div><div class="line">&lt;/html&gt;</div></pre></td></tr></table></figure></p>
+<p>WEB-INF/views/input.jsp:<br><figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div></pre></td><td class="code"><pre><div class="line">&lt;%@page import="java.util.HashMap"%&gt;</div><div class="line">&lt;%@page import="java.util.Map"%&gt;</div><div class="line">&lt;%@ page language="java" contentType="text/html; charset=UTF-8"</div><div class="line">	pageEncoding="UTF-8"%&gt;</div><div class="line">&lt;%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%&gt;</div><div class="line">&lt;%@taglib prefix="form" uri="http://www.springframework.org/tags/form"%&gt;</div><div class="line">&lt;!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd"&gt;</div><div class="line">&lt;html&gt;</div><div class="line">&lt;head&gt;</div><div class="line">&lt;meta http-equiv="Content-Type" content="text/html; charset=UTF-8"&gt;</div><div class="line">&lt;title&gt;Insert title here&lt;/title&gt;</div><div class="line">&lt;/head&gt;</div><div class="line">&lt;body&gt;</div><div class="line">	&lt;form:form action="$&#123;pageContext.request.contextPath &#125;/emp"</div><div class="line">		method="POST" modelAttribute="employee"&gt;</div><div class="line">		&lt;c:if test="$&#123;employee.id == null &#125;"&gt;</div><div class="line">		LastName:&lt;form:input path="lastName" /&gt;</div><div class="line">		&amp;nbsp;&lt;form:errors path="lastName"&gt;&lt;/form:errors&gt;</div><div class="line">			&lt;br&gt;</div><div class="line">			&lt;br&gt;</div><div class="line">		&lt;/c:if&gt;</div><div class="line">		&lt;c:if test="$&#123;employee.id != null &#125;"&gt;</div><div class="line">			&lt;form:hidden path="id" /&gt;</div><div class="line">			&lt;input type="hidden" name="_method" value="PUT"&gt;</div><div class="line">			&lt;%-- 对于 _method 不能使用 form:hidden 标签, 因为 modelAttribute 对应的 bean 中没有 _method 这个属性 --%&gt;</div><div class="line">			&lt;%-- </div><div class="line">			&lt;form:hidden path="_method" value="PUT"/&gt;</div><div class="line">			--%&gt;</div><div class="line">		&lt;/c:if&gt;</div><div class="line">		</div><div class="line">		Email:&lt;form:input path="email" /&gt;</div><div class="line">		&amp;nbsp;&lt;form:errors path="email"&gt;&lt;/form:errors&gt;</div><div class="line">		&lt;br&gt;</div><div class="line">		&lt;br&gt;</div><div class="line">		&lt;%</div><div class="line">			Map&lt;String, String&gt; genders = new HashMap&lt;String, String&gt;();</div><div class="line">				genders.put("0", "Female");</div><div class="line">				genders.put("1", "Male");</div><div class="line">				request.setAttribute("genders", genders);</div><div class="line">		%&gt;</div><div class="line">		Gender:&lt;form:radiobuttons path="gender" items="$&#123;genders &#125;" /&gt;</div><div class="line">		&lt;br&gt;</div><div class="line">		&lt;br&gt;</div><div class="line">		Birth:&lt;form:input path="birth" /&gt;</div><div class="line">		&amp;nbsp;&lt;form:errors path="birth"&gt;&lt;/form:errors&gt;</div><div class="line">		&lt;br&gt;</div><div class="line">		&lt;br&gt;</div><div class="line">		Department:&lt;form:select path="department.id" items="$&#123;departments &#125;"</div><div class="line">			itemLabel="departmentName" itemValue="id"&gt;&lt;/form:select&gt;</div><div class="line">		&lt;input type="submit" value="Submit" /&gt;</div><div class="line">	&lt;/form:form&gt;</div><div class="line">&lt;/body&gt;</div><div class="line">&lt;/html&gt;</div></pre></td></tr></table></figure></p>
+<p>WEB-INF/views/list.jsp<br><figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div></pre></td><td class="code"><pre><div class="line">&lt;%@ page language="java" contentType="text/html; charset=UTF-8"</div><div class="line">	pageEncoding="UTF-8"%&gt;</div><div class="line">&lt;%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%&gt;</div><div class="line">&lt;!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd"&gt;</div><div class="line">&lt;html&gt;</div><div class="line">&lt;head&gt;</div><div class="line">&lt;meta http-equiv="Content-Type" content="text/html; charset=UTF-8"&gt;</div><div class="line">&lt;title&gt;Insert title here&lt;/title&gt;</div><div class="line">&lt;script type="text/javascript"</div><div class="line">	src="$&#123;pageContext.request.contextPath &#125;/scripts/jquery-1.9.1.min.js"&gt;&lt;/script&gt;</div><div class="line">&lt;script type="text/javascript"&gt;</div><div class="line">	$(function() &#123;</div><div class="line">		$(".delete").click(function() &#123;</div><div class="line">			var href = $(this).attr("href");</div><div class="line">			$("form").attr("action", href).submit();</div><div class="line">			return false;</div><div class="line">		&#125;);</div><div class="line">	&#125;)</div><div class="line">&lt;/script&gt;</div><div class="line">&lt;/head&gt;</div><div class="line">&lt;body&gt;</div><div class="line">	&lt;form action="" method="POST"&gt;</div><div class="line">		&lt;input type="hidden" name="_method" value="DELETE"&gt;</div><div class="line">	&lt;/form&gt;</div><div class="line">	&lt;c:if test="$&#123;empty requestScope.employees &#125;"&gt;</div><div class="line"> no employees information.</div><div class="line">&lt;/c:if&gt;</div><div class="line">	&lt;c:if test="$&#123;!empty requestScope.employees &#125;"&gt;</div><div class="line">		&lt;table border="1" cellpadding="10" cellspacing="0"&gt;</div><div class="line">			&lt;tr&gt;</div><div class="line">				&lt;th&gt;ID&lt;/th&gt;</div><div class="line">				&lt;th&gt;LastName&lt;/th&gt;</div><div class="line">				&lt;th&gt;Email&lt;/th&gt;</div><div class="line">				&lt;th&gt;Gender&lt;/th&gt;</div><div class="line">				&lt;th&gt;Birth&lt;/th&gt;</div><div class="line">				&lt;th&gt;Department&lt;/th&gt;</div><div class="line">				&lt;th&gt;Edit&lt;/th&gt;</div><div class="line">				&lt;th&gt;Delete&lt;/th&gt;</div><div class="line">			&lt;/tr&gt;</div><div class="line">			&lt;c:forEach items="$&#123;requestScope.employees &#125;" var="emp"&gt;</div><div class="line">				&lt;tr&gt;</div><div class="line">					&lt;td&gt;$&#123;emp.id &#125;&lt;/td&gt;</div><div class="line">					&lt;td&gt;$&#123;emp.lastName &#125;&lt;/td&gt;</div><div class="line">					&lt;td&gt;$&#123;emp.email &#125;&lt;/td&gt;</div><div class="line">					&lt;td&gt;$&#123;emp.gender == 0 ? 'Female' : 'male' &#125;&lt;/td&gt;</div><div class="line">					&lt;td&gt;$&#123;emp.birth &#125;&lt;/td&gt;</div><div class="line">					&lt;td&gt;$&#123;emp.department.departmentName &#125;&lt;/td&gt;</div><div class="line">					&lt;td&gt;&lt;a</div><div class="line">						href="$&#123;pageContext.request.contextPath &#125;/emp/$&#123;emp.id &#125;"&gt;Edit&lt;/a&gt;&lt;/td&gt;</div><div class="line">					&lt;td&gt;&lt;a class="delete"</div><div class="line">						href="$&#123;pageContext.request.contextPath &#125;/emp/$&#123;emp.id &#125;"&gt;Delete&lt;/a&gt;&lt;/td&gt;</div><div class="line">				&lt;/tr&gt;</div><div class="line"></div><div class="line">			&lt;/c:forEach&gt;</div><div class="line">		&lt;/table&gt;</div><div class="line">	&lt;/c:if&gt;</div><div class="line">	&lt;a href="$&#123;pageContext.request.contextPath &#125;/emp"&gt;Add New Employee&lt;/a&gt;</div><div class="line"></div><div class="line">&lt;/body&gt;</div><div class="line">&lt;/html&gt;</div></pre></td></tr></table></figure></p>
+<p>web.xml:<br><figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div></pre></td><td class="code"><pre><div class="line">&lt;?xml version="1.0" encoding="UTF-8"?&gt;</div><div class="line"><span class="tag">&lt;<span class="name">web-app</span> <span class="attr">xmlns:xsi</span>=<span class="string">"http://www.w3.org/2001/XMLSchema-instance"</span></span></div><div class="line">	<span class="attr">xmlns</span>=<span class="string">"http://xmlns.jcp.org/xml/ns/javaee"</span></div><div class="line">	<span class="attr">xsi:schemaLocation</span>=<span class="string">"http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd"</span></div><div class="line">	<span class="attr">id</span>=<span class="string">"WebApp_ID"</span> <span class="attr">version</span>=<span class="string">"3.1"</span>&gt;</div><div class="line"></div><div class="line">    <span class="comment">&lt;!-- 配置 org.springframework.web.filter.HiddenHttpMethodFilter: 可以把 POST </span></div><div class="line">		请求转为 DELETE 或 PUT 请求 --&gt;</div><div class="line">	<span class="tag">&lt;<span class="name">filter</span>&gt;</span></div><div class="line">		<span class="tag">&lt;<span class="name">filter-name</span>&gt;</span>HiddenHttpMethodFilter<span class="tag">&lt;/<span class="name">filter-name</span>&gt;</span></div><div class="line">		<span class="tag">&lt;<span class="name">filter-class</span>&gt;</span>org.springframework.web.filter.HiddenHttpMethodFilter<span class="tag">&lt;/<span class="name">filter-class</span>&gt;</span></div><div class="line">	<span class="tag">&lt;/<span class="name">filter</span>&gt;</span></div><div class="line">	<span class="tag">&lt;<span class="name">filter-mapping</span>&gt;</span></div><div class="line">		<span class="tag">&lt;<span class="name">filter-name</span>&gt;</span>HiddenHttpMethodFilter<span class="tag">&lt;/<span class="name">filter-name</span>&gt;</span></div><div class="line">		<span class="tag">&lt;<span class="name">url-pattern</span>&gt;</span>/*<span class="tag">&lt;/<span class="name">url-pattern</span>&gt;</span></div><div class="line">	<span class="tag">&lt;/<span class="name">filter-mapping</span>&gt;</span></div><div class="line">    <span class="comment">&lt;!-- 配置 DispatcherServlet --&gt;</span></div><div class="line">	<span class="tag">&lt;<span class="name">servlet</span>&gt;</span></div><div class="line">		<span class="tag">&lt;<span class="name">servlet-name</span>&gt;</span>springDispatcherServlet<span class="tag">&lt;/<span class="name">servlet-name</span>&gt;</span></div><div class="line">		<span class="tag">&lt;<span class="name">servlet-class</span>&gt;</span>org.springframework.web.servlet.DispatcherServlet<span class="tag">&lt;/<span class="name">servlet-class</span>&gt;</span></div><div class="line">		<span class="tag">&lt;<span class="name">init-param</span>&gt;</span></div><div class="line">			<span class="tag">&lt;<span class="name">param-name</span>&gt;</span>contextConfigLocation<span class="tag">&lt;/<span class="name">param-name</span>&gt;</span></div><div class="line">			<span class="tag">&lt;<span class="name">param-value</span>&gt;</span>classpath:springmvc.xml<span class="tag">&lt;/<span class="name">param-value</span>&gt;</span></div><div class="line">		<span class="tag">&lt;/<span class="name">init-param</span>&gt;</span></div><div class="line">		<span class="tag">&lt;<span class="name">load-on-startup</span>&gt;</span>1<span class="tag">&lt;/<span class="name">load-on-startup</span>&gt;</span></div><div class="line">	<span class="tag">&lt;/<span class="name">servlet</span>&gt;</span></div><div class="line"></div><div class="line">	<span class="comment">&lt;!-- Map all requests to the DispatcherServlet for handling --&gt;</span></div><div class="line">	<span class="tag">&lt;<span class="name">servlet-mapping</span>&gt;</span></div><div class="line">		<span class="tag">&lt;<span class="name">servlet-name</span>&gt;</span>springDispatcherServlet<span class="tag">&lt;/<span class="name">servlet-name</span>&gt;</span></div><div class="line">		<span class="tag">&lt;<span class="name">url-pattern</span>&gt;</span>/<span class="tag">&lt;/<span class="name">url-pattern</span>&gt;</span></div><div class="line">	<span class="tag">&lt;/<span class="name">servlet-mapping</span>&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">web-app</span>&gt;</span></div></pre></td></tr></table></figure></p>
+<p>springmvc.xml:<br><figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div></pre></td><td class="code"><pre><div class="line">&lt;?xml version="1.0" encoding="UTF-8"?&gt;</div><div class="line"><span class="tag">&lt;<span class="name">beans</span> <span class="attr">xmlns</span>=<span class="string">"http://www.springframework.org/schema/beans"</span></span></div><div class="line">	<span class="attr">xmlns:xsi</span>=<span class="string">"http://www.w3.org/2001/XMLSchema-instance"</span> <span class="attr">xmlns:context</span>=<span class="string">"http://www.springframework.org/schema/context"</span></div><div class="line">	<span class="attr">xmlns:mvc</span>=<span class="string">"http://www.springframework.org/schema/mvc"</span></div><div class="line">	<span class="attr">xsi:schemaLocation</span>=<span class="string">"http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd</span></div><div class="line">		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.0.xsd</div><div class="line">		http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-4.0.xsd"&gt;</div><div class="line"></div><div class="line">	<span class="comment">&lt;!-- 配置要自动扫描的包 --&gt;</span></div><div class="line">	<span class="tag">&lt;<span class="name">context:component-scan</span> <span class="attr">base-package</span>=<span class="string">"com.MySpringMVC"</span>&gt;</span><span class="tag">&lt;/<span class="name">context:component-scan</span>&gt;</span></div><div class="line"></div><div class="line">	<span class="comment">&lt;!-- 配置视图解析器: 如何把 handler 方法返回值解析为实际的物理视图 --&gt;</span></div><div class="line">	<span class="tag">&lt;<span class="name">bean</span></span></div><div class="line">		<span class="attr">class</span>=<span class="string">"org.springframework.web.servlet.view.InternalResourceViewResolver"</span>&gt;</div><div class="line">		<span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"prefix"</span> <span class="attr">value</span>=<span class="string">"/WEB-INF/views/"</span>&gt;</span><span class="tag">&lt;/<span class="name">property</span>&gt;</span></div><div class="line">		<span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"suffix"</span> <span class="attr">value</span>=<span class="string">".jsp"</span>&gt;</span><span class="tag">&lt;/<span class="name">property</span>&gt;</span></div><div class="line">	<span class="tag">&lt;/<span class="name">bean</span>&gt;</span></div><div class="line"></div><div class="line">	<span class="comment">&lt;!-- default-servlet-handler 将在 SpringMVC 上下文中定义一个 DefaultServletHttpRequestHandler, </span></div><div class="line">		它会对进入 DispatcherServlet 的请求进行筛查, 如果发现是没有经过映射的请求, 就将该请求交由 WEB 应用服务器默认的 Servlet </div><div class="line">		处理. 如果不是静态资源的请求，才由 DispatcherServlet 继续处理 一般 WEB 应用服务器默认的 Servlet 的名称都是 default. </div><div class="line">		若所使用的 WEB 服务器的默认 Servlet 名称不是 default，则需要通过 default-servlet-name 属性显式指定 --&gt;</div><div class="line">	<span class="tag">&lt;<span class="name">mvc:default-servlet-handler</span> /&gt;</span></div><div class="line"></div><div class="line"></div><div class="line">	<span class="comment">&lt;!-- 解决 配置了 mvc:default-servlet-handler 或者 mvc:view-controller 后，控制器不能正常映射请求 </span></div><div class="line">		的问题 还会会默认装配好一个LocalValidatorFactoryBean，用于数据校验 --&gt;</div><div class="line">	<span class="tag">&lt;<span class="name">mvc:annotation-driven</span>&gt;</span><span class="tag">&lt;/<span class="name">mvc:annotation-driven</span>&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">beans</span>&gt;</span></div></pre></td></tr></table></figure></p>
+<p>lib目录：<br><img src="http://static.zybuluo.com/xiangwanpeng/blqehoho6ibmn25ee82k0i7l/image_1b1dmlo7b1cnc1f3sn7fv4cb171g.png" alt="image_1b1dmlo7b1cnc1f3sn7fv4cb171g.png-60.7kB"></p>
+<h2 id="核心知识点"><a href="#核心知识点" class="headerlink" title="核心知识点"></a>核心知识点</h2><p><strong>1、SpringMVC的form标签：</strong></p>
+<p>　　<strong>1.1</strong> 通过SpringMVC的<strong>form</strong>标签可以实现将模型数据中的属性和HTML 表单元素相绑定，以实现表单数据更便捷编辑和表单值的回显。<br>　　<strong>1.2</strong> 可以通过SpringMVC的<strong>form</strong>标签的modelAttribute属性指定绑定的模型属性以进行表单回显。<br>　　<strong>1.3</strong> SpringMVC的<strong>form</strong>标签默认一定要回显表单，若没有指定modelAttribute属性，则默认从request 域对象中读取command的表单bean。如果在 指定的modelAttribute 或者 command 中无法获取到某一属性，则会发生错误。<br>　　<br><strong>2、处理静态资源：</strong></p>
+<p>　　<strong>2.1</strong> 优雅的REST 风格的资源URL 不希望带.html 或.do 等后缀，若将DispatcherServlet请求映射配置为/，则Spring MVC 将捕获WEB 容器的所有请求，包括静态资源的请求（例如使用jQuery），SpringMVC会将他们当成一个普通请求处理，因找不到对应处理器将导致错误。<br>　　<br>　　<strong>2.2</strong> 上述问题的解决方法为：在SpringMVC的配置文件中添加配置:<br><figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">mvc:default-servlet-handler</span>/&gt;</span></div></pre></td></tr></table></figure></p>
+<p>其原理是：default-servlet-handler 将在 SpringMVC 上下文中定义一个 DefaultServletHttpRequestHandler，它会对进入 DispatcherServlet 的请求进行筛查，如果发现是没有经过映射的请求， 就将该请求交由 WEB 应用服务器默认的 Servlet 处理。如果不是静态资源的请求，才由 DispatcherServlet 继续处理。一般情况下，WEB 应用服务器默认的 Servlet 的名称都是 default。若所使用的 WEB 服务器的默认 Servlet 名称不是 default，则需要通过 default-servlet-name 属性显式指定。</p>
+<p><strong>3.数据转换&amp;数据格式化&amp;数据校验</strong></p>
+<p>　　<strong>3.1 数据绑定流程：</strong><br>　　① Spring MVC主框架将ServletRequest对象及目标方法的入参实例传递给WebDataBinderFactory实例，以创建DataBinder实例对象；<br>　　② DataBinder调用装配在Spring MVC上下文中的ConversionService组件进行数据类型转换、数据格式化工作。将Servlet 中的请求信息填充到入参对象中；<br>　　③ 调用Validator组件对已经绑定了请求消息的入参对象进行数据合法性校验，并最终生成数据绑定结果BindingData对象；<br>　　④ Spring MVC抽取BindingResult中的入参对象和校验错误对象，将它们赋给处理方法的响应入参<br>　　Spring MVC通过反射机制对目标处理方法进行解析，将请求消息绑定到处理方法的入参中。数据绑定的核心部件是DataBinder，运行机制如下：<br>　　<br>　　<img src="http://static.zybuluo.com/xiangwanpeng/hl7ecxcr3bocje970a2ngjdj/image_1b1doigq71hd01kg01e6cqbd150q2j.png" alt="image_1b1doigq71hd01kg01e6cqbd150q2j.png-77.5kB"><br>　　<br>　　实现源码：<br>　　<img src="http://static.zybuluo.com/xiangwanpeng/6dwjwfovhx3fwixmtq6ylv96/image_1b1dohstp1v2tjt8rstfue1n9o26.png" alt="image_1b1dohstp1v2tjt8rstfue1n9o26.png-236.9kB"><br>　　<br>　　<strong>3.2 数据转换</strong><br>　　Spring MVC 上下文中内建了很多转换器，可完成大多数Java 类型的转换工作，如下图：<br>　　<img src="http://static.zybuluo.com/xiangwanpeng/hf3nbxsrbu9u4txhewjpb9p2/image_1b1dp9ap5105bn081nmlna5bnj30.png" alt="image_1b1dp9ap5105bn081nmlna5bnj30.png-215.9kB"><br>　　<br>　　如果内建的转换器不能满足要求，可以自定义转换器。方法是利用 <strong>ConversionServiceFactoryBean</strong> 在Spring 的IOC 容器中定义一个 <strong>ConversionService</strong>，并通过ConversionServiceFactoryBean的 <strong>converters</strong> 属性注册自定义的类型转换器。Spring 将自动识别出IOC 容器中的ConversionService，并在Bean 属性配置及Spring MVC 处理方法入参绑定等场合使用它进行数据的转换。例如现在要实现一个将String转为Employee对象的转换器：(这里的Employee没有添加birth属性)<br>　　<br>springmvc.xml:<br><figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line"><span class="comment">&lt;!-- 将自定义的ConversionService注册到Spring MVC 的上下文中 --&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">mvc:annotation-driven</span> <span class="attr">conversion-service</span>=<span class="string">"conversionService"</span>&gt;</span><span class="tag">&lt;/<span class="name">mvc:annotation-driven</span>&gt;</span>	</div><div class="line">	</div><div class="line">	<span class="comment">&lt;!-- 配置 ConversionService --&gt;</span></div><div class="line">	<span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">"conversionService"</span></span></div><div class="line">		<span class="attr">class</span>=<span class="string">"org.springframework.format.support.FormattingConversionServiceFactoryBean"</span>&gt;</div><div class="line">		<span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"converters"</span>&gt;</span></div><div class="line">			<span class="tag">&lt;<span class="name">set</span>&gt;</span></div><div class="line">				<span class="tag">&lt;<span class="name">ref</span> <span class="attr">bean</span>=<span class="string">"employeeConverter"</span>/&gt;</span></div><div class="line">			<span class="tag">&lt;/<span class="name">set</span>&gt;</span></div><div class="line">		<span class="tag">&lt;/<span class="name">property</span>&gt;</span>	</div><div class="line">	<span class="tag">&lt;/<span class="name">bean</span>&gt;</span></div></pre></td></tr></table></figure></p>
+<p>jsp:<br><figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">&lt;form action="testConversionServiceConverer" method="POST" &gt;          </div><div class="line">&lt;!-- lastname-email-gender-department.id 例如: GG-gg@atguigu.com-0-105 --&gt;  </div><div class="line">        Employee: &lt;input type="text" name="employee"/&gt;  </div><div class="line">        &lt;input type="submit" value="Submit"/&gt;  </div><div class="line">    &lt;/form&gt;</div></pre></td></tr></table></figure></p>
+<p>controller:<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@RequestMapping</span>(<span class="string">"/testConversionServiceConverer"</span>)  </div><div class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">testConverter</span><span class="params">(@RequestParam(<span class="string">"employee"</span>)</span> Employee employee)</span>&#123;  </div><div class="line">        System.out.println(<span class="string">"save: "</span> + employee);  </div><div class="line">        employeeDao.save(employee);  </div><div class="line">        <span class="keyword">return</span> <span class="string">"redirect:/emps"</span>;  </div><div class="line">    &#125;</div></pre></td></tr></table></figure></p>
+<p>Converter:<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@Component</span>  </div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">EmployeeConverter</span> <span class="keyword">implements</span> <span class="title">Converter</span>&lt;<span class="title">String</span>, <span class="title">Employee</span>&gt; </span>&#123;  </div><div class="line">  </div><div class="line">    <span class="meta">@Override</span>  </div><div class="line">    <span class="function"><span class="keyword">public</span> Employee <span class="title">convert</span><span class="params">(String source)</span> </span>&#123;  </div><div class="line">        <span class="keyword">if</span>(source != <span class="keyword">null</span>)&#123;  </div><div class="line">            String [] vals = source.split(<span class="string">"-"</span>);  </div><div class="line">            <span class="comment">//GG-gg@atguigu.com-0-105  </span></div><div class="line">            <span class="keyword">if</span>(vals != <span class="keyword">null</span> &amp;&amp; vals.length == <span class="number">4</span>)&#123;  </div><div class="line">                String lastName = vals[<span class="number">0</span>];  </div><div class="line">                String email = vals[<span class="number">1</span>];  </div><div class="line">                Integer gender = Integer.parseInt(vals[<span class="number">2</span>]);  </div><div class="line">                Department department = <span class="keyword">new</span> Department();  </div><div class="line">                department.setId(Integer.parseInt(vals[<span class="number">3</span>]));  </div><div class="line">  </div><div class="line">                Employee employee = <span class="keyword">new</span> Employee(<span class="keyword">null</span>, lastName, email, gender, department);  </div><div class="line">                System.out.println(source + <span class="string">"--convert--"</span> + employee);  </div><div class="line">                <span class="keyword">return</span> employee;  </div><div class="line">            &#125;  </div><div class="line">        &#125;  </div><div class="line">        <span class="keyword">return</span> <span class="keyword">null</span>;  </div><div class="line">    &#125;  </div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>　　<strong>3.3 数据格式化</strong><br>　　对属性对象的输入/输出进行格式化，从其本质上讲依然属于“类型转换”的范畴。Spring 在格式化模块中定义了一个实现ConversionService接口的FormattingConversionService实现类，该实现类扩展了GenericConversionService，因此它既具有类型转换的功能，又具有格式化的功能。FormattingConversionService拥有一个FormattingConversionServiceFactroyBean工厂类，后者用于在Spring 上下文中构造前者。<br>　　FormattingConversionServiceFactroyBean内部已经注册了:</p>
+<ul>
+<li><p>NumberFormatAnnotationFormatterFactroy：支持对数字类型的属性使用@NumberFormat注解</p>
+</li>
+<li><p>JodaDateTimeFormatAnnotationFormatterFactroy：支持对日期类型的属性使用@DateTimeFormat注解</p>
+</li>
+</ul>
+<p>　　装配了FormattingConversionServiceFactroyBean后，就可以在Spring MVC 入参绑定及模型数据输出时使用注解驱动了。<strong>mvc:annotation-driven标签 默认创建的ConversionService 实例即为 FormattingConversionServiceFactroyBean</strong>。<br>　　例如，我们在Employee.java中的birth属性上添加了注解：@DateTimeFormat(pattern=”yyyy-MM-dd”)，即指定了日期输入的格式。此外，还可通过@NumberFormat注解对类似数字类型的属性进行格式化标注，例如<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">　　<span class="meta">@NumberFormat</span>(pattern=<span class="string">"#,###,###.#"</span>)  </div><div class="line"><span class="keyword">private</span> Float salary;</div></pre></td></tr></table></figure></p>
+<p>　　<strong>3.4 数据校验</strong><br>　　JSR 303是Java 为Bean 数据合法性校验提供的标准框架，它已经包含在JavaEE 6.0中。JSR 303通过在Bean 属性上标注类似于@NotNull、@Max等标准的注解指定校验规则，并通过标准的验证接口对Bean 进行验证。详细注解如下图：<br>　　<img src="http://static.zybuluo.com/xiangwanpeng/y5t8muqjo7qgfqthizj8msdq/image_1b1ds94ej1m5d1c9h2oo118g13vc3t.png" alt="image_1b1ds94ej1m5d1c9h2oo118g13vc3t.png-208.7kB"><br>　　<br>　　hibernate Validator是JSR 303 的一个参考实现，除支持所有标准的校验注解外，它还支持以下的扩展注解：<br>　　<img src="http://static.zybuluo.com/xiangwanpeng/otoyltxu91jtya4m035h7znf/image_1b1dsabituub1vpsv23grg1f2f4a.png" alt="image_1b1dsabituub1vpsv23grg1f2f4a.png-159.3kB"><br>　　<br><strong>Spring MVC 数据校验：</strong> </p>
+<p>　　Spring 4.0拥有自己独立的数据校验框架，同时支持JSR 303标准的校验框架。<br>　　Spring 在进行数据绑定时，可同时调用校验框架完成数据校验工作。在Spring MVC 中，可直接通过注解驱动的方式进行数据校验。<br>　　Spring 的LocalValidatorFactroyBean既实现了Spring 的Validator 接口，也实现了JSR 303 的Validator接口。只要在Spring 容器中定义了一个LocalValidatorFactoryBean，即可将其注入到需要数据校验的Bean 中。<strong>mvc:annotation-driven标签</strong> 会默认装配好一个LocalValidatorFactoryBean，通过在<strong>处理方法的入参上标注@valid注解</strong>即可让Spring MVC 在完成数据绑定后执行数据校验的工作。<br>　　Spring 本身并没有提供JSR303 的实现，所以必须将JSR303 的实现者的jar 包放到类路径下:<br>　　<img src="http://static.zybuluo.com/xiangwanpeng/wpqhb9q2gbo8btbfo2yjb9ag/image_1b1dsi76s5j875d19k014n2nao4n.png" alt="image_1b1dsi76s5j875d19k014n2nao4n.png-10.6kB"><br>　　<br>　　Spring MVC 是通过对处理方法签名的规约来保存校验结果的：<strong>前一个表单/命令对象的校验结果保存到随后的入参中</strong>，这个保存校验结果的入参必须是BindingResult或Errors类型，这两个类都位于org.springframework.validation包中。<strong>需校验的Bean 对象和其绑定结果对象或错误对象时成对出现的，它们之间不允许声明其他的入参</strong>。<br>　　例如，在上述的EmployeeHandler类的save方法中即声明了需要对employee入参进行校验，并将校验结果存入result中：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@RequestMapping</span>(value = <span class="string">"/emp"</span>, method = RequestMethod.POST)</div><div class="line">	<span class="function"><span class="keyword">public</span> String <span class="title">save</span><span class="params">(@Valid Employee employee, BindingResult result, Map&lt;String, Object&gt; map)</span> </span>&#123;</div><div class="line">		<span class="keyword">if</span> (result.getErrorCount() &gt; <span class="number">0</span>) &#123;</div><div class="line">			System.out.println(<span class="string">"出错了！"</span>);</div><div class="line">			<span class="keyword">for</span> (FieldError error : result.getFieldErrors()) &#123;</div><div class="line">				System.out.println(error.getField() + <span class="string">":"</span> + error.getDefaultMessage());</div><div class="line">			&#125;</div><div class="line">			map.put(<span class="string">"departments"</span>, departmenDao.getDepartments());</div><div class="line">			<span class="keyword">return</span> <span class="string">"input"</span>;</div><div class="line"></div><div class="line">		&#125;</div><div class="line">		employeeDao.save(employee);</div><div class="line">		<span class="keyword">return</span> <span class="string">"redirect:/emps"</span>;</div><div class="line">	&#125;</div></pre></td></tr></table></figure></p>
+<p>其中对employee的哪些字段进行何种校验，Employee.java中已经标注了，例如<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@NotEmpty</span></div><div class="line">	<span class="keyword">private</span> String lastName;</div></pre></td></tr></table></figure></p>
+<p>标注了lastName字段不能为null。</p>
+<p><strong>在目标方法中获取校验结果：</strong><br>　　上面save方法的代码已经介绍了如何利用校验结果的信息在目标方法中进行打印。<br>　　<br><strong>在页面上显示错误：</strong><br>　　Spring MVC 除了会将表单/命令对象的校验结果保存到对应的BindingResult或Errors 对象中外，还会将所有校验结果保存到“隐含模型”，即implicitModel。隐含模型中的所有数据最终将通过HttpServletRequest的属性列表暴露给JSP 视图对象，因此在JSP 中可以获取错误信息。例如，如果上述的lastName字段为null，则可以在跳转的页面input.jsp中通过如下代码获取错误信息。<br><figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">　　&lt;form:errors path="lastName"&gt;&lt;/form:errors&gt;</div></pre></td></tr></table></figure></p>
+<p><strong>提示消息的国际化：</strong><br>　　 每个属性在数据绑定和数据校验发生错误时，都会生成一个对应的FieldError对象。当一个属性校验失败后，校验框架会为该属性生成4 个消息代码，这些代码以校验注解类名为前缀，结合modleAttribute、属性名及属性类型名生成多个对应的消息代码：例如User 类中的password 属性标准了一个@Pattern 注解，当该属性值不满足@Pattern 所定义的规则时, 就会产生以下4 个错误代码：</p>
+<ul>
+<li>Pattern.user.password</li>
+<li>Pattern.password</li>
+<li>Pattern.java.lang.String</li>
+<li>Pattern</li>
+</ul>
+<p>　　当使用Spring MVC 标签显示错误消息时，Spring MVC 会查看WEB 上下文是否装配了对应的国际化消息，如果没有，则显示默认的错误消息，否则使用国际化消息。例如，我们要定制lastName字段的验证出错的错误消息：<br>　　<br>创建国际化资源文件 i18n.properties：(其中“LastName\u4E0D\u80FD\u4E3A\u7A7A”是输入汉字“LastName不能为空”自动转换为ISO-8859-1编码的结果)<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">NotEmpty.employee.lastName=LastName\u4E0D\u80FD\u4E3A\u7A7A</div></pre></td></tr></table></figure></p>
+<p>在springmvc.xml中配置国际化资源文件<br><figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="comment">&lt;!-- 配置国际化资源文件 --&gt;</span></div><div class="line">	<span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">"messageSource"</span></span></div><div class="line">		<span class="attr">class</span>=<span class="string">"org.springframework.context.support.ResourceBundleMessageSource"</span>&gt;</div><div class="line">		<span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"basename"</span> <span class="attr">value</span>=<span class="string">"i18n"</span>&gt;</span><span class="tag">&lt;/<span class="name">property</span>&gt;</span></div><div class="line">	<span class="tag">&lt;/<span class="name">bean</span>&gt;</span></div></pre></td></tr></table></figure></p>
+<p>那么如果lastName字段为null，错误信息将会是：LastName不能为空。<br>　　<br>　　若数据类型转换或数据格式转换时发生错误，或该有的参数不存在，或调用处理方法时发生错误，都会在隐含模型中创建错误消息。其错误代码前缀说明如下：</p>
+<ul>
+<li>required：必要的参数不存在。如@RequiredParam(“param1”) 标注了一个入参，但是该参数不存在。</li>
+<li>typeMismatch：在数据绑定时，发生数据类型不匹配的问题</li>
+<li>methodInvocation：Spring MVC。 在调用处理方法时发生了错误–注册国际化资源文件。</li>
+</ul>
+<p><strong>4、关于mvc:annotation-driven</strong><br>　　<strong>mvc:annotation-driven</strong> 会自动注册RequestMappingHandlerMapping、RequestMappingHandlerAdapter与ExceptionHandlerExceptionResolver三个bean。还将提供以下支持：</p>
+<ul>
+<li>支持使用ConversionService实例对表单参数进行类型转换（不加的话就没有ConversionService）</li>
+<li>支持使用@NumberFormat、@DateTimeFormat注解完成数据类型的格式化</li>
+<li>支持使用@Valid注解对JavaBean 实例进行JSR 303验证</li>
+<li>支持使用@RequestBody和@ResponseBody注解</li>
+</ul>
+<p><strong>5、关于@InitBinder注解</strong><br>　　由@InitBinder标识的方法，可以对WebDataBinder对象进行初始化。WebDataBinder是DataBinder的子类，用于完成由表单字段到JavaBean 属性的绑定。<br>　　@InitBinder方法不能有返回值，它必须声明为void。<br>　　@InitBinder方法的参数通常是WebDataBinder。<br>　　例如，如下代码声明了不将请求参数中的lastName属性绑定到WebDataBinder中：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//lastName不进行赋值，（不自动绑定对象中的lastName属性，另行处理）    user的角色赋值的时候可能会用到  </span></div><div class="line">    <span class="meta">@InitBinder</span>  </div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">initBinder</span><span class="params">(WebDataBinder binder)</span></span>&#123;  </div><div class="line">        binder.setDisallowedFields(<span class="string">"lastName"</span>);  </div><div class="line">    &#125;</div></pre></td></tr></table></figure></p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/SpringMVC/" rel="tag">#SpringMVC</a>
+          
+            <a href="/tags/REST/" rel="tag">#REST</a>
+          
+            <a href="/tags/CRUD/" rel="tag">#CRUD</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/11/12/SpringMVC中的视图和视图解析器/" rel="next" title="SpringMVC中的视图和视图解析器">
+                <i class="fa fa-chevron-left"></i> SpringMVC中的视图和视图解析器
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/11/13/使用HttpMessageConverter处理JSON/" rel="prev" title="使用HttpMessageConverter处理JSON">
+                使用HttpMessageConverter处理JSON <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2016/11/13/使用SpringMVC实现REST风格的CRUD功能/"
+           data-title="使用SpringMVC实现REST风格的CRUD功能" data-url="http://yoursite.com/2016/11/13/使用SpringMVC实现REST风格的CRUD功能/">
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/image/avatar.png"
+               alt="Alan" />
+          <p class="site-author-name" itemprop="name">Alan</p>
+          <p class="site-description motion-element" itemprop="description">Better late than never.</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">26</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">6</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">44</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/xiangwanpeng" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/u/2810288024/home" target="_blank" title="weibo">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  weibo
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#需求"><span class="nav-number">1.</span> <span class="nav-text">需求</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#实现"><span class="nav-number">2.</span> <span class="nav-text">实现</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#核心知识点"><span class="nav-number">3.</span> <span class="nav-text">核心知识点</span></a></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2016</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Alan</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Pisces
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.1"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.0.1"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.1"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"xiangwanpeng"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+    
+    <script src="/vendors/ua-parser-js/dist/ua-parser.min.js?v=0.7.9"></script>
+    <script src="/js/src/hook-duoshuo.js"></script>
+  
+
+
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

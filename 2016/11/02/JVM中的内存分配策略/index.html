@@ -1,0 +1,768 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Java,JVM,内存分配," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.1" />
+
+
+
+
+
+
+<meta name="description" content="对象的内存分配，从大方向上将，就是在堆上分配（但也可能经过JIT编译后被拆散为标量类型并间接地在栈上分配），对象主要分配在新生代的Eden区上，如果启动了本地线程分配缓冲，将按线程优先在TLAB上分配。少数情况也可能直接分配在老年代中，分配的规则并不是百分之百固定的，其细节取决于当前使用的是哪一种垃圾收集器组合，还有虚拟机中与内存相关的参数的设置。　　下面讲解集中最普遍的内存分配规则，并通过代">
+<meta property="og:type" content="article">
+<meta property="og:title" content="JVM中的内存分配策略">
+<meta property="og:url" content="http://yoursite.com/2016/11/02/JVM中的内存分配策略/index.html">
+<meta property="og:site_name" content="向万鹏的独立博客">
+<meta property="og:description" content="对象的内存分配，从大方向上将，就是在堆上分配（但也可能经过JIT编译后被拆散为标量类型并间接地在栈上分配），对象主要分配在新生代的Eden区上，如果启动了本地线程分配缓冲，将按线程优先在TLAB上分配。少数情况也可能直接分配在老年代中，分配的规则并不是百分之百固定的，其细节取决于当前使用的是哪一种垃圾收集器组合，还有虚拟机中与内存相关的参数的设置。　　下面讲解集中最普遍的内存分配规则，并通过代">
+<meta property="og:updated_time" content="2016-11-02T14:15:38.045Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="JVM中的内存分配策略">
+<meta name="twitter:description" content="对象的内存分配，从大方向上将，就是在堆上分配（但也可能经过JIT编译后被拆散为标量类型并间接地在栈上分配），对象主要分配在新生代的Eden区上，如果启动了本地线程分配缓冲，将按线程优先在TLAB上分配。少数情况也可能直接分配在老年代中，分配的规则并不是百分之百固定的，其细节取决于当前使用的是哪一种垃圾收集器组合，还有虚拟机中与内存相关的参数的设置。　　下面讲解集中最普遍的内存分配规则，并通过代">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"always"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 0,
+      author: '博主'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2016/11/02/JVM中的内存分配策略/"/>
+
+  <title> JVM中的内存分配策略 | 向万鹏的独立博客 </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">向万鹏的独立博客</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle"></p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                JVM中的内存分配策略
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-11-02T21:44:42+08:00" content="2016-11-02">
+              2016-11-02
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/JVM/" itemprop="url" rel="index">
+                    <span itemprop="name">JVM</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2016/11/02/JVM中的内存分配策略/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/11/02/JVM中的内存分配策略/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>　　对象的内存分配，从大方向上将，就是在堆上分配（但也可能经过JIT编译后被拆散为标量类型并间接地在栈上分配），对象主要分配在新生代的Eden区上，如果启动了本地线程分配缓冲，将按线程优先在TLAB上分配。少数情况也可能直接分配在老年代中，分配的规则并不是百分之百固定的，其细节取决于当前使用的是哪一种垃圾收集器组合，还有虚拟机中与内存相关的参数的设置。<br>　　下面讲解集中最普遍的内存分配规则，并通过代码去验证这些规则。本文中的代码在测试时使用Client模式虚拟机运行，没有手工指定收集器组合，换句话说，验证的是使用Serial/Serial Old收集器下（ParNew/Serial Old组合的规则也基本一致）的内存分配策略。</p>
+<h2 id="1、对象优先在Eden分配"><a href="#1、对象优先在Eden分配" class="headerlink" title="1、对象优先在Eden分配"></a>1、对象优先在Eden分配</h2><p>　　大多数情况下，对象在新生代Eden区中分配。当Eden区没有足够空间分配时，虚拟机将发起一次Minor GC。</p>
+<p>虚拟机提供了-XX:+PrintGCDetails这个收集器日志参数，告诉虚拟机在发生垃圾收集行为时打印内存回收日志，并且在进程退出的时候输出当前内存各区域的分配情况。在实际应用中，内存回收日志一般都是打印到文件后通过日志工具进行分析，不过本实验的日志并不多，直接阅读就能看得很清除。代码及运行结果如下：</p>
+<pre><code>private static final int _1MB = 1024*1024;
+
+/**
+ * VM Args : -verbose:gc -Xms20M -Xmx20M -Xmn10M -XX:SurvivorRatio=8 -XX:+PrintGCDetails
+ */
+public static void testAllocation(){
+    byte[] allocation1,allocation2,allocation3,allocation4;
+    allocation1 = new byte[2*_1MB];
+    allocation2 = new byte[2*_1MB];
+    allocation3 = new byte[2*_1MB];
+    allocation4 = new byte[4*_1MB];//出现一次Minor GC
+}
+</code></pre><p>运行结果：</p>
+<p>[GC [DefNew: <strong>6487K-&gt;152K(9216K)</strong>, 0.0041641 secs] <strong>6487K-&gt;6296K(19456K)</strong>, 0.0042253 secs] [Times: user=0.02 sys=0.00, real=0.00 secs]<br>Heap<br> def new generation   total 9216K, used 4412K [0x326e0000, 0x330e0000, 0x330e0000)<br>  <strong>eden space 8192K</strong>,  52% used [0x326e0000, 0x32b08fe0, 0x32ee0000)<br>  <strong>from space 1024K</strong>,  14% used [0x32fe0000, 0x330062b0, 0x330e0000)<br>  <strong>to   space 1024K</strong>,   0% used [0x32ee0000, 0x32ee0000, 0x32fe0000)<br> tenured generation   total 10240K, used 6144K [0x330e0000, 0x33ae0000, 0x33ae0000)<br>   <strong>the space 10240K</strong>,  60% used [0x330e0000, 0x336e0030, 0x336e0200, 0x33ae0000)<br> compacting perm gen  total 12288K, used 375K [0x33ae0000, 0x346e0000, 0x37ae0000)<br>   the space 12288K,   3% used [0x33ae0000, 0x33b3dcb0, 0x33b3de00, 0x346e0000)<br>    ro space 10240K,  54% used [0x37ae0000, 0x3805d9f8, 0x3805da00, 0x384e0000)<br>    rw space 12288K,  55% used [0x384e0000, 0x38b813f8, 0x38b81400, 0x390e0000)</p>
+<p>　　上述程序的testAllocation()方法中，尝试分配3个2MB和1个4MB的对象，在运行时通过-Xms20M、-Xmx20M和-Xmn10M这3个参数限制Java堆大小为20M，且不可扩展，其中10MB分配给新生代，剩下的10M就分配给老年代了。-XX:SurvivorRatio=8决定了新生代中Eden和Survivor区的空间比例为8:1，从运行结果可以看到“eden space 8192K、from space 1024K、to space 1024K”的信息，新生代总可用空间为9216KB（Eden区+1个Survivor区的总容量）。</p>
+<p>执行testAllocation()中分配allocation4对象的语句时会发生一次Minor GC，这次GC的结果是新生代由6487K变为152K，而总内存占用了几乎没有减少（因为allocation1,2,3三个对象都是存活的虚拟机几乎没有找到可回收的对象）。这次GC发生的原因是给allocation4分配所需的4MB内存时，发现Eden区已经被占用了6MB，剩余空间不足以分配4MB，因此发生Minor GC。GC期间虚拟机又发现已有的3个2MB对象无法全部放入Survivor空间（Survivor只有1MB），所以只好通过分配担保机制提前转移到老年代。</p>
+<p>这次GC结束后，4MB的allocation4对象被顺利分配到Eden中。因此程序执行完的结果是Eden占用4MB（被allocation4占用），Survivor空闲，老年代被占用6MB（allocation1,2,3占用）。</p>
+<p>在这里补充一点，Minor GC和Full GC的区别：</p>
+<p>新生代GC（Minor GC）：指发生在新生代的垃圾收集动作，因为Java对象大多都具备朝生夕死的特性，所以Minor GC非常频繁，一般回收速度也比较快。</p>
+<p>老年代GC（Major GC/Full GC）：指发生在老年代的GC，出现Major GC，经常会伴随至少一次的Minor GC（但并非绝对的，在Parallel Scavenge收集器的收集策略里就有直接进行Major GC的策略选择过程）。Major GC的速度一般会比Minor GC慢10倍以上。</p>
+<h2 id="2、大对象直接进入老年代"><a href="#2、大对象直接进入老年代" class="headerlink" title="2、大对象直接进入老年代"></a>2、大对象直接进入老年代</h2><p>　　所谓大对象，就是指需要大量<strong>连续内存空间</strong>的Java对象，最典型的大对象就是那种很长的字符串及数组（byte[]数组就是典型的大对象）。大对象对虚拟机的内存分配来说就是一个坏消息（更加坏的情况就是遇到一群朝生夕死的短命大对象，写程序时应该避免），经常出现大对象容易导致内存还有不少空间时就提前触发垃圾收集以获取足够的连续空间来安置大对象。</p>
+<p>　　虚拟机提供了一个-XX:PretenureSizeThreshold参数，令大于这个设置值的对象直接进入老年代中分配。这样避免在Eden区及两个Survivor区之间发生大量的内存拷贝。我们来看下面的代码和运行结果：</p>
+<pre><code>/**
+     * -verbose:gc -Xms20M -Xmx20M -Xmn10M -XX:SurvivorRatio=8 -XX:+PrintGCDetails
+     * -XX:PretenureSizeThreshold=3145728
+     */
+    public static void testPretenureSizeThreshold(){
+        byte[] allocation;
+        allocation = new byte[4*_1MB];
+    }
+</code></pre><p>运行结果：</p>
+<p>Heap<br> def new generation   total 9216K, used 671K [0x046a0000, 0x050a0000, 0x050a0000)<br>  eden space 8192K,   8% used [0x046a0000, 0x04747e88, 0x04ea0000)<br>  from space 1024K,   0% used [0x04ea0000, 0x04ea0000, 0x04fa0000)<br>  to   space 1024K,   0% used [0x04fa0000, 0x04fa0000, 0x050a0000)<br> tenured generation   total 10240K, used 4096K [0x050a0000, 0x05aa0000, 0x05aa0000)<br>   <strong>the space 10240K,  40% used</strong> [0x050a0000, 0x054a0010, 0x054a0200, 0x05aa0000)<br> compacting perm gen  total 12288K, used 2130K [0x05aa0000, 0x066a0000, 0x09aa0000)<br>   the space 12288K,  17% used [0x05aa0000, 0x05cb49b8, 0x05cb4a00, 0x066a0000)<br>No shared spaces configured.<br>我们可以看到Eden空间几乎没有被利用，，而老年代10MB空间被使用40%，也就是4MB的allocation对象被直接分配到老年代中，这是因为PretenureSizeThreshold被设置为3MB，因此超过3MB的对象都会直接在老年代中进行分配。</p>
+<h2 id="3、长期存活的对象将进入老年代"><a href="#3、长期存活的对象将进入老年代" class="headerlink" title="3、长期存活的对象将进入老年代"></a>3、长期存活的对象将进入老年代</h2><p>虚拟机采用了分代收集的思想来管理内存，那内存回收时就必须识别哪些对象应该放在新生代，哪些对象应该放在老年代中。为了做到这点，虚拟机给每个对象定义了一个对象年龄（Age）计数器。如果对象在Eden出生并经过第一次Minor GC后仍然存活，并且能被Survivor容纳的话，将被移动到Survivor空间中，并将对象年龄设为1。对象在Survivor区中没熬过一次Minor GC，年龄就增加1，当它的年龄增加到一定程度（默认为15）时，就会被晋升到老年代中。对象晋升到老年代的年龄阀值，可以通过参数-XX:MaxTenuringThreshold来设置。我们来看下面的代码和运行结果：</p>
+<pre><code>/**
+* VM Args : -verbose:gc -Xms20M -Xmx20M -Xmn10M -XX:SurvivorRatio=8 -XX:+PrintGCDetails
+* -XX:MaxTenuringThreshold=1
+*/
+public static void testTenuringThreshold(){
+    byte[] allocation1,allocation2,allocation3;
+    allocation1 = new byte[_1MB/4];
+    allocation2 = new byte[4*_1MB];
+    allocation3 = new byte[4*_1MB];
+    allocation3 = null;
+    allocation3 = new byte[4*_1MB];
+}
+</code></pre><p>当-XX:MaxTenuringThreshold=1时，运行结果：</p>
+<p>[GC [DefNew<br>Desired survivor size 524288 bytes, new threshold 1 (max 1)</p>
+<ul>
+<li>age   1:     420200 bytes,     420200 total</li>
+</ul>
+<p>: 4859K-&gt;410K(9216K), 0.0042347 secs] 4859K-&gt;4506K(19456K), 0.0042967 secs] [Times: user=0.02 sys=0.00, real=0.00 secs]<br>[GC [DefNew<br>Desired survivor size 524288 bytes, new threshold 1 (max 1)<br>: 4506K-&gt;0K(9216K), 0.0008751 secs] 8602K-&gt;4506K(19456K), 0.0009284 secs] [Times: user=0.00 sys=0.00, real=0.00 secs]<br>Heap<br> def new generation   total 9216K, used 4178K [0x04540000, 0x04f40000, 0x04f40000)<br>  eden space 8192K,  51% used [0x04540000, 0x04954830, 0x04d40000)<br>  <strong>from space 1024K,   0% used</strong> [0x04d40000, 0x04d40000, 0x04e40000)<br>  to   space 1024K,   0% used [0x04e40000, 0x04e40000, 0x04f40000)<br> tenured generation   total 10240K, used 4506K [0x04f40000, 0x05940000, 0x05940000)<br>   <strong>the space 10240K,  44% used</strong> [0x04f40000, 0x053a6978, 0x053a6a00, 0x05940000)<br> compacting perm gen  total 12288K, used 2137K [0x05940000, 0x06540000, 0x09940000)<br>   the space 12288K,  17% used [0x05940000, 0x05b56580, 0x05b56600, 0x06540000)<br>No shared spaces configured.</p>
+<p>当-XX:MaxTenuringThreshold=15时，运行结果：</p>
+<p>[GC [DefNew<br>Desired survivor size 524288 bytes, new threshold 15 (max 15)</p>
+<ul>
+<li>age   1:     420200 bytes,     420200 total</li>
+</ul>
+<p>: 4859K-&gt;410K(9216K), 0.0069588 secs] 4859K-&gt;4506K(19456K), 0.0070540 secs] [Times: user=0.00 sys=0.00, real=0.01 secs]<br>[GC [DefNew<br>Desired survivor size 524288 bytes, new threshold 15 (max 15)</p>
+<ul>
+<li>age   2:     420056 bytes,     420056 total<br>: 4506K-&gt;410K(9216K), 0.0012592 secs] 8602K-&gt;4506K(19456K), 0.0013433 secs] [Times: user=0.00 sys=0.00, real=0.00 secs]<br>Heap<br>def new generation   total 9216K, used 4588K [0x044e0000, 0x04ee0000, 0x04ee0000)<br>eden space 8192K,  51% used [0x044e0000, 0x048f4830, 0x04ce0000)<br><strong>from space 1024K</strong>,  40% used [0x04ce0000, 0x04d468d8, 0x04de0000)<br>to   space 1024K,   0% used [0x04de0000, 0x04de0000, 0x04ee0000)<br>tenured generation   total 10240K, used 4096K [0x04ee0000, 0x058e0000, 0x058e0000)<br> <strong>the space 10240K</strong>,  40% used [0x04ee0000, 0x052e0010, 0x052e0200, 0x058e0000)<br>compacting perm gen  total 12288K, used 2137K [0x058e0000, 0x064e0000, 0x098e0000)<br> the space 12288K,  17% used [0x058e0000, 0x05af6580, 0x05af6600, 0x064e0000)<br>No shared spaces configured.</li>
+</ul>
+<p>　　此方法中allocation1对象需要256KB的内存空间，Survivor空间可以容纳。当MaxTenuringThreshold=1时，allocation1对象在第二次GC发生时进入老年代，新生代已使用的内存GC后会非常干净地变成0KB。而MaxTenuringThreshold=15时，第二次GC发生后，allocation1对象则还留在新生代Survivor空间，这时候新生代仍然有410KB的空间被占用。</p>
+<h2 id="4、动态对象年龄判定"><a href="#4、动态对象年龄判定" class="headerlink" title="4、动态对象年龄判定"></a>4、动态对象年龄判定</h2><p>　　为了能更好地适应不同程序的内存状况，虚拟机并不总是要求对象的年龄必须达到MaxTenuringThreshold才能晋升到老年代，<strong>如果在Survivor空间中相同年龄所有对象大小的总和大于Survivor空间的一半，年龄大于或等于该年龄的对象就可以直接进入老年代</strong>，无须等到MaxTenuringThreshold中要求的年龄。</p>
+<p>/**</p>
+<pre><code> * VM Args : -verbose:gc -Xms20M -Xmx20M -Xmn10M -XX:SurvivorRatio=8
+ * -XX:MaxTenuringThreshold=15 -XX:+PrintTenuringDistribution
+ */
+public static void testTenuringThreshold2(){
+    byte[] allocation1,allocation2,allocation3,allocation4;
+    allocation1 = new byte[_1MB/4];
+    allocation2 = new byte[_1MB/4];
+    allocation3 = new byte[4*_1MB];
+    allocation4 = new byte[4*_1MB];
+    allocation4 = null;
+    allocation4 = new byte[4*_1MB];
+}
+</code></pre><p>运行结果：</p>
+<p>[GC [DefNew<br>Desired survivor size 524288 bytes, new threshold 1 (max 15)</p>
+<ul>
+<li>age   1:     682360 bytes,     682360 total</li>
+</ul>
+<p>: 5115K-&gt;666K(9216K), 0.0068333 secs] 5115K-&gt;4762K(19456K), 0.0069434 secs] [Times: user=0.01 sys=0.00, real=0.01 secs]<br>[GC [DefNew<br>Desired survivor size 524288 bytes, new threshold 15 (max 15)<br>: 4762K-&gt;0K(9216K), 0.0015284 secs] 8858K-&gt;4762K(19456K), 0.0016157 secs] [Times: user=0.00 sys=0.00, real=0.00 secs]<br>Heap<br> def new generation   total 9216K, used 4178K [0x04470000, 0x04e70000, 0x04e70000)<br>  eden space 8192K,  51% used [0x04470000, 0x04884830, 0x04c70000)<br>  from space 1024K,   0% used [0x04c70000, 0x04c70000, 0x04d70000)<br>  to   space 1024K,   0% used [0x04d70000, 0x04d70000, 0x04e70000)<br> tenured generation   total 10240K, used 4762K [0x04e70000, 0x05870000, 0x05870000)<br>   the space 10240K,  46% used [0x04e70000, 0x053168f8, 0x05316a00, 0x05870000)<br> compacting perm gen  total 12288K, used 2137K [0x05870000, 0x06470000, 0x09870000)<br>   the space 12288K,  17% used [0x05870000, 0x05a86580, 0x05a86600, 0x06470000)<br>No shared spaces configured.</p>
+<p>　　发现运行结果中Survivor占用仍然为0%，而老年代比预期增加了6%，也就是说allocation1，allocation2对象都直接进入了老年代，而没有等到15岁的临界年龄。因为这两个对象加起来达到了512KB，并且它们是同年的，满足同年对象达到Survivor空间的一半规则。我们只要注释一个对象的new操作，就会发现另外一个不会晋升到老年代了。</p>
+<h2 id="5、空间分配担保"><a href="#5、空间分配担保" class="headerlink" title="5、空间分配担保"></a>5、空间分配担保</h2><p>　　当发生Minor GC时，虚拟机会检测之前每次晋升到老年代的平均大小是否大于老年代的剩余空间大小，如果大于，则改为直接进行一次Full GC。如果小于，则查看HandlePromotionFailure设置是否允许担保失败；如果允许，那只会进行Minor GC；如果不允许，则也要改为进行一次Full GC。</p>
+<p>　　新生代使用复制收集算法，但为了内存利用率，值使用其中一个Survivor空间来作为轮换备份，因此当出现大量对象在Minor GC后仍然存活的情况时（最极端就是内存回收后新生代中所有对象都存活），就需要老年代进行分配担保，让Survivor无法容纳的对象直接进入老年代。与生活中的贷款担保类似，老年代要进行这样的担保，前提是老年代本身还有容纳这些对象的剩余空间，一共有多少对象会活下去，在实际完成内存回收之前是无法明确知道的，所以只好取之前每一次回收晋升到老年代对象容量的平均大小值作为经验，与老年代的剩余空间进行对比，决定是否进行Full GC来让老年代腾出更多空间。</p>
+<p>　　取平均值进行比较其实仍然是一种动态概率的手段，也就是说如果某次Minor GC存活后的对象突增，远远高于平均值时，依然会导致担保失败（Handle Promotion Failure）。如果出现HandlePromotionFailure失败，那就只好在失败后重新发起一次Full GC。虽然担保失败时绕的圈子是最大的，但大部分情况下都还是会将HandlePromotionFailure开关打开，避免Full GC过于频繁。</p>
+<pre><code>/**
+     * VM Args : -verbose:gc -Xms20M -Xmx20M -Xmn10M -XX:SurvivorRatio=8
+     * -XX:-HandlePromotionFailure -XX:+PrintGCDetails
+     */
+    public static void testHandlePromotion(){
+        byte[] allocation1,allocation2,allocation3,allocation4,allocation5,
+            allocation6,allocation7;
+        allocation1 = new byte[2*_1MB];
+        allocation2 = new byte[2*_1MB];
+        allocation3 = new byte[2*_1MB];
+        allocation1 = null;
+        allocation4 = new byte[2*_1MB];
+        allocation5 = new byte[2*_1MB];
+        allocation6 = new byte[2*_1MB];
+        allocation4 = null;
+        allocation5 = null;
+        allocation6 = null;
+        allocation7 = new byte[2*_1MB];
+    }
+</code></pre><p>以HandlePromotionFailure=false运行结果：</p>
+<p>[GC [DefNew: 6651K-&gt;154K(9216K), 0.0033102 secs] 6651K-&gt;4250K(19456K), 0.0033813 secs] [Times: user=0.00 sys=0.00, real=0.00 secs]<br>[GC [DefNew: 6384K-&gt;6384K(9216K), 0.0000288 secs][Tenured: 4096K-&gt;4250K(10240K), 0.0039019 secs] 10480K-&gt;4250K(19456K), [Perm : 2132K-&gt;2132K(12288K)], 0.0040460 secs] [Times: user=0.00 sys=0.00, real=0.00 secs]<br>Heap<br> def new generation   total 9216K, used 2211K [0x044e0000, 0x04ee0000, 0x04ee0000)<br>  eden space 8192K,  27% used [0x044e0000, 0x04708fe0, 0x04ce0000)<br>  from space 1024K,   0% used [0x04de0000, 0x04de0000, 0x04ee0000)<br>  to   space 1024K,   0% used [0x04ce0000, 0x04ce0000, 0x04de0000)<br> tenured generation   total 10240K, used 4250K [0x04ee0000, 0x058e0000, 0x058e0000)<br>   the space 10240K,  41% used [0x04ee0000, 0x053068a8, 0x05306a00, 0x058e0000)<br> compacting perm gen  total 12288K, used 2137K [0x058e0000, 0x064e0000, 0x098e0000)<br>   the space 12288K,  17% used [0x058e0000, 0x05af6710, 0x05af6800, 0x064e0000)<br>No shared spaces configured.</p>
+<p>以HandlePromotionFailure=true运行结果：</p>
+<p>[GC [DefNew: 6651K-&gt;154K(9216K), 0.0038289 secs] 6651K-&gt;4250K(19456K), 0.0038877 secs] [Times: user=0.00 sys=0.00, real=0.00 secs]<br>[GC [DefNew: 6384K-&gt;154K(9216K), 0.0006008 secs] 10480K-&gt;4250K(19456K), 0.0006525 secs] [Times: user=0.00 sys=0.00, real=0.00 secs]<br>Heap<br> def new generation   total 9216K, used 2366K [0x043d0000, 0x04dd0000, 0x04dd0000)<br>  eden space 8192K,  27% used [0x043d0000, 0x045f8fe0, 0x04bd0000)<br>  from space 1024K,  15% used [0x04bd0000, 0x04bf6888, 0x04cd0000)<br>  to   space 1024K,   0% used [0x04cd0000, 0x04cd0000, 0x04dd0000)<br> tenured generation   total 10240K, used 4096K [0x04dd0000, 0x057d0000, 0x057d0000)<br>   the space 10240K,  40% used [0x04dd0000, 0x051d0020, 0x051d0200, 0x057d0000)<br> compacting perm gen  total 12288K, used 2137K [0x057d0000, 0x063d0000, 0x097d0000)<br>   the space 12288K,  17% used [0x057d0000, 0x059e6710, 0x059e6800, 0x063d0000)<br>No shared spaces configured.</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Java/" rel="tag">#Java</a>
+          
+            <a href="/tags/JVM/" rel="tag">#JVM</a>
+          
+            <a href="/tags/内存分配/" rel="tag">#内存分配</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/11/02/JVM垃圾收集器总结/" rel="next" title="JVM垃圾收集器总结">
+                <i class="fa fa-chevron-left"></i> JVM垃圾收集器总结
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/11/03/JVM的类加载机制/" rel="prev" title="JVM的类加载机制">
+                JVM的类加载机制 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2016/11/02/JVM中的内存分配策略/"
+           data-title="JVM中的内存分配策略" data-url="http://yoursite.com/2016/11/02/JVM中的内存分配策略/">
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/image/avatar.png"
+               alt="Alan" />
+          <p class="site-author-name" itemprop="name">Alan</p>
+          <p class="site-description motion-element" itemprop="description">Better late than never.</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">26</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">6</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">44</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/xiangwanpeng" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/u/2810288024/home" target="_blank" title="weibo">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  weibo
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1、对象优先在Eden分配"><span class="nav-number">1.</span> <span class="nav-text">1、对象优先在Eden分配</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2、大对象直接进入老年代"><span class="nav-number">2.</span> <span class="nav-text">2、大对象直接进入老年代</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3、长期存活的对象将进入老年代"><span class="nav-number">3.</span> <span class="nav-text">3、长期存活的对象将进入老年代</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4、动态对象年龄判定"><span class="nav-number">4.</span> <span class="nav-text">4、动态对象年龄判定</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5、空间分配担保"><span class="nav-number">5.</span> <span class="nav-text">5、空间分配担保</span></a></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2016</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Alan</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Pisces
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.1"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.0.1"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.1"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"xiangwanpeng"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+    
+    <script src="/vendors/ua-parser-js/dist/ua-parser.min.js?v=0.7.9"></script>
+    <script src="/js/src/hook-duoshuo.js"></script>
+  
+
+
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
