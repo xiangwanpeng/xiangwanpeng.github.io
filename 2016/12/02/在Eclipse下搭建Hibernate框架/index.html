@@ -1,0 +1,703 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/VEN/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/VEN/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Hibernate,J2EE,数据库," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.1" />
+
+
+
+
+
+
+<meta name="description" content="实现在Eclipse中搭建一个Hibernate框架。在这里，我使用的数据库是mysql5.5。
+1.安装和当前Eclipse版本匹配的Hibernate插件或者JBoss插件：　　在Eclipse中点击Help —&amp;gt; Eclipse Marketplace，搜索JBoss Tools，点击install，选择要安装的JBoss插件（我选择了全部），一路默认即可，安装完后重启Eclips">
+<meta property="og:type" content="article">
+<meta property="og:title" content="在Eclipse下搭建Hibernate框架">
+<meta property="og:url" content="http://yoursite.com/2016/12/02/在Eclipse下搭建Hibernate框架/index.html">
+<meta property="og:site_name" content="向万鹏的独立博客">
+<meta property="og:description" content="实现在Eclipse中搭建一个Hibernate框架。在这里，我使用的数据库是mysql5.5。
+1.安装和当前Eclipse版本匹配的Hibernate插件或者JBoss插件：　　在Eclipse中点击Help —&amp;gt; Eclipse Marketplace，搜索JBoss Tools，点击install，选择要安装的JBoss插件（我选择了全部），一路默认即可，安装完后重启Eclips">
+<meta property="og:image" content="http://static.zybuluo.com/xiangwanpeng/eh3venr47csgit2iwhufreok/image_1b2vd9s8718mprui1988vl1174l9.png">
+<meta property="og:image" content="http://static.zybuluo.com/xiangwanpeng/f9q80051vz33xmv8mt97mte2/image_1b2vdkqcqblkme7k691h8gqc716.png">
+<meta property="og:image" content="http://static.zybuluo.com/xiangwanpeng/ijfksbq78eu5140ph86uyg6v/image_1b2vq99m869b14oo4daes31bsjm.png">
+<meta property="og:image" content="http://static.zybuluo.com/xiangwanpeng/or6qgn4k3v0brzq54yeja9gp/image_1b2vqa5vc1fke71h1drr104q1loj13.png">
+<meta property="og:updated_time" content="2016-12-03T02:24:02.528Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="在Eclipse下搭建Hibernate框架">
+<meta name="twitter:description" content="实现在Eclipse中搭建一个Hibernate框架。在这里，我使用的数据库是mysql5.5。
+1.安装和当前Eclipse版本匹配的Hibernate插件或者JBoss插件：　　在Eclipse中点击Help —&amp;gt; Eclipse Marketplace，搜索JBoss Tools，点击install，选择要安装的JBoss插件（我选择了全部），一路默认即可，安装完后重启Eclips">
+<meta name="twitter:image" content="http://static.zybuluo.com/xiangwanpeng/eh3venr47csgit2iwhufreok/image_1b2vd9s8718mprui1988vl1174l9.png">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"always"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 0,
+      author: '博主'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2016/12/02/在Eclipse下搭建Hibernate框架/"/>
+
+  <title> 在Eclipse下搭建Hibernate框架 | 向万鹏的独立博客 </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">向万鹏的独立博客</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle"></p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                在Eclipse下搭建Hibernate框架
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-12-02T17:07:48+08:00" content="2016-12-02">
+              2016-12-02
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/Hibernate/" itemprop="url" rel="index">
+                    <span itemprop="name">Hibernate</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2016/12/02/在Eclipse下搭建Hibernate框架/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/12/02/在Eclipse下搭建Hibernate框架/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>　　实现在Eclipse中搭建一个Hibernate框架。在这里，我使用的数据库是mysql5.5。</p>
+<p><strong>1.安装和当前Eclipse版本匹配的Hibernate插件或者JBoss插件：</strong><br>　　在Eclipse中点击Help —&gt; Eclipse Marketplace，搜索JBoss Tools，点击install，选择要安装的JBoss插件（我选择了全部），一路默认即可，安装完后重启Eclipse。<br>　　重新打开Eclipse后，右键New -&gt; Other，输入hibernate会提示<br>　　<br>　　<img src="http://static.zybuluo.com/xiangwanpeng/eh3venr47csgit2iwhufreok/image_1b2vd9s8718mprui1988vl1174l9.png" alt="image_1b2vd9s8718mprui1988vl1174l9.png-28.8kB"><br>　　<br>　　表明Hibernat插件安装成功。<br>　　<br><strong>2.新建项目，并搭建Hibernate环境：</strong><br>　　右键New -&gt; Java Project（仅需测试Hibernate，故没有新建Web Project），右键项目名，New -&gt; Folder，命名为lib，复制需要的hibernate的JAR文件和mysql的JAR文件到该文件夹下：</p>
+<p><img src="http://static.zybuluo.com/xiangwanpeng/f9q80051vz33xmv8mt97mte2/image_1b2vdkqcqblkme7k691h8gqc716.png" alt="image_1b2vdkqcqblkme7k691h8gqc716.png-11.6kB"></p>
+<p>　　右键这些jar文件，Build Path -&gt; Add to Build Path。<br>　　<br><strong>3.创建持久化Java类：</strong>（在这里用一个新闻类News.java测试）<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">import</span> java.util.Date;</div><div class="line"></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">News</span> </span>&#123;</div><div class="line">	<span class="keyword">private</span> Integer id;</div><div class="line">	<span class="keyword">private</span> String title;</div><div class="line">	<span class="keyword">private</span> String content;</div><div class="line">	<span class="keyword">private</span> Date date;</div><div class="line"></div><div class="line">	<span class="function"><span class="keyword">public</span> Integer <span class="title">getId</span><span class="params">()</span> </span>&#123;</div><div class="line">		<span class="keyword">return</span> id;</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setId</span><span class="params">(Integer id)</span> </span>&#123;</div><div class="line">		<span class="keyword">this</span>.id = id;</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="function"><span class="keyword">public</span> String <span class="title">getTitle</span><span class="params">()</span> </span>&#123;</div><div class="line">		<span class="keyword">return</span> title;</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setTitle</span><span class="params">(String title)</span> </span>&#123;</div><div class="line">		<span class="keyword">this</span>.title = title;</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="function"><span class="keyword">public</span> String <span class="title">getContent</span><span class="params">()</span> </span>&#123;</div><div class="line">		<span class="keyword">return</span> content;</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setContent</span><span class="params">(String content)</span> </span>&#123;</div><div class="line">		<span class="keyword">this</span>.content = content;</div><div class="line">	&#125;</div><div class="line">	</div><div class="line">	</div><div class="line"></div><div class="line">	<span class="function"><span class="keyword">public</span> Date <span class="title">getDate</span><span class="params">()</span> </span>&#123;</div><div class="line">		<span class="keyword">return</span> date;</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setDate</span><span class="params">(Date date)</span> </span>&#123;</div><div class="line">		<span class="keyword">this</span>.date = date;</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="title">News</span><span class="params">(String title, String content, Date date)</span> </span>&#123;</div><div class="line">		<span class="keyword">super</span>();</div><div class="line">		<span class="keyword">this</span>.title = title;</div><div class="line">		<span class="keyword">this</span>.content = content;</div><div class="line">		<span class="keyword">this</span>.date = date;</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="title">News</span><span class="params">()</span> </span>&#123;</div><div class="line">		<span class="comment">// TODO Auto-generated constructor stub</span></div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="meta">@Override</span></div><div class="line">	<span class="function"><span class="keyword">public</span> String <span class="title">toString</span><span class="params">()</span> </span>&#123;</div><div class="line">		<span class="keyword">return</span> <span class="string">"News [id="</span> + id + <span class="string">", title="</span> + title + <span class="string">", content="</span> + content + <span class="string">", date="</span> + date + <span class="string">"]"</span>;</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>注意点：</p>
+<ul>
+<li>要提供一个无参构造器。以便Hibernate可以使用Constructor.newInstance()来实例化持久化类。</li>
+<li>提供一个标识属性。通常映射为数据库表的主键字段。如果没有该属性，一些功能将不起作用，如：Session.saveOrUpdate()。</li>
+<li>为持久化类的字段声明访问方法（get/set）。Hibernate对JavaBeans风格的属性实行持久化。</li>
+<li>使用非final类。在运行时生成代理是Hibernate的一个重要的功能。如果持久化类没有实现任何接口，Hibnernate 使用 CGLIB 生成代理。如果使用的是 final 类，则无法生成CGLIB代理。</li>
+<li>重写eqauls()和hashCode()方法。如果需要把持久化类的实例放到Set中（当需要进行关联映射时），则应该重写这两个方法。
+　</li>
+</ul>
+<p><strong>4.创建对象-关系映射文件：</strong><br>　　右键持久化类所在的包名，New -&gt; Hibernate XML Mapping file（hbm.xml） -&gt; 选择News类 -&gt; finish，将生成New类对应的对象-关系映射文件News.hbm.xml，把其中&lt;id&gt;下的&lt;generator&gt;的class属性设置为”native”，即指定主键的生成方式为使用数据库的本地方式：<br><figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div></pre></td><td class="code"><pre><div class="line">&lt;?xml version="1.0"?&gt;</div><div class="line"><span class="meta">&lt;!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"</span></div><div class="line">"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd"&gt;</div><div class="line"><span class="comment">&lt;!-- Generated 2016-12-2 16:03:18 by Hibernate Tools 3.5.0.Final --&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">hibernate-mapping</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">class</span> <span class="attr">name</span>=<span class="string">"com.Hibernate.entities.News"</span> <span class="attr">table</span>=<span class="string">"NEWS"</span>&gt;</span></div><div class="line">        <span class="tag">&lt;<span class="name">id</span> <span class="attr">name</span>=<span class="string">"id"</span> <span class="attr">type</span>=<span class="string">"java.lang.Integer"</span>&gt;</span></div><div class="line">            <span class="tag">&lt;<span class="name">column</span> <span class="attr">name</span>=<span class="string">"ID"</span> /&gt;</span></div><div class="line">            <span class="comment">&lt;!-- 指定主键的生成方式, native: 使用数据库本地方式 --&gt;</span></div><div class="line">            <span class="tag">&lt;<span class="name">generator</span> <span class="attr">class</span>=<span class="string">"native"</span> /&gt;</span></div><div class="line">        <span class="tag">&lt;/<span class="name">id</span>&gt;</span></div><div class="line">        <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"title"</span> <span class="attr">type</span>=<span class="string">"java.lang.String"</span>&gt;</span></div><div class="line">            <span class="tag">&lt;<span class="name">column</span> <span class="attr">name</span>=<span class="string">"TITLE"</span> /&gt;</span></div><div class="line">        <span class="tag">&lt;/<span class="name">property</span>&gt;</span></div><div class="line">        <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"content"</span> <span class="attr">type</span>=<span class="string">"java.lang.String"</span>&gt;</span></div><div class="line">            <span class="tag">&lt;<span class="name">column</span> <span class="attr">name</span>=<span class="string">"CONTENT"</span> /&gt;</span></div><div class="line">        <span class="tag">&lt;/<span class="name">property</span>&gt;</span></div><div class="line">        <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"date"</span> <span class="attr">type</span>=<span class="string">"java.util.Date"</span>&gt;</span></div><div class="line">            <span class="tag">&lt;<span class="name">column</span> <span class="attr">name</span>=<span class="string">"DATE"</span> /&gt;</span></div><div class="line">        <span class="tag">&lt;/<span class="name">property</span>&gt;</span></div><div class="line">    <span class="tag">&lt;/<span class="name">class</span>&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">hibernate-mapping</span>&gt;</span></div></pre></td></tr></table></figure></p>
+<p><strong>5.创建Hibernate配置文件：</strong><br>　　右键src目录 -&gt; New -&gt; Hibernate Configuration File -&gt; next，使用默认名字hibernate.cfg.xml，点击finish，然后在该文件中配置数据库连接相关的信息：<br><figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div></pre></td><td class="code"><pre><div class="line">&lt;?xml version="1.0" encoding="UTF-8"?&gt;</div><div class="line"><span class="meta">&lt;!DOCTYPE hibernate-configuration PUBLIC</span></div><div class="line">		"-//Hibernate/Hibernate Configuration DTD 3.0//EN"</div><div class="line">		"http://hibernate.sourceforge.net/hibernate-configuration-3.0.dtd"&gt;</div><div class="line"><span class="tag">&lt;<span class="name">hibernate-configuration</span>&gt;</span></div><div class="line">	<span class="tag">&lt;<span class="name">session-factory</span>&gt;</span></div><div class="line">    </div><div class="line">		<span class="comment">&lt;!-- 配置连接数据库的基本信息 --&gt;</span></div><div class="line">		<span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"connection.username"</span>&gt;</span>root<span class="tag">&lt;/<span class="name">property</span>&gt;</span></div><div class="line">		<span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"connection.password"</span>&gt;</span>你的数据库密码<span class="tag">&lt;/<span class="name">property</span>&gt;</span></div><div class="line">		<span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"connection.driver_class"</span>&gt;</span>com.mysql.jdbc.Driver<span class="tag">&lt;/<span class="name">property</span>&gt;</span></div><div class="line">		<span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"connection.url"</span>&gt;</span>jdbc:mysql:///数据库名<span class="tag">&lt;/<span class="name">property</span>&gt;</span></div><div class="line">		</div><div class="line">		<span class="comment">&lt;!-- 配置 hibernate 的基本信息 --&gt;</span></div><div class="line">		<span class="comment">&lt;!-- hibernate 所使用的数据库方言 --&gt;</span></div><div class="line">		<span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"dialect"</span>&gt;</span>org.hibernate.dialect.MySQL5InnoDBDialect<span class="tag">&lt;/<span class="name">property</span>&gt;</span>		</div><div class="line">		</div><div class="line">		<span class="comment">&lt;!-- 执行操作时是否在控制台打印 SQL --&gt;</span></div><div class="line">		<span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"show_sql"</span>&gt;</span>true<span class="tag">&lt;/<span class="name">property</span>&gt;</span></div><div class="line">	</div><div class="line">		<span class="comment">&lt;!-- 是否对 SQL 进行格式化 --&gt;</span></div><div class="line">		<span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"format_sql"</span>&gt;</span>true<span class="tag">&lt;/<span class="name">property</span>&gt;</span></div><div class="line">	</div><div class="line">		<span class="comment">&lt;!-- 指定自动生成数据表的策略 --&gt;</span></div><div class="line">		<span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"hbm2ddl.auto"</span>&gt;</span>update<span class="tag">&lt;/<span class="name">property</span>&gt;</span></div><div class="line">		</div><div class="line">		<span class="comment">&lt;!-- 指定关联的 .hbm.xml 文件 --&gt;</span></div><div class="line">		<span class="tag">&lt;<span class="name">mapping</span> <span class="attr">resource</span>=<span class="string">"com/atguigu/hibernate/helloworld/News.hbm.xml"</span>/&gt;</span></div><div class="line">	</div><div class="line">	<span class="tag">&lt;/<span class="name">session-factory</span>&gt;</span></div><div class="line"></div><div class="line"><span class="tag">&lt;/<span class="name">hibernate-configuration</span>&gt;</span></div></pre></td></tr></table></figure></p>
+<p><strong>6.测试：</strong><br>　　右键 -&gt; New -&gt; JUnit Test Case，用下面的代码测试保存一个New对象到数据库，然后查找该记录并输出。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Test</span> </span>&#123;</div><div class="line"></div><div class="line">	<span class="meta">@org</span>.junit.<span class="function">Test</span></div><div class="line">	<span class="keyword">public</span> <span class="keyword">void</span> <span class="title">test</span><span class="params">()</span> &#123;</div><div class="line">		<span class="comment">//1.创建一个 SessionFactory 对象</span></div><div class="line">		SessionFactory sessionFactory = <span class="keyword">null</span>;</div><div class="line">				</div><div class="line">		<span class="comment">//1).创建Configuration对象:对应hibernate的基本配置信息和对象关系映射信息</span></div><div class="line">		Configuration configuration = <span class="keyword">new</span> Configuration().configure();</div><div class="line">				</div><div class="line">		<span class="comment">// Hibernate4.0之前这样创建</span></div><div class="line">        <span class="comment">//sessionFactory = configuration.buildSessionFactory();</span></div><div class="line">				</div><div class="line">		<span class="comment">//2).创建一个 ServiceRegistry 对象: hibernate 4.x 新添加的对象</span></div><div class="line">		<span class="comment">//hibernate 的任何配置和服务都需要在该对象中注册后才能有效.</span></div><div class="line">		ServiceRegistry serviceRegistry = </div><div class="line">						<span class="keyword">new</span> ServiceRegistryBuilder().applySettings(configuration.getProperties())</div><div class="line">						                            .buildServiceRegistry();</div><div class="line">				</div><div class="line">		<span class="comment">//3).</span></div><div class="line">		sessionFactory = configuration.buildSessionFactory(serviceRegistry);</div><div class="line">				</div><div class="line">		<span class="comment">//2. 创建一个 Session 对象</span></div><div class="line">		Session session = sessionFactory.openSession();</div><div class="line">				</div><div class="line">		<span class="comment">//3. 开启事务</span></div><div class="line">		Transaction transaction = session.beginTransaction();</div><div class="line">				</div><div class="line">		<span class="comment">//4.执行保存和加载操作</span></div><div class="line">		News news = <span class="keyword">new</span> News(<span class="string">"C++"</span>, <span class="string">"zhangsan"</span>, <span class="keyword">new</span> Date(<span class="keyword">new</span> java.util.Date().getTime()));</div><div class="line">		session.save(news);</div><div class="line">		</div><div class="line">		<span class="comment">//加载数据库中id为1的News记录</span></div><div class="line">		News news1 = (News) session.get(News.class, <span class="number">1</span>);</div><div class="line">		System.out.println(news);</div><div class="line">				</div><div class="line">		<span class="comment">//5. 提交事务 </span></div><div class="line">		transaction.commit();</div><div class="line">				</div><div class="line">		<span class="comment">//6. 关闭 Session</span></div><div class="line">		session.close();</div><div class="line">				</div><div class="line">		<span class="comment">//7. 关闭 SessionFactory 对象</span></div><div class="line">		sessionFactory.close();</div><div class="line">	&#125;</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>运行代码后，会自动为数据库hibernate1创建一张news表，并添加一条记录：</p>
+<p><img src="http://static.zybuluo.com/xiangwanpeng/ijfksbq78eu5140ph86uyg6v/image_1b2vq99m869b14oo4daes31bsjm.png" alt="image_1b2vq99m869b14oo4daes31bsjm.png-15.5kB"></p>
+<p>而且在控制台输出了sql语句以及从数据库中加载的记录：</p>
+<p><img src="http://static.zybuluo.com/xiangwanpeng/or6qgn4k3v0brzq54yeja9gp/image_1b2vqa5vc1fke71h1drr104q1loj13.png" alt="image_1b2vqa5vc1fke71h1drr104q1loj13.png-29.6kB"></p>
+<p>　　在test方法中，各个接口的作用为：</p>
+<ul>
+<li><strong>Configuration接口：</strong><br>　　Configuration 类负责管理 hibernate 的配置信息，包括如下内容：<br>　　<strong>Hibernate 运行的底层信息</strong>：数据库的URL、用户名、密码、JDBC驱动类；<br>　　<strong>数据库Dialect,数据库连接池等</strong>（对应 hibernate.cfg.xml 文件）；<br>　　<strong>持久化类与数据表的映射关系</strong>（对应<em>.hbm.xml 文件）。<br>　<br>　　创建 Configuration 的两种方式：（只一种即可，否则会被覆盖）<br>　　<em>*属性文件（hibernate.properties）:</em></em><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">　　Configuration cfg = <span class="keyword">new</span> Configuration();</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>　　　　<strong>Xml文件（hibernate.cfg.xml）：</strong><br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">　　Configuration cfg = <span class="keyword">new</span> Configuration().configure();</div></pre></td></tr></table></figure></p>
+<p>　<br>　　　　Configuration 的 configure 方法还支持带参数的访问：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">　　File file = <span class="keyword">new</span> File(“<span class="keyword">new</span>.xml”)；</div><div class="line">　　Configuration cfg = <span class="keyword">new</span> Configuration().configure(file);</div></pre></td></tr></table></figure></p>
+<ul>
+<li><p><strong>SessionFactory接口：</strong><br>　　针对单个数据库映射关系经过编译后的内存镜像，是线程安全的。<br>　　SessionFactory对象一旦构造完毕，即被赋予特定的配置信息。<br>　　SessionFactory是生成Session的工厂。<br>　　构造SessionFactory很消耗资源，一般情况下一个应用中只初始化一个SessionFactory对象。<br>　　Hibernate4新增了一个ServiceRegistry接口，所有基于Hibernate的配置或者服务都必须统一向这个ServiceRegistry  注册后才能生效。<br>　<br>　　Hibernate4中创建SessionFactory的步骤：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//创建Configuration对象</span></div><div class="line">Configuration configuration = <span class="keyword">new</span> Configuration().configure();</div><div class="line"><span class="comment">//创建ServiceRegistry对象</span></div><div class="line">ServiceRegistry serviceRegistry = <span class="keyword">new</span> ServiceRegistryBuilder()</div><div class="line">.applySettings(configuration.getProperties())</div><div class="line">.buildServiceRegistry();</div><div class="line"><span class="comment">//创建SessionFactory对象</span></div><div class="line">SessionFactory sessionFactory = configuration.buildSessionFactory(serviceRegistry);</div></pre></td></tr></table></figure>
+</li>
+<li><p><strong>Session接口：</strong><br>　　Session 是应用程序与数据库之间交互操作的一个单线程对象，是 Hibernate运作的中心，所有持久化对象必须在session的管理下才可以进行持久化操作。此对象的生命周期很短。Session对象有一个一级缓存，显式执行flush之前，所有的持久层操作的数据都缓存在session对象处。相当于JDBC中的Connection。<br>　　持久化类与 Session关联起来后就具有了持久化的能力。<br>　　Session 类的方法：<br>　　取得持久化对象的方法： get()load()；<br>　　持久化对象都得保存，更新和删除：save(),update(),saveOrUpdate(),delete()；<br>　　开启事务: beginTransaction()；<br>　　管理 Session的方法：isOpen(),flush(),clear(), evict(), close()等。</p>
+</li>
+<li><p><strong>Transaction接口：</strong><br>　　代表一次原子操作，它具有数据库事务的概念。<br>　　所有持久层都应该在事务管理下进行，即使是只读操作。<br>　　获取Transaction对象：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">Transaction transaction = session.beginTransaction();</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>　　　　常用方法:<br>　　　　commit():提交相关联的session实例；<br>　　　　rollback():撤销事务操作；<br>　　　　wasCommitted():检查事务是否提交。</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Hibernate/" rel="tag">#Hibernate</a>
+          
+            <a href="/tags/J2EE/" rel="tag">#J2EE</a>
+          
+            <a href="/tags/数据库/" rel="tag">#数据库</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/11/23/Java设计模式之单例模式/" rel="next" title="Java设计模式之单例模式">
+                <i class="fa fa-chevron-left"></i> Java设计模式之单例模式
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/12/03/Hibernate一级缓存——Session/" rel="prev" title="Hibernate一级缓存——Session">
+                Hibernate一级缓存——Session <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2016/12/02/在Eclipse下搭建Hibernate框架/"
+           data-title="在Eclipse下搭建Hibernate框架" data-url="http://yoursite.com/2016/12/02/在Eclipse下搭建Hibernate框架/">
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/image/avatar.png"
+               alt="Alan" />
+          <p class="site-author-name" itemprop="name">Alan</p>
+          <p class="site-description motion-element" itemprop="description">Better late than never.</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">45</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">11</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">61</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/xiangwanpeng" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/u/2810288024/home" target="_blank" title="weibo">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  weibo
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <p class="post-toc-empty">此文章未包含目录</p>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2016</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Alan</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Pisces
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/VEN/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/VEN/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/VEN/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/VEN/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/VEN/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/VEN/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.1"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.0.1"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.1"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"xiangwanpeng"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+    
+    <script src="/VEN/ua-parser-js/dist/ua-parser.min.js?v=0.7.9"></script>
+    <script src="/js/src/hook-duoshuo.js"></script>
+  
+
+
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

@@ -1,0 +1,669 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/VEN/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/VEN/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="SpringMVC,Spring," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.1" />
+
+
+
+
+
+
+<meta name="description" content="是否需要用Spring整合SpringMVC　　是否需要用 Spring 整合 SpringMVC？或者更通俗地说，是否需要在 web.xml 文件中配置了SpringMVC IOC 容器的 DispatcherServlet 的同时，再去配置启动 Spring IOC 容器的 ContextLoaderListener？关于这个问题，答案通常是需要的。建议SpringMVC的配置文件只去配置Sp">
+<meta property="og:type" content="article">
+<meta property="og:title" content="在Spring的环境下使用SpringMVC">
+<meta property="og:url" content="http://yoursite.com/2016/11/15/在Spring的环境下使用SpringMVC/index.html">
+<meta property="og:site_name" content="向万鹏的独立博客">
+<meta property="og:description" content="是否需要用Spring整合SpringMVC　　是否需要用 Spring 整合 SpringMVC？或者更通俗地说，是否需要在 web.xml 文件中配置了SpringMVC IOC 容器的 DispatcherServlet 的同时，再去配置启动 Spring IOC 容器的 ContextLoaderListener？关于这个问题，答案通常是需要的。建议SpringMVC的配置文件只去配置Sp">
+<meta property="og:image" content="http://static.zybuluo.com/xiangwanpeng/7jyhqlyojktmg1uqi9qiy86w/image_1b1jj5u7e24rlmn75v1sj311n09.png">
+<meta property="og:image" content="http://static.zybuluo.com/xiangwanpeng/qrei4ienw388dz2c0beedztl/image_1b1jjguch11gk9c91eu1va11iskm.png">
+<meta property="og:image" content="http://static.zybuluo.com/xiangwanpeng/tboinhbg4si0eyetorwfxhsb/image_1b1jjkmo9u94lo11ie11labntr13.png">
+<meta property="og:updated_time" content="2016-11-15T09:09:59.531Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="在Spring的环境下使用SpringMVC">
+<meta name="twitter:description" content="是否需要用Spring整合SpringMVC　　是否需要用 Spring 整合 SpringMVC？或者更通俗地说，是否需要在 web.xml 文件中配置了SpringMVC IOC 容器的 DispatcherServlet 的同时，再去配置启动 Spring IOC 容器的 ContextLoaderListener？关于这个问题，答案通常是需要的。建议SpringMVC的配置文件只去配置Sp">
+<meta name="twitter:image" content="http://static.zybuluo.com/xiangwanpeng/7jyhqlyojktmg1uqi9qiy86w/image_1b1jj5u7e24rlmn75v1sj311n09.png">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"always"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 0,
+      author: '博主'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2016/11/15/在Spring的环境下使用SpringMVC/"/>
+
+  <title> 在Spring的环境下使用SpringMVC | 向万鹏的独立博客 </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">向万鹏的独立博客</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle"></p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                在Spring的环境下使用SpringMVC
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-11-15T16:19:43+08:00" content="2016-11-15">
+              2016-11-15
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/SpringMVC/" itemprop="url" rel="index">
+                    <span itemprop="name">SpringMVC</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2016/11/15/在Spring的环境下使用SpringMVC/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/11/15/在Spring的环境下使用SpringMVC/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="是否需要用Spring整合SpringMVC"><a href="#是否需要用Spring整合SpringMVC" class="headerlink" title="是否需要用Spring整合SpringMVC"></a>是否需要用Spring整合SpringMVC</h2><p>　　是否需要用 Spring 整合 SpringMVC？或者更通俗地说，是否需要在 web.xml 文件中配置了SpringMVC IOC 容器的 DispatcherServlet 的同时，再去配置启动 Spring IOC 容器的 ContextLoaderListener？关于这个问题，答案通常是需要的。建议SpringMVC的配置文件只去配置SpringMVC需要的handler，而类似于数据源，事务，Service，Dao以及整合其他框架都是放在Spring的配置文件中(而不是放在 SpringMVC 的配置文件中)。</p>
+<h2 id="bean被创建两次？"><a href="#bean被创建两次？" class="headerlink" title="bean被创建两次？"></a>bean被创建两次？</h2><p>　　当我们同时配置了SpringMVC和Spring的IOC容器，并且指定扫描相同的包，那么同一个Bean会被创建两次。而正确的情况应该为，Spring的IOC 容器不应该扫描SpringMVC中的bean, 对应的SpringMVC的IOC 容器不应该扫描Spring中的bean。有两种解决方法：<br>　　<br>　　<strong>方法一：</strong>使Spring的IOC容器扫描的包和SpringMVC的IOC 容器扫描的包没有重合的部分。不过在实际情况下，项目的开发很可能是分模块进行的，所以这种方法并不总是适合。<br>　　<br>　　<strong>方法二：</strong>在SpringMVC的IOC容器中指定<strong>只扫描由@Controller和@ControllerAdvice注解标记的bean：</strong><br><figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">context:component-scan</span> <span class="attr">base-package</span>=<span class="string">"com.MySpringMVC"</span></span></div><div class="line">		<span class="attr">use-default-filters</span>=<span class="string">"false"</span>&gt;</div><div class="line">		<span class="tag">&lt;<span class="name">context:include-filter</span> <span class="attr">type</span>=<span class="string">"annotation"</span></span></div><div class="line">			<span class="attr">expression</span>=<span class="string">"org.springframework.stereotype.Controller"</span> /&gt;</div><div class="line">		<span class="tag">&lt;<span class="name">context:include-filter</span> <span class="attr">type</span>=<span class="string">"annotation"</span></span></div><div class="line">			<span class="attr">expression</span>=<span class="string">"org.springframework.web.bind.annotation.ControllerAdvice"</span> /&gt;</div><div class="line">	<span class="tag">&lt;/<span class="name">context:component-scan</span>&gt;</span></div></pre></td></tr></table></figure></p>
+<p>　　同时在Spring的IOC容器中指定<strong>不扫描由@Controller和@ControllerAdvice注解标记的bean：</strong><br><figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">context:component-scan</span> <span class="attr">base-package</span>=<span class="string">"com.MySpringMVC"</span>&gt;</span></div><div class="line">		<span class="tag">&lt;<span class="name">context:exclude-filter</span> <span class="attr">type</span>=<span class="string">"annotation"</span></span></div><div class="line">			<span class="attr">expression</span>=<span class="string">"org.springframework.stereotype.Controller"</span> /&gt;</div><div class="line">		<span class="tag">&lt;<span class="name">context:exclude-filter</span> <span class="attr">type</span>=<span class="string">"annotation"</span></span></div><div class="line">			<span class="attr">expression</span>=<span class="string">"org.springframework.web.bind.annotation.ControllerAdvice"</span> /&gt;</div><div class="line">	<span class="tag">&lt;/<span class="name">context:component-scan</span>&gt;</span></div></pre></td></tr></table></figure></p>
+<h2 id="SpringMVC的IOC容器中的bean可以引用Spring的IOC容器中的bean，反之则不行"><a href="#SpringMVC的IOC容器中的bean可以引用Spring的IOC容器中的bean，反之则不行" class="headerlink" title=" SpringMVC的IOC容器中的bean可以引用Spring的IOC容器中的bean，反之则不行"></a> SpringMVC的IOC容器中的bean可以引用Spring的IOC容器中的bean，反之则不行</h2><p>　　SpringMVC的IOC容器中的bean可以引用SpringIOC容器中的bean，例如，我们现在在SpringMVC的IOC容器中注册了一个Controller，名为HelloWorld，在SpringIOC的容器中注册了一个Service，名为UserService，那么现在我可以在HelloWorld中引用UserService的bean:<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@Controller</span></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">HelloWorld</span> </span>&#123;</div><div class="line"></div><div class="line">	<span class="meta">@Autowired</span></div><div class="line">	<span class="keyword">private</span> UserService userService;</div><div class="line">	</div><div class="line">	<span class="meta">@RequestMapping</span>(<span class="string">"/hello"</span>)</div><div class="line">	<span class="function"><span class="keyword">public</span> String <span class="title">hello</span><span class="params">()</span></span>&#123;</div><div class="line">		System.out.println(<span class="string">"hello:"</span>+userService);</div><div class="line">		<span class="keyword">return</span> <span class="string">"success"</span>;</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>运行程序将输出：</p>
+<p><img src="http://static.zybuluo.com/xiangwanpeng/7jyhqlyojktmg1uqi9qiy86w/image_1b1jj5u7e24rlmn75v1sj311n09.png" alt="image_1b1jj5u7e24rlmn75v1sj311n09.png-30.5kB"></p>
+<p>　　但是我们却无法在UserService中引用HelloWorld的bean：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@Service</span></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">UserService</span> </span>&#123;</div><div class="line"></div><div class="line">	<span class="meta">@Autowired</span></div><div class="line">	<span class="keyword">private</span> HelloWorld helloWorld;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>运行程序会报错：</p>
+<p><img src="http://static.zybuluo.com/xiangwanpeng/qrei4ienw388dz2c0beedztl/image_1b1jjguch11gk9c91eu1va11iskm.png" alt="image_1b1jjguch11gk9c91eu1va11iskm.png-46.3kB"></p>
+<p>　　这是因为多个Spring IOC 容器之间可以设置为父子关系，以实现良好的解耦。<br>　　Spring MVC的IOC作为WEB层容器，是业务层容器Spring IOC的子容器：即WEB 层容器可以引用业务层容器的Bean，而业务层容器却访问不到WEB 层容器的Bean，如下图所示：<br>　　<img src="http://static.zybuluo.com/xiangwanpeng/tboinhbg4si0eyetorwfxhsb/image_1b1jjkmo9u94lo11ie11labntr13.png" alt="image_1b1jjkmo9u94lo11ie11labntr13.png-28.6kB"><br>　　<br>　　实际上，从软件设计的层面来讲这也是符合逻辑的——Controller可以依赖Service，而Service却不能依赖Controller。</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/SpringMVC/" rel="tag">#SpringMVC</a>
+          
+            <a href="/tags/Spring/" rel="tag">#Spring</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/11/15/SpringMVC的工作流程/" rel="next" title="SpringMVC的工作流程">
+                <i class="fa fa-chevron-left"></i> SpringMVC的工作流程
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/11/15/SpringMVC对比Struts2/" rel="prev" title="SpringMVC对比Struts2">
+                SpringMVC对比Struts2 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2016/11/15/在Spring的环境下使用SpringMVC/"
+           data-title="在Spring的环境下使用SpringMVC" data-url="http://yoursite.com/2016/11/15/在Spring的环境下使用SpringMVC/">
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/image/avatar.png"
+               alt="Alan" />
+          <p class="site-author-name" itemprop="name">Alan</p>
+          <p class="site-description motion-element" itemprop="description">Better late than never.</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">45</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">11</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">61</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/xiangwanpeng" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/u/2810288024/home" target="_blank" title="weibo">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  weibo
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#是否需要用Spring整合SpringMVC"><span class="nav-number">1.</span> <span class="nav-text">是否需要用Spring整合SpringMVC</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#bean被创建两次？"><span class="nav-number">2.</span> <span class="nav-text">bean被创建两次？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#SpringMVC的IOC容器中的bean可以引用Spring的IOC容器中的bean，反之则不行"><span class="nav-number">3.</span> <span class="nav-text"> SpringMVC的IOC容器中的bean可以引用Spring的IOC容器中的bean，反之则不行</span></a></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2016</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Alan</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Pisces
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/VEN/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/VEN/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/VEN/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/VEN/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/VEN/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/VEN/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.1"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.0.1"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.1"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"xiangwanpeng"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+    
+    <script src="/VEN/ua-parser-js/dist/ua-parser.min.js?v=0.7.9"></script>
+    <script src="/js/src/hook-duoshuo.js"></script>
+  
+
+
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

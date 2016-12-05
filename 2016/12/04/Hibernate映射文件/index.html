@@ -1,0 +1,708 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/VEN/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/VEN/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Hibernate,J2EE,数据库," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.1" />
+
+
+
+
+
+
+<meta name="description" content="POJO 类和数据库的映射文件*.hbm.xml　　POJO类和关系数据库之间的映射可以用一个XML文档来定义。　　通过POJO类的数据库映射文件，Hibernate可以理解持久化类和数据表之间的对应关系，也可以理解持久化类属性与数据库表列之间的对应关系。在运行时 Hibernate 将根据这个映射文件来生成各种SQL语句，映射文件的扩展名为 .hbm.xml。
+映射文件说明
+hibernate-">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Hibernate映射文件">
+<meta property="og:url" content="http://yoursite.com/2016/12/04/Hibernate映射文件/index.html">
+<meta property="og:site_name" content="向万鹏的独立博客">
+<meta property="og:description" content="POJO 类和数据库的映射文件*.hbm.xml　　POJO类和关系数据库之间的映射可以用一个XML文档来定义。　　通过POJO类的数据库映射文件，Hibernate可以理解持久化类和数据表之间的对应关系，也可以理解持久化类属性与数据库表列之间的对应关系。在运行时 Hibernate 将根据这个映射文件来生成各种SQL语句，映射文件的扩展名为 .hbm.xml。
+映射文件说明
+hibernate-">
+<meta property="og:image" content="http://static.zybuluo.com/xiangwanpeng/jyw6iu3rugw2xeefm5ixe1pn/image_1b346btk31o238fa1j1u1j61n049.png">
+<meta property="og:image" content="http://static.zybuluo.com/xiangwanpeng/2xg4ijtfoapq14lo5xossvtc/image_1b346dve91mo81m0d17un1uhvcrpm.png">
+<meta property="og:image" content="http://static.zybuluo.com/xiangwanpeng/fuubabhwvogmriv4yaj6v1hz/image_1b346frg8kpu1uui1vcf16961fk313.png">
+<meta property="og:image" content="http://static.zybuluo.com/xiangwanpeng/wevodqbnrsq5hti2apkrkrio/image_1b346ha6bv66hht1vk9bku10fa1g.png">
+<meta property="og:image" content="http://static.zybuluo.com/xiangwanpeng/sb1rzrkolgog947coiwcx3wj/image_1b346u22q660j8g1igs1mt81k1n2n.png">
+<meta property="og:image" content="http://static.zybuluo.com/xiangwanpeng/d5l3y44josx13lb90tjo79gt/image_1b348es521kk81fev41b1q5m38j34.png">
+<meta property="og:image" content="http://static.zybuluo.com/xiangwanpeng/d8fcnhuh7hu81nq7agjynn5b/image_1b348ggd013651lsckqg1ptc1sa03h.png">
+<meta property="og:image" content="http://static.zybuluo.com/xiangwanpeng/i2ujp498ug98t9ac3l3fhxty/image_1b34a68661rcq12o4ms3147m1rae3u.png">
+<meta property="og:updated_time" content="2016-12-04T07:02:39.421Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Hibernate映射文件">
+<meta name="twitter:description" content="POJO 类和数据库的映射文件*.hbm.xml　　POJO类和关系数据库之间的映射可以用一个XML文档来定义。　　通过POJO类的数据库映射文件，Hibernate可以理解持久化类和数据表之间的对应关系，也可以理解持久化类属性与数据库表列之间的对应关系。在运行时 Hibernate 将根据这个映射文件来生成各种SQL语句，映射文件的扩展名为 .hbm.xml。
+映射文件说明
+hibernate-">
+<meta name="twitter:image" content="http://static.zybuluo.com/xiangwanpeng/jyw6iu3rugw2xeefm5ixe1pn/image_1b346btk31o238fa1j1u1j61n049.png">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"always"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 0,
+      author: '博主'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2016/12/04/Hibernate映射文件/"/>
+
+  <title> Hibernate映射文件 | 向万鹏的独立博客 </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">向万鹏的独立博客</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle"></p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                Hibernate映射文件
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-12-04T13:27:36+08:00" content="2016-12-04">
+              2016-12-04
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/Hibernate/" itemprop="url" rel="index">
+                    <span itemprop="name">Hibernate</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2016/12/04/Hibernate映射文件/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/12/04/Hibernate映射文件/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="POJO-类和数据库的映射文件-hbm-xml"><a href="#POJO-类和数据库的映射文件-hbm-xml" class="headerlink" title="POJO 类和数据库的映射文件*.hbm.xml"></a>POJO 类和数据库的映射文件*.hbm.xml</h2><p>　　POJO类和关系数据库之间的映射可以用一个XML文档来定义。<br>　　通过POJO类的数据库映射文件，Hibernate可以理解持久化类和数据表之间的对应关系，也可以理解持久化类属性与数据库表列之间的对应关系。在运行时 Hibernate 将根据这个映射文件来生成各种SQL语句，映射文件的扩展名为 .hbm.xml。</p>
+<h2 id="映射文件说明"><a href="#映射文件说明" class="headerlink" title="映射文件说明"></a>映射文件说明</h2><ul>
+<li>hibernate-mapping<ul>
+<li>类层次：class<br>-主键：id<br>-基本类型:property<br>-实体引用类: many-to-one  |  one-to-one<br>-集合:set | list | map | array<br>　one-to-many<br>　many-to-many<br>-子类:subclass | joined-subclass<br>-其它:component | any 等
+　</li>
+<li>查询语句:query（用来放置查询语句，便于对数据库查询的统一管理和优化）
+　</li>
+</ul>
+</li>
+</ul>
+<p>下面对各个节点进行介绍</p>
+<p><strong>hibernate-mapping</strong><br><img src="http://static.zybuluo.com/xiangwanpeng/jyw6iu3rugw2xeefm5ixe1pn/image_1b346btk31o238fa1j1u1j61n049.png" alt="image_1b346btk31o238fa1j1u1j61n049.png-84.1kB"><br>　<br><strong>class</strong><br><img src="http://static.zybuluo.com/xiangwanpeng/2xg4ijtfoapq14lo5xossvtc/image_1b346dve91mo81m0d17un1uhvcrpm.png" alt="image_1b346dve91mo81m0d17un1uhvcrpm.png-87.6kB"><br>　<br>　<br>在介绍下面的节点之前先来介绍一下<strong>映射对象标识符</strong>：</p>
+<ul>
+<li>Hibernate使用对象标识符(OID)来建立内存中的对象和数据库表中记录的对应关系，对象的OID和数据表的主键对应，Hibernate通过标识符生成器来为主键赋值。</li>
+<li>Hibernate 推荐在数据表中使用代理主键，即不具备业务含义的字段，代理主键通常为整数类型，因为整数类型比字符串类型要节省更多的数据库空间。</li>
+<li>在对象-关系映射文件中， &lt;id&gt;元素用来设置对象标识符. &lt;generator&gt;子元素用来设定标识符生成器。</li>
+<li>Hibernate提供了标识符生成器接口：IdentifierGenerator，并提供了各种内置实现。<br>　<br><strong>id</strong><br><img src="http://static.zybuluo.com/xiangwanpeng/fuubabhwvogmriv4yaj6v1hz/image_1b346frg8kpu1uui1vcf16961fk313.png" alt="image_1b346frg8kpu1uui1vcf16961fk313.png-51.2kB"><br>　<br><strong>generator</strong><br><img src="http://static.zybuluo.com/xiangwanpeng/wevodqbnrsq5hti2apkrkrio/image_1b346ha6bv66hht1vk9bku10fa1g.png" alt="image_1b346ha6bv66hht1vk9bku10fa1g.png-8.4kB"><br>　<br>下面是hibernate提供的内置标识符生成器：<br><img src="http://static.zybuluo.com/xiangwanpeng/sb1rzrkolgog947coiwcx3wj/image_1b346u22q660j8g1igs1mt81k1n2n.png" alt="image_1b346u22q660j8g1igs1mt81k1n2n.png-63.5kB">
+　</li>
+<li><p>increment 标识符生成器<br>increment标识符生成器由Hibernate以递增的方式为代理主键赋值，Hibernate会先读取NEWS表中的主键的最大值，而接下来向NEWS表中插入记录时，就在max(id)的基础上递增，增量为 1。<br>适用范围:<br>　　由于increment生存标识符机制不依赖于底层数据库系统，因此它适合所有的数据库系统。<br>　　适用于只有单个Hibernate应用进程访问同一个数据库的场合， 在集群环境下不推荐使用它。（并发问题）<br>　　OID必须为long，int或short类型，如果把OID定义为byte类型，在运行时会抛出异常 。</p>
+</li>
+<li><p>identity 标识符生成器<br>identity标识符生成器由底层数据库来负责生成标识符，它要求底层数据库把主键定义为自动增长字段类型。<br>适用范围：<br>　　由于identity生成标识符的机制依赖于底层数据库系统，因为要求底层数据库系统必须支持自动正常字段类型，这样的数据库包括：DB2，Mysql，MSSQLServer，Sybase等，不包括oracle。<br>　　OID必须为long，int或short类型，如果把OID定义为byte类型，在运行时会抛出异常。</p>
+</li>
+<li><p>sequence 标识符生成器<br>sequence标识符生成器利用底层数据库提供的序列来生成标识符。<br>Hibernate在持久化一个News对象时，先从底层数据库的news_seq序列中获得一个唯一的标识号，再把它作为主键值 。<br>适用范围:<br>　　由于sequence生成标识符的机制依赖于底层数据库系统的序列，因此， 要求底层数据库系统必须支持序列。支持序列的数据库包括: DB2， Oracle 等，不包括Mysql。<br>　　OID必须为long，int或short类型，如果把OID定义为byte类型，在运行时会抛出异常。</p>
+</li>
+<li><p>hilo 标识符生成器<br>hilo标识符生成器由Hibernate按照一种“high/low”算法生成标识符。<br>Hibernate在持久化一个News对象时，由Hibernate负责生成主键值。hilo 标识符生成器在生成标识符时，需要<strong>读取并修改</strong>HI_TABLE表中的NEXT_VALUE值。<br>适用范围:<br>　　由于hilo生存标识符机制不依赖于底层数据库系统，因此它适合所有的数据库系统。<br>　　OID必须为long，int或short类型，如果把OID定义为byte类型，在运行时会抛出异常。</p>
+</li>
+<li><p>native 标识符生成器 （通常使用的方式）<br>native标识符生成器依据底层数据库对自动生成标识符的支持能力，来选择使用identity，sequence或hilo标识符生成器。<br>适用范围:<br>　　由于native能根据底层数据库系统的类型，自动选择合适的标识符生成器，因此很适合于跨数据库平台开发。<br>　　OID必须为long，int或short类型，如果把OID定义为byte类型，在运行时会抛出异常。<br>　<br><strong>property</strong><br><img src="http://static.zybuluo.com/xiangwanpeng/d5l3y44josx13lb90tjo79gt/image_1b348es521kk81fev41b1q5m38j34.png" alt="image_1b348es521kk81fev41b1q5m38j34.png-205.5kB"><br><img src="http://static.zybuluo.com/xiangwanpeng/d8fcnhuh7hu81nq7agjynn5b/image_1b348ggd013651lsckqg1ptc1sa03h.png" alt="image_1b348ggd013651lsckqg1ptc1sa03h.png-130.5kB"></p>
+</li>
+<li><p>派生属性：<br>并不是持久化类的所有属性都直接和表的字段匹配，持久化类的有些属性的值必须在运行时通过计算才能得到，这种属性称为派生属性，下面我们使用property的formular属性来测试派生属性：<br>首先在News.java中添加一个desc字段：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//该属性值为： title：author</span></div><div class="line">	<span class="keyword">private</span> String desc;</div><div class="line">	</div><div class="line">	<span class="function"><span class="keyword">public</span> String <span class="title">getDesc</span><span class="params">()</span> </span>&#123;</div><div class="line">		<span class="keyword">return</span> desc;</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setDesc</span><span class="params">(String desc)</span> </span>&#123;</div><div class="line">		<span class="keyword">this</span>.desc = desc;</div><div class="line">	&#125;</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>然后在News的映射文件中映射派生属性：<br><figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="comment">&lt;!-- 映射派生属性 --&gt;</span></div><div class="line">        <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"desc"</span> <span class="attr">formula</span>=<span class="string">"(SELECT concat(author, ': ', title) FROM NEWS n WHERE n.id = id)"</span>&gt;</span><span class="tag">&lt;/<span class="name">property</span>&gt;</span></div></pre></td></tr></table></figure></p>
+<p>测试：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@Test</span></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">testFormula</span><span class="params">()</span></span>&#123;</div><div class="line">		News news = (News) session.get(News.class, <span class="number">1</span>);</div><div class="line">		</div><div class="line">		System.out.println(news.getDesc());</div><div class="line">	&#125;</div></pre></td></tr></table></figure></p>
+<p>运行结果：</p>
+<p><img src="http://static.zybuluo.com/xiangwanpeng/i2ujp498ug98t9ac3l3fhxty/image_1b34a68661rcq12o4ms3147m1rae3u.png" alt="image_1b34a68661rcq12o4ms3147m1rae3u.png-66.5kB"></p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Hibernate/" rel="tag">#Hibernate</a>
+          
+            <a href="/tags/J2EE/" rel="tag">#J2EE</a>
+          
+            <a href="/tags/数据库/" rel="tag">#数据库</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/12/04/Hibernate配置文件/" rel="next" title="Hibernate配置文件">
+                <i class="fa fa-chevron-left"></i> Hibernate配置文件
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/12/04/Java时间和日期类型的Hibernate映射/" rel="prev" title="Java时间和日期类型的Hibernate映射">
+                Java时间和日期类型的Hibernate映射 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2016/12/04/Hibernate映射文件/"
+           data-title="Hibernate映射文件" data-url="http://yoursite.com/2016/12/04/Hibernate映射文件/">
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/image/avatar.png"
+               alt="Alan" />
+          <p class="site-author-name" itemprop="name">Alan</p>
+          <p class="site-description motion-element" itemprop="description">Better late than never.</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">45</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">11</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">61</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/xiangwanpeng" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/u/2810288024/home" target="_blank" title="weibo">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  weibo
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#POJO-类和数据库的映射文件-hbm-xml"><span class="nav-number">1.</span> <span class="nav-text">POJO 类和数据库的映射文件*.hbm.xml</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#映射文件说明"><span class="nav-number">2.</span> <span class="nav-text">映射文件说明</span></a></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2016</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Alan</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Pisces
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/VEN/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/VEN/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/VEN/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/VEN/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/VEN/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/VEN/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.1"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.0.1"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.1"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"xiangwanpeng"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+    
+    <script src="/VEN/ua-parser-js/dist/ua-parser.min.js?v=0.7.9"></script>
+    <script src="/js/src/hook-duoshuo.js"></script>
+  
+
+
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

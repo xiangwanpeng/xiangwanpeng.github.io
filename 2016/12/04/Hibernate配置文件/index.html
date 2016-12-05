@@ -1,0 +1,702 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/VEN/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/VEN/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Hibernate,J2EE,数据库," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.1" />
+
+
+
+
+
+
+<meta name="description" content="Hibernate配置文件主要用于配置数据库连接和Hibernate运行时所需的各种属性。　　每个Hibernate配置文件对应一个Configuration对象。　　Hibernate配置文件可以有以下两种形式：　　1. hibernate.properties　　2. hibernate.cfg.xml （常用形式）
+　　
+hibernate.cfg.xml的常用属性JDBC连接属性
+
+c">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Hibernate配置文件">
+<meta property="og:url" content="http://yoursite.com/2016/12/04/Hibernate配置文件/index.html">
+<meta property="og:site_name" content="向万鹏的独立博客">
+<meta property="og:description" content="Hibernate配置文件主要用于配置数据库连接和Hibernate运行时所需的各种属性。　　每个Hibernate配置文件对应一个Configuration对象。　　Hibernate配置文件可以有以下两种形式：　　1. hibernate.properties　　2. hibernate.cfg.xml （常用形式）
+　　
+hibernate.cfg.xml的常用属性JDBC连接属性
+
+c">
+<meta property="og:image" content="http://static.zybuluo.com/xiangwanpeng/ne1jyai01xolie1o24m2pluj/image_1b344l62o14ns10s01abf14ic6dj9.png">
+<meta property="og:image" content="http://static.zybuluo.com/xiangwanpeng/sql2bmldw5jr0s0gh6fycvcx/image_1b342n90c1ues1nhkfc3vbcvaj9.png">
+<meta property="og:updated_time" content="2016-12-04T05:24:52.857Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Hibernate配置文件">
+<meta name="twitter:description" content="Hibernate配置文件主要用于配置数据库连接和Hibernate运行时所需的各种属性。　　每个Hibernate配置文件对应一个Configuration对象。　　Hibernate配置文件可以有以下两种形式：　　1. hibernate.properties　　2. hibernate.cfg.xml （常用形式）
+　　
+hibernate.cfg.xml的常用属性JDBC连接属性
+
+c">
+<meta name="twitter:image" content="http://static.zybuluo.com/xiangwanpeng/ne1jyai01xolie1o24m2pluj/image_1b344l62o14ns10s01abf14ic6dj9.png">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"always"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 0,
+      author: '博主'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2016/12/04/Hibernate配置文件/"/>
+
+  <title> Hibernate配置文件 | 向万鹏的独立博客 </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">向万鹏的独立博客</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle"></p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                Hibernate配置文件
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-12-04T11:16:59+08:00" content="2016-12-04">
+              2016-12-04
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/Hibernate/" itemprop="url" rel="index">
+                    <span itemprop="name">Hibernate</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2016/12/04/Hibernate配置文件/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/12/04/Hibernate配置文件/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>　　Hibernate配置文件主要用于配置<strong>数据库连接</strong>和<strong>Hibernate运行时所需的各种属性</strong>。<br>　　每个Hibernate配置文件对应一个Configuration对象。<br>　　Hibernate配置文件可以有以下两种形式：<br>　　1. hibernate.properties<br>　　2. hibernate.cfg.xml （常用形式）
+　　</p>
+<h2 id="hibernate-cfg-xml的常用属性"><a href="#hibernate-cfg-xml的常用属性" class="headerlink" title="hibernate.cfg.xml的常用属性"></a>hibernate.cfg.xml的常用属性</h2><p><strong>JDBC连接属性</strong></p>
+<ul>
+<li>connection.username：数据库用户名。</li>
+<li>connection.password：数据库用户密码。</li>
+<li>connection.driver_class：数据库JDBC驱动。</li>
+<li>connection.url：数据库URL。</li>
+<li>dialect：配置数据库的方言，根据底层的数据库不同产生不同的sql语句，Hibernate 会针对数据库的特性在访问时进行优化。</li>
+</ul>
+<p><strong>C3P0数据库连接池属性</strong></p>
+<ul>
+<li>hibernate.c3p0.max_size:数据库连接池的最大连接数。</li>
+<li>hibernate.c3p0.min_size:数据库连接池的最小连接数。</li>
+<li>hibernate.c3p0.timeout:数据库连接池中连接对象在多长时间没有使用过后，就应该被销毁。</li>
+<li>hibernate.c3p0.idle_test_period:表示<strong>连接池检测线程</strong>多长时间检测一次池内的所有连接对象是否超时。连接本身不会把自己从连接池中移除，而是专门有一个线程按照一定的时间间隔来做这件事，这个线程通过比较连接对象最后一次被使用时间和当前时间的时间差来和timeout做对比，进而决定是否销毁这个连接对象。</li>
+<li>hibernate.c3p0.acquire_increment:当数据库连接池中的连接耗尽时, 每一次获取多少个数据库连接。</li>
+<li>hibernate.c3p0.max_statements:缓存 Statement 对象的数量。<br>　　下面我们配置C3P0数据源，然后调用session.doWork方法查看获取的连接是否来自于C3P0：<br>首先导入jar包：<br><img src="http://static.zybuluo.com/xiangwanpeng/ne1jyai01xolie1o24m2pluj/image_1b344l62o14ns10s01abf14ic6dj9.png" alt="image_1b344l62o14ns10s01abf14ic6dj9.png-5.9kB"><figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="comment">&lt;!-- 配置 C3P0 数据源 --&gt;</span></div><div class="line">    	<span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"hibernate.c3p0.max_size"</span>&gt;</span>10<span class="tag">&lt;/<span class="name">property</span>&gt;</span></div><div class="line">    	<span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"hibernate.c3p0.min_size"</span>&gt;</span>5<span class="tag">&lt;/<span class="name">property</span>&gt;</span></div><div class="line">    	<span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"c3p0.acquire_increment"</span>&gt;</span>2<span class="tag">&lt;/<span class="name">property</span>&gt;</span></div><div class="line">    	</div><div class="line">    	<span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"c3p0.idle_test_period"</span>&gt;</span>2000<span class="tag">&lt;/<span class="name">property</span>&gt;</span></div><div class="line">    	<span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"c3p0.timeout"</span>&gt;</span>2000<span class="tag">&lt;/<span class="name">property</span>&gt;</span></div><div class="line">    	</div><div class="line">    	<span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"c3p0.max_statements"</span>&gt;</span>10<span class="tag">&lt;/<span class="name">property</span>&gt;</span></div></pre></td></tr></table></figure>
+</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@Test</span></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">testDoWork</span><span class="params">()</span></span>&#123;</div><div class="line">		session.doWork(<span class="keyword">new</span> Work() &#123;</div><div class="line">			</div><div class="line">			<span class="meta">@Override</span></div><div class="line">			<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">execute</span><span class="params">(Connection connection)</span> <span class="keyword">throws</span> SQLException </span>&#123;</div><div class="line">				System.out.println(connection); </div><div class="line">			&#125;</div><div class="line">		&#125;);</div><div class="line">	&#125;</div></pre></td></tr></table></figure>
+<p>运行结果：<br><img src="http://static.zybuluo.com/xiangwanpeng/sql2bmldw5jr0s0gh6fycvcx/image_1b342n90c1ues1nhkfc3vbcvaj9.png" alt="image_1b342n90c1ues1nhkfc3vbcvaj9.png-37.6kB"></p>
+<p><strong>其他属性</strong></p>
+<ul>
+<li>show_sql：是否将运行期生成的SQL输出到日志以供调试，取值为 true | false。</li>
+<li>format_sql：是否将SQL语句转化为格式良好的SQL语句，取值 true | false。</li>
+<li>hbm2ddl.auto：在启动和停止时自动地创建，更新或删除数据库模式，取值 create | update | create-drop | validate。</li>
+<li>hibernate.jdbc.fetch_size：实质是调用Statement.setFetchSize()方法设定JDBC的Statement读取数据的时候每次从数据库中取出的记录条数。<br>例如一次查询1万条记录，对于Oracle的JDBC驱动来说，是不会一次性把1万条取出来的，而只会取出fetchSize条记录，当结果集遍历完了这些记录以后，再去数据库取fetchSize条数据，因此大大节省了无谓的内存消耗。fetch Size设的越大，读数据库的次数越少，速度越快，但是对web服务器资源的消耗越严重；fetchSize越小，读数据库的次数越多，速度越慢，但是对web服务器资源的消耗越小。Oracle数据库的JDBC驱动默认的fetchSize=10，是一个保守的设定，根据测试，当Fetch Size=50时，性能会提升1倍之多，当 fetchSize=100，性能还能继续提升20%，fetchSize继续增大，性能提升的就不显著了。<br>但是并不是所有的数据库都支持Fetch Size特性，例如MySQL就不支持。</li>
+<li>hibernate.jdbc.batch_size：设定对数据库进行批量删除，批量更新和批量插入的时候的批次大小，类似于设置缓冲区大小的意思。batchSize 越大，批量操作时向数据库发送sql的次数越少，速度就越快。测试结果是当batchSize=0的时候，使用Hibernate对Oracle数据库删除1万条记录需要25秒，batchSize = 50的时候，删除仅仅需要5秒！Oracle数据库 batchSize=30 的时候比较合适。</li>
+</ul>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Hibernate/" rel="tag">#Hibernate</a>
+          
+            <a href="/tags/J2EE/" rel="tag">#J2EE</a>
+          
+            <a href="/tags/数据库/" rel="tag">#数据库</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/12/03/数据库事务的隔离级别/" rel="next" title="数据库事务的隔离级别">
+                <i class="fa fa-chevron-left"></i> 数据库事务的隔离级别
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/12/04/Hibernate映射文件/" rel="prev" title="Hibernate映射文件">
+                Hibernate映射文件 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2016/12/04/Hibernate配置文件/"
+           data-title="Hibernate配置文件" data-url="http://yoursite.com/2016/12/04/Hibernate配置文件/">
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/image/avatar.png"
+               alt="Alan" />
+          <p class="site-author-name" itemprop="name">Alan</p>
+          <p class="site-description motion-element" itemprop="description">Better late than never.</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">45</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">11</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">61</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/xiangwanpeng" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/u/2810288024/home" target="_blank" title="weibo">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  weibo
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#hibernate-cfg-xml的常用属性"><span class="nav-number">1.</span> <span class="nav-text">hibernate.cfg.xml的常用属性</span></a></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2016</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Alan</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Pisces
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/VEN/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/VEN/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/VEN/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/VEN/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/VEN/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/VEN/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.1"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.0.1"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.1"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"xiangwanpeng"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+    
+    <script src="/VEN/ua-parser-js/dist/ua-parser.min.js?v=0.7.9"></script>
+    <script src="/js/src/hook-duoshuo.js"></script>
+  
+
+
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

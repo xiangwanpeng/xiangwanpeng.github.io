@@ -1,0 +1,670 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/VEN/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/VEN/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Hibernate,J2EE,数据库,映射组成关系," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.1" />
+
+
+
+
+
+
+<meta name="description" content="建立域模型和关系数据模型有着不同的出发点。　　域模型（面向对象设计）:由程序代码组成，通过细化持久化类的的粒度可提高代码的可重用性，简化编程。　　关系数据模型（数据库设计）：在没有数据冗余的情况下，应该尽可能减少表的数目，简化表之间的参照关系，以便提高数据的访问速度。　　　　在这篇文章中我们以Worker（工人）和Pay（薪酬）之间的关系为例进行说明：　　　　　　Hibernate 把持久化类">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Hibernate映射组成关系">
+<meta property="og:url" content="http://yoursite.com/2016/12/04/Hibernate映射组成关系/index.html">
+<meta property="og:site_name" content="向万鹏的独立博客">
+<meta property="og:description" content="建立域模型和关系数据模型有着不同的出发点。　　域模型（面向对象设计）:由程序代码组成，通过细化持久化类的的粒度可提高代码的可重用性，简化编程。　　关系数据模型（数据库设计）：在没有数据冗余的情况下，应该尽可能减少表的数目，简化表之间的参照关系，以便提高数据的访问速度。　　　　在这篇文章中我们以Worker（工人）和Pay（薪酬）之间的关系为例进行说明：　　　　　　Hibernate 把持久化类">
+<meta property="og:image" content="http://static.zybuluo.com/xiangwanpeng/wtnzb9aa5ds6edeg1rbujv0u/image_1b34cojeh1ua6193h6cg128t9fc9.png">
+<meta property="og:image" content="http://static.zybuluo.com/xiangwanpeng/oxzov30sotvxboalu8uvu264/image_1b34ddp4h2vf1b6p1p7ji341u32m.png">
+<meta property="og:image" content="http://static.zybuluo.com/xiangwanpeng/6m6xfxj1gm5r1cha4uye4z3x/image_1b34dfjo817uu1rg55kf37e1a3o13.png">
+<meta property="og:updated_time" content="2016-12-04T08:01:26.689Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Hibernate映射组成关系">
+<meta name="twitter:description" content="建立域模型和关系数据模型有着不同的出发点。　　域模型（面向对象设计）:由程序代码组成，通过细化持久化类的的粒度可提高代码的可重用性，简化编程。　　关系数据模型（数据库设计）：在没有数据冗余的情况下，应该尽可能减少表的数目，简化表之间的参照关系，以便提高数据的访问速度。　　　　在这篇文章中我们以Worker（工人）和Pay（薪酬）之间的关系为例进行说明：　　　　　　Hibernate 把持久化类">
+<meta name="twitter:image" content="http://static.zybuluo.com/xiangwanpeng/wtnzb9aa5ds6edeg1rbujv0u/image_1b34cojeh1ua6193h6cg128t9fc9.png">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"always"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 0,
+      author: '博主'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2016/12/04/Hibernate映射组成关系/"/>
+
+  <title> Hibernate映射组成关系 | 向万鹏的独立博客 </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">向万鹏的独立博客</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle"></p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                Hibernate映射组成关系
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-12-04T15:40:07+08:00" content="2016-12-04">
+              2016-12-04
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/Hibernate/" itemprop="url" rel="index">
+                    <span itemprop="name">Hibernate</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2016/12/04/Hibernate映射组成关系/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/12/04/Hibernate映射组成关系/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>　　建立域模型和关系数据模型有着不同的出发点。<br>　　域模型（面向对象设计）:由程序代码组成，通过细化持久化类的的粒度可提高代码的可重用性，简化编程。<br>　　关系数据模型（数据库设计）：在没有数据冗余的情况下，应该尽可能减少表的数目，简化表之间的参照关系，以便提高数据的访问速度。<br>　　<br>　　在这篇文章中我们以Worker（工人）和Pay（薪酬）之间的关系为例进行说明：<br>　　<img src="http://static.zybuluo.com/xiangwanpeng/wtnzb9aa5ds6edeg1rbujv0u/image_1b34cojeh1ua6193h6cg128t9fc9.png" alt="image_1b34cojeh1ua6193h6cg128t9fc9.png-37.2kB"><br>　　<br>　　Hibernate 把持久化类的属性分为两种:<br>　　<strong>值(value)类型：</strong>没有OID，不能被单独持久化，生命周期依赖于所属的持久化类的对象的生命周期。<br>　　<strong>实体(entity)类型：</strong>有OID，可以被单独持久化，有独立的生命周期。<br>　　<br>　　显然在上述例子中Worker为实体类型，Pay为值类型。如果我们将这两个类根据组成关系映射为数据库中的一张表而不是两张表，那么单表查询的速度是要快于多表查询的。<br>　　Hibernate 使用 &lt;component&gt; 元素来映射组成关系, 该元素表明 pay 属性是 Worker 类一个组成部分, 在 Hibernate 中称之为组件。<br>　　<br>　　下面进行测试，首先新建两个java类：<br>　　<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Worker</span> </span>&#123;</div><div class="line">	</div><div class="line">	<span class="keyword">private</span> Integer id;</div><div class="line">	<span class="keyword">private</span> String name;</div><div class="line">	</div><div class="line">	<span class="keyword">private</span> Pay pay;</div><div class="line"></div><div class="line">　　<span class="comment">//getters and setters</span></div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Pay</span> </span>&#123;</div><div class="line">	</div><div class="line">	<span class="keyword">private</span> <span class="keyword">int</span> monthlyPay;</div><div class="line">	<span class="keyword">private</span> <span class="keyword">int</span> yearPay;</div><div class="line">	<span class="keyword">private</span> <span class="keyword">int</span> vocationWithPay;</div><div class="line">	</div><div class="line">	<span class="comment">//getters and setters</span></div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>生成映射文件Worker.hbm.xml，并在映射文件中映射组成关系：<br><figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="comment">&lt;!-- 映射组成关系 --&gt;</span></div><div class="line">        <span class="tag">&lt;<span class="name">component</span> <span class="attr">name</span>=<span class="string">"pay"</span> <span class="attr">class</span>=<span class="string">"Pay"</span>&gt;</span></div><div class="line">        	<span class="tag">&lt;<span class="name">parent</span> <span class="attr">name</span>=<span class="string">"worker"</span>/&gt;</span></div><div class="line">        	<span class="comment">&lt;!-- 指定组成关系的组件的属性 --&gt;</span></div><div class="line">        	<span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"monthlyPay"</span> <span class="attr">column</span>=<span class="string">"MONTHLY_PAY"</span>&gt;</span><span class="tag">&lt;/<span class="name">property</span>&gt;</span></div><div class="line">        	<span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"yearPay"</span> <span class="attr">column</span>=<span class="string">"YEAR_PAY"</span>&gt;</span><span class="tag">&lt;/<span class="name">property</span>&gt;</span></div><div class="line">        	<span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"vocationWithPay"</span> <span class="attr">column</span>=<span class="string">"VOCATION_WITH_PAY"</span>&gt;</span><span class="tag">&lt;/<span class="name">property</span>&gt;</span></div><div class="line">        <span class="tag">&lt;/<span class="name">component</span>&gt;</span></div></pre></td></tr></table></figure></p>
+<p>编写测试程序：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@Test</span></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">testComponent</span><span class="params">()</span></span>&#123;</div><div class="line">		Worker worker = <span class="keyword">new</span> Worker();</div><div class="line">		Pay pay = <span class="keyword">new</span> Pay();</div><div class="line">		</div><div class="line">		pay.setMonthlyPay(<span class="number">1000</span>);</div><div class="line">		pay.setYearPay(<span class="number">80000</span>); </div><div class="line">		pay.setVocationWithPay(<span class="number">5</span>);</div><div class="line">		</div><div class="line">		worker.setName(<span class="string">"ABCD"</span>);</div><div class="line">		worker.setPay(pay);</div><div class="line">		</div><div class="line">		session.save(worker);</div><div class="line">	&#125;</div></pre></td></tr></table></figure></p>
+<p>运行程序，发现生成了一张数据表worker：</p>
+<p><img src="http://static.zybuluo.com/xiangwanpeng/oxzov30sotvxboalu8uvu264/image_1b34ddp4h2vf1b6p1p7ji341u32m.png" alt="image_1b34ddp4h2vf1b6p1p7ji341u32m.png-20.1kB"></p>
+<p>并且成功插入了记录：</p>
+<p><img src="http://static.zybuluo.com/xiangwanpeng/6m6xfxj1gm5r1cha4uye4z3x/image_1b34dfjo817uu1rg55kf37e1a3o13.png" alt="image_1b34dfjo817uu1rg55kf37e1a3o13.png-11.6kB"></p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Hibernate/" rel="tag">#Hibernate</a>
+          
+            <a href="/tags/J2EE/" rel="tag">#J2EE</a>
+          
+            <a href="/tags/数据库/" rel="tag">#数据库</a>
+          
+            <a href="/tags/映射组成关系/" rel="tag">#映射组成关系</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/12/04/Java时间和日期类型的Hibernate映射/" rel="next" title="Java时间和日期类型的Hibernate映射">
+                <i class="fa fa-chevron-left"></i> Java时间和日期类型的Hibernate映射
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/12/04/Hibernate的一对多关联关系（单向和双向）/" rel="prev" title="Hibernate的一对多关联关系（单向和双向）">
+                Hibernate的一对多关联关系（单向和双向） <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2016/12/04/Hibernate映射组成关系/"
+           data-title="Hibernate映射组成关系" data-url="http://yoursite.com/2016/12/04/Hibernate映射组成关系/">
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/image/avatar.png"
+               alt="Alan" />
+          <p class="site-author-name" itemprop="name">Alan</p>
+          <p class="site-description motion-element" itemprop="description">Better late than never.</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">45</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">11</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">61</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/xiangwanpeng" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/u/2810288024/home" target="_blank" title="weibo">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  weibo
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <p class="post-toc-empty">此文章未包含目录</p>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2016</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Alan</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Pisces
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/VEN/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/VEN/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/VEN/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/VEN/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/VEN/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/VEN/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.1"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.0.1"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.1"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"xiangwanpeng"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+    
+    <script src="/VEN/ua-parser-js/dist/ua-parser.min.js?v=0.7.9"></script>
+    <script src="/js/src/hook-duoshuo.js"></script>
+  
+
+
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

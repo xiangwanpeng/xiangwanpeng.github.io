@@ -1,0 +1,720 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/VEN/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/VEN/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="J2EE,Servlet," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.1" />
+
+
+
+
+
+
+<meta name="description" content="最近感觉到用久了SpringMVC、Struts2等框架，反而对它们的底层实现，即Servlet，的相关知识有了许多遗忘。现在参考了网上的一些博客，来进行一次知识点总结。
+　　
+Servlet响应客户端请求的过程
+Servlet生命周期
+init方法：当Servlet容器第一次加载并创建Servlet实例时，在调用该Servlet的构造函数后立即调用init方法对该Servlet对象进行初始化">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Servlet生命周期以及工作原理">
+<meta property="og:url" content="http://yoursite.com/2016/11/20/Servlet生命周期以及工作原理/index.html">
+<meta property="og:site_name" content="向万鹏的独立博客">
+<meta property="og:description" content="最近感觉到用久了SpringMVC、Struts2等框架，反而对它们的底层实现，即Servlet，的相关知识有了许多遗忘。现在参考了网上的一些博客，来进行一次知识点总结。
+　　
+Servlet响应客户端请求的过程
+Servlet生命周期
+init方法：当Servlet容器第一次加载并创建Servlet实例时，在调用该Servlet的构造函数后立即调用init方法对该Servlet对象进行初始化">
+<meta property="og:image" content="http://static.zybuluo.com/xiangwanpeng/0m7okl2u5n2nsvsse0rwclv2/image_1b205lk8c1f881cu01s401jn01b6n9.png">
+<meta property="og:image" content="http://static.zybuluo.com/xiangwanpeng/xo9l9by7bpd0ai0oq59cv3u2/image_1b207k93m1f0knmd1vej8pcqlsm.png">
+<meta property="og:image" content="http://static.zybuluo.com/xiangwanpeng/p1zsnye3isgzfoalczzhiuuj/image_1b207q5r788mo0hf6m1gj1omo13.png">
+<meta property="og:image" content="http://static.zybuluo.com/xiangwanpeng/tlxagkmh89ag807nq9dj516e/image_1b209obula7s169r1501pn71a7k1t.png">
+<meta property="og:image" content="http://static.zybuluo.com/xiangwanpeng/pi8il2i472pm9pnhgm1uogxt/image_1b20aapc615gg2qd4iv1ofebah2a.png">
+<meta property="og:image" content="http://static.zybuluo.com/xiangwanpeng/yxhegk0dxtny22fmz2xmeg0n/image_1b20acpqjehe1b8lsrk1if4dtr2n.png">
+<meta property="og:updated_time" content="2016-11-20T08:09:51.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Servlet生命周期以及工作原理">
+<meta name="twitter:description" content="最近感觉到用久了SpringMVC、Struts2等框架，反而对它们的底层实现，即Servlet，的相关知识有了许多遗忘。现在参考了网上的一些博客，来进行一次知识点总结。
+　　
+Servlet响应客户端请求的过程
+Servlet生命周期
+init方法：当Servlet容器第一次加载并创建Servlet实例时，在调用该Servlet的构造函数后立即调用init方法对该Servlet对象进行初始化">
+<meta name="twitter:image" content="http://static.zybuluo.com/xiangwanpeng/0m7okl2u5n2nsvsse0rwclv2/image_1b205lk8c1f881cu01s401jn01b6n9.png">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"always"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 0,
+      author: '博主'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2016/11/20/Servlet生命周期以及工作原理/"/>
+
+  <title> Servlet生命周期以及工作原理 | 向万鹏的独立博客 </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">向万鹏的独立博客</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle"></p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                Servlet生命周期以及工作原理
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-11-20T13:38:43+08:00" content="2016-11-20">
+              2016-11-20
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/J2EE/" itemprop="url" rel="index">
+                    <span itemprop="name">J2EE</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2016/11/20/Servlet生命周期以及工作原理/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/11/20/Servlet生命周期以及工作原理/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>　　最近感觉到用久了SpringMVC、Struts2等框架，反而对它们的底层实现，即Servlet，的相关知识有了许多遗忘。现在参考了网上的一些博客，来进行一次知识点总结。
+　　</p>
+<h2 id="Servlet响应客户端请求的过程"><a href="#Servlet响应客户端请求的过程" class="headerlink" title="Servlet响应客户端请求的过程"></a>Servlet响应客户端请求的过程</h2><p><img src="http://static.zybuluo.com/xiangwanpeng/0m7okl2u5n2nsvsse0rwclv2/image_1b205lk8c1f881cu01s401jn01b6n9.png" alt="image_1b205lk8c1f881cu01s401jn01b6n9.png-54kB"></p>
+<h2 id="Servlet生命周期"><a href="#Servlet生命周期" class="headerlink" title="Servlet生命周期"></a>Servlet生命周期</h2><ol>
+<li>init方法：当Servlet容器第一次加载并创建Servlet实例时，在调用该Servlet的构造函数后立即调用init方法对该Servlet对象进行初始化。构造器和init方法都只会被调用一次，这说明Servlet是单实例的（需要考虑线程安全的问题，不推荐在其中写全局变量）。</li>
+<li>service方法：每次请求都会调用service方法，它是实际用于响应请求的方法，可以被多次调用。</li>
+<li>destroy方法：在服务器端停止且卸载Servlet时执行该方法，用于释放当前Servlet所占用的资源，只会被调用一次。</li>
+</ol>
+<p><strong>以上方法都由Servlet容器（例如Tomcat）负责调用。</strong>
+　
+　</p>
+<h2 id="ServletConfig"><a href="#ServletConfig" class="headerlink" title="ServletConfig"></a>ServletConfig</h2><p>　　Servlet接口的init方法会接收一个<strong>ServletConfig</strong>对象作为参数，即init(ServletConfig servletConfig)，ServletConfig对象封装了该Serlvet的配置信息,并且可以获取<strong>ServletContext</strong>对象。例如：<br>　　<br>在web.xml中配置Servlet的初始化参数：<br><figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">servlet</span>&gt;</span></div><div class="line">		<span class="comment">&lt;!-- Servlet注册的名字 --&gt;</span></div><div class="line">		<span class="tag">&lt;<span class="name">servlet-name</span>&gt;</span>helloServlet<span class="tag">&lt;/<span class="name">servlet-name</span>&gt;</span></div><div class="line">		<span class="comment">&lt;!-- Servlet全类名 --&gt;</span></div><div class="line">		<span class="tag">&lt;<span class="name">servlet-class</span>&gt;</span>servlet.HelloServlet<span class="tag">&lt;/<span class="name">servlet-class</span>&gt;</span></div><div class="line">		<span class="comment">&lt;!-- 配置该Servlet的初始化参数 --&gt;</span></div><div class="line">		<span class="tag">&lt;<span class="name">init-param</span>&gt;</span></div><div class="line">			<span class="tag">&lt;<span class="name">param-name</span>&gt;</span>username<span class="tag">&lt;/<span class="name">param-name</span>&gt;</span></div><div class="line">			<span class="tag">&lt;<span class="name">param-value</span>&gt;</span>root<span class="tag">&lt;/<span class="name">param-value</span>&gt;</span></div><div class="line">		<span class="tag">&lt;/<span class="name">init-param</span>&gt;</span></div><div class="line">		<span class="tag">&lt;<span class="name">init-param</span>&gt;</span></div><div class="line">			<span class="tag">&lt;<span class="name">param-name</span>&gt;</span>password<span class="tag">&lt;/<span class="name">param-name</span>&gt;</span></div><div class="line">			<span class="tag">&lt;<span class="name">param-value</span>&gt;</span>123456<span class="tag">&lt;/<span class="name">param-value</span>&gt;</span></div><div class="line">		<span class="tag">&lt;/<span class="name">init-param</span>&gt;</span></div><div class="line">	<span class="tag">&lt;/<span class="name">servlet</span>&gt;</span></div></pre></td></tr></table></figure></p>
+<p>可以在HelloServlet的init方法中获取这些参数的信息（在实际开发中，通常使用的Servlet都继承了HttpServlet类，可以通过getServletConfig()在该Servlet对象中获取到ServletConfig对象，不一定只能在init方法中使用，下面的getServletContext()也是一样）：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@Override</span></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">init</span><span class="params">(ServletConfig servletConfig)</span> <span class="keyword">throws</span> ServletException </span>&#123;</div><div class="line">		<span class="comment">//获取Servlet初始化参数相关的信息</span></div><div class="line">		String username = servletConfig.getInitParameter(<span class="string">"username"</span>);</div><div class="line">		System.out.println(<span class="string">"username is "</span>+username);</div><div class="line">		Enumeration&lt;String&gt; names = servletConfig.getInitParameterNames();</div><div class="line">		<span class="keyword">while</span>(names.hasMoreElements())&#123;</div><div class="line">			String name = names.nextElement();</div><div class="line">			System.out.println(<span class="string">"name is "</span>+name);</div><div class="line">			System.out.println(<span class="string">"value is "</span>+servletConfig.getInitParameter(name));</div><div class="line">		&#125;</div></pre></td></tr></table></figure></p>
+<p>当有请求发送到该Servlet后可以在控制台看到输出：</p>
+<p><img src="http://static.zybuluo.com/xiangwanpeng/xo9l9by7bpd0ai0oq59cv3u2/image_1b207k93m1f0knmd1vej8pcqlsm.png" alt="image_1b207k93m1f0knmd1vej8pcqlsm.png-17.4kB">
+　
+　</p>
+<h2 id="ServletContext"><a href="#ServletContext" class="headerlink" title="ServletContext"></a>ServletContext</h2><p>　　ServletContext对象代表着当前的WEB应用。可以认为SerlvetContext是当前 WEB应用的一个大管家，可以从中获取到当前WEB应用的各个方面的信息。<br>　　<strong>ServletContext对象可以由SerlvetConfig获取：</strong><br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">ServletContext servletContext = servletConfig.getServletContext();</div></pre></td></tr></table></figure></p>
+<p>　　<strong>ServletContext主要的作用有：</strong><br>　　<br><strong>① 获取当前WEB应用的初始化参数：</strong><br>　　<br>在web.xml中配置当前WEB应用的初始化参数：（这些参数可以被所有的 Servlet通过ServletContext获取，而上面配置在Servlet中的参数只能由对应的Servlet获取）<br><figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">context-param</span>&gt;</span></div><div class="line">		<span class="tag">&lt;<span class="name">param-name</span>&gt;</span>driver<span class="tag">&lt;/<span class="name">param-name</span>&gt;</span></div><div class="line">		<span class="tag">&lt;<span class="name">param-value</span>&gt;</span>com.mysql.jdbc.Driver<span class="tag">&lt;/<span class="name">param-value</span>&gt;</span></div><div class="line">	<span class="tag">&lt;/<span class="name">context-param</span>&gt;</span></div><div class="line">	<span class="tag">&lt;<span class="name">context-param</span>&gt;</span></div><div class="line">		<span class="tag">&lt;<span class="name">param-name</span>&gt;</span>jdbcUrl<span class="tag">&lt;/<span class="name">param-name</span>&gt;</span></div><div class="line">		<span class="tag">&lt;<span class="name">param-value</span>&gt;</span>jdbc:mysql:///xiangwanpeng<span class="tag">&lt;/<span class="name">param-value</span>&gt;</span></div><div class="line">	<span class="tag">&lt;/<span class="name">context-param</span>&gt;</span></div></pre></td></tr></table></figure></p>
+<p>在init方法中获取到这些参数：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@Override</span></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">init</span><span class="params">(ServletConfig servletConfig)</span> <span class="keyword">throws</span> ServletException </span>&#123;</div><div class="line">		<span class="comment">//获取ServletContext对象，它包含了当前WEB应用的各种信息</span></div><div class="line">		ServletContext servletContext = servletConfig.getServletContext();</div><div class="line">		<span class="comment">//获取WEB应用的初始化信息，方法和servletConfig类似</span></div><div class="line">		String driver = servletContext.getInitParameter(<span class="string">"driver"</span>);</div><div class="line">		System.out.println(<span class="string">"driver is "</span>+driver);</div><div class="line">		Enumeration&lt;String&gt; names2 = servletContext.getInitParameterNames();</div><div class="line">		<span class="keyword">while</span>(names2.hasMoreElements())&#123;</div><div class="line">			String name2 = names2.nextElement();</div><div class="line">			System.out.println(<span class="string">"name2 is "</span>+name2);</div><div class="line">			System.out.println(<span class="string">"value2 is "</span>+servletContext.getInitParameter(name2));</div><div class="line">		&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>当有请求发送到该Servlet后可以在控制台看到输出：</p>
+<p><img src="http://static.zybuluo.com/xiangwanpeng/p1zsnye3isgzfoalczzhiuuj/image_1b207q5r788mo0hf6m1gj1omo13.png" alt="image_1b207q5r788mo0hf6m1gj1omo13.png-9.8kB"></p>
+<p><strong>② 获取当前WEB应用的某一个文件在服务器上的绝对路径,而不是部署前的路径。</strong></p>
+<p>例如现在在根目录下新建一个note.txt：</p>
+<p><img src="http://static.zybuluo.com/xiangwanpeng/tlxagkmh89ag807nq9dj516e/image_1b209obula7s169r1501pn71a7k1t.png" alt="image_1b209obula7s169r1501pn71a7k1t.png-5kB"></p>
+<p>在Servlet中获取：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">String realPath = servletContext.getRealPath(<span class="string">"/note.txt"</span>);</div><div class="line">		System.out.println(<span class="string">"realPath is "</span>+realPath);</div></pre></td></tr></table></figure></p>
+<p>获取请求后在控制台输出：</p>
+<p>realPath is G:\Eclipse\J2EE\workspace.metadata.plugins\org.eclipse.wst.server.core\tmp0\wtpwebapps\JavaWeb\note.txt</p>
+<p><strong>③ 获取当前 WEB应用的名称：</strong><br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">String contextPath = servletContext.getContextPath();</div><div class="line">System.out.println(contextPath);</div></pre></td></tr></table></figure></p>
+<p><strong>④ 获取当前 WEB应用的某一个文件对应的输入流：</strong></p>
+<p>在src目录下新建一个jdbc.properties：</p>
+<p><img src="http://static.zybuluo.com/xiangwanpeng/pi8il2i472pm9pnhgm1uogxt/image_1b20aapc615gg2qd4iv1ofebah2a.png" alt="image_1b20aapc615gg2qd4iv1ofebah2a.png-6.3kB"></p>
+<p>在Servlet中获取该文件的输入流：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">InputStream is = servletContext.getResourceAsStream(<span class="string">"/WEB-INF/classes/jdbc.properties"</span>);</div><div class="line">		System.out.println(<span class="string">"is is "</span>+is);</div></pre></td></tr></table></figure></p>
+<p>输出：</p>
+<p><img src="http://static.zybuluo.com/xiangwanpeng/yxhegk0dxtny22fmz2xmeg0n/image_1b20acpqjehe1b8lsrk1if4dtr2n.png" alt="image_1b20acpqjehe1b8lsrk1if4dtr2n.png-7.1kB"></p>
+<p>注意区别另一种方法，即通过getClassLoader获取，这种方法的路径是没有/WEB-INF/classes/前缀的：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">InputStream is2 = <span class="keyword">this</span>.getClass().getClassLoader().getResourceAsStream(<span class="string">"jdbc.properties"</span>);</div><div class="line">		System.out.println(<span class="string">"is2 is "</span>+is2);</div></pre></td></tr></table></figure></p>
+<p><strong>⑤ 和attribute相关的几个方法。</strong> 
+　
+　</p>
+<h2 id="GenericServlet"><a href="#GenericServlet" class="headerlink" title="GenericServlet"></a>GenericServlet</h2><p>　　GenericServlet是Servlet接口和ServletConfig接口的实现类，是一个抽象类，因为其中的service()方法为抽象方法。它的作用是：如果新建的 Servlet程序直接继承GenericSerlvet会使开发更简洁。<br>　　<br>具体实现：<br>① 在GenericServlet中声明了一个SerlvetConfig类型的成员变量，在init(ServletConfig)方法中对其进行了初始化。<br>② 利用servletConfig成员变量的方法实现了 ServletConfig接口的方法。<br>③ 还定义了一个 init()方法，在init(SerlvetConfig)方法中对其进行调用，子类可以直接覆盖init()在其中实现对Servlet的初始化。<br>④ 不建议直接覆盖 init(ServletConfig),因为如果忘记编写super.init(config)，而还是用了SerlvetConfig接口的方法,则会出现空指针异常。<br>⑤ 新建的 init(){}并非Serlvet的生命周期方法，而init(ServletConfig)是生命周期相关的方法。</p>
+<p>以下是源码：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="class"><span class="keyword">class</span> <span class="title">GenericServlet</span> </span></div><div class="line">    <span class="keyword">implements</span> <span class="title">Servlet</span>, <span class="title">ServletConfig</span>, <span class="title">java</span>.<span class="title">io</span>.<span class="title">Serializable</span></div><div class="line">&#123;</div><div class="line">    <span class="keyword">private</span> <span class="keyword">transient</span> ServletConfig config;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="title">GenericServlet</span><span class="params">()</span> </span>&#123; &#125;</div><div class="line">    </div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">destroy</span><span class="params">()</span> </span>&#123;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">getInitParameter</span><span class="params">(String name)</span> </span>&#123;</div><div class="line">	<span class="keyword">return</span> getServletConfig().getInitParameter(name);</div><div class="line">    &#125;</div><div class="line">    </div><div class="line">    <span class="function"><span class="keyword">public</span> Enumeration <span class="title">getInitParameterNames</span><span class="params">()</span> </span>&#123;</div><div class="line">	<span class="keyword">return</span> getServletConfig().getInitParameterNames();</div><div class="line">    &#125;   </div><div class="line">    </div><div class="line">    <span class="function"><span class="keyword">public</span> ServletConfig <span class="title">getServletConfig</span><span class="params">()</span> </span>&#123;</div><div class="line">	<span class="keyword">return</span> config;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> ServletContext <span class="title">getServletContext</span><span class="params">()</span> </span>&#123;</div><div class="line">	<span class="keyword">return</span> getServletConfig().getServletContext();</div><div class="line">    &#125;</div><div class="line"></div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">getServletInfo</span><span class="params">()</span> </span>&#123;</div><div class="line">	<span class="keyword">return</span> <span class="string">""</span>;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">init</span><span class="params">(ServletConfig config)</span> <span class="keyword">throws</span> ServletException </span>&#123;</div><div class="line">	<span class="keyword">this</span>.config = config;</div><div class="line">	<span class="keyword">this</span>.init();</div><div class="line">    &#125;</div><div class="line">    </div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">init</span><span class="params">()</span> <span class="keyword">throws</span> ServletException </span>&#123;</div><div class="line"></div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">log</span><span class="params">(String msg)</span> </span>&#123;</div><div class="line">	getServletContext().log(getServletName() + <span class="string">": "</span>+ msg);</div><div class="line">    &#125;</div><div class="line">   </div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">log</span><span class="params">(String message, Throwable t)</span> </span>&#123;</div><div class="line">	getServletContext().log(getServletName() + <span class="string">": "</span> + message, t);</div><div class="line">    &#125;</div><div class="line">    </div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="keyword">void</span> <span class="title">service</span><span class="params">(ServletRequest req, ServletResponse res)</span></span></div><div class="line">	<span class="keyword">throws</span> ServletException, IOException;</div><div class="line">    </div><div class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">getServletName</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="keyword">return</span> config.getServletName();</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>　
+　
+　</p>
+<h2 id="HttpServlet"><a href="#HttpServlet" class="headerlink" title="HttpServlet"></a>HttpServlet</h2><p>　　HttpServlet是一个继承自 GenericServlet的Servlet，而且它是针对于 HTTP协议所定制。<br>　　HttpServlet在service(ServletRequest,ServletResponse)方法中直接把<strong>ServletReuqest和  ServletResponse</strong>强制转换为<strong>HttpServletRequest和HttpServletResponse</strong>。并调用了重载的service(HttpServletRequest, HttpServletResponse)方法。<br>　　在service(HttpServletRequest, HttpServletResponse)中，通过<strong>request.getMethod()</strong>获取请求方式，并根据请求方式创建了doXxx()方法(xxx为具体的请求方式,比如 doGet,doPost)。<br>　　实际开发中, 我们通常直接继承HttpServlet，这样做的好处是可以直接有针对性的覆盖doXxx()方法；直接使用HttpServletRequest和HttpServletResponse，而不再需要进行类型的强制转换。<br>　　<br>主要源码如下：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">service</span><span class="params">(ServletRequest req, ServletResponse res)</span></span></div><div class="line"><span class="keyword">throws</span> ServletException, IOException</div><div class="line">   &#123;</div><div class="line">HttpServletRequest	request;</div><div class="line">HttpServletResponse	response;</div><div class="line"></div><div class="line"><span class="keyword">try</span> &#123;</div><div class="line">    request = (HttpServletRequest) req;</div><div class="line">    response = (HttpServletResponse) res;</div><div class="line">&#125; <span class="keyword">catch</span> (ClassCastException e) &#123;</div><div class="line">    <span class="keyword">throw</span> <span class="keyword">new</span> ServletException(<span class="string">"non-HTTP request or response"</span>);</div><div class="line">&#125;</div><div class="line">service(request, response);</div><div class="line">   &#125;</div><div class="line">   </div><div class="line">   </div><div class="line"> <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">service</span><span class="params">(HttpServletRequest req, HttpServletResponse resp)</span></span></div><div class="line"><span class="keyword">throws</span> ServletException, IOException</div><div class="line">   &#123;</div><div class="line">String method = req.getMethod();</div><div class="line"></div><div class="line"><span class="keyword">if</span> (method.equals(METHOD_GET)) &#123;</div><div class="line">    <span class="keyword">long</span> lastModified = getLastModified(req);</div><div class="line">    <span class="keyword">if</span> (lastModified == -<span class="number">1</span>) &#123;</div><div class="line">	<span class="comment">// servlet doesn't support if-modified-since, no reason</span></div><div class="line">	<span class="comment">// to go through further expensive logic</span></div><div class="line">	doGet(req, resp);</div><div class="line">    &#125; <span class="keyword">else</span> &#123;</div><div class="line">	<span class="keyword">long</span> ifModifiedSince = req.getDateHeader(HEADER_IFMODSINCE);</div><div class="line">	<span class="keyword">if</span> (ifModifiedSince &lt; (lastModified / <span class="number">1000</span> * <span class="number">1000</span>)) &#123;</div><div class="line">	    <span class="comment">// If the servlet mod time is later, call doGet()</span></div><div class="line">                   <span class="comment">// Round down to the nearest second for a proper compare</span></div><div class="line">                   <span class="comment">// A ifModifiedSince of -1 will always be less</span></div><div class="line">	    maybeSetLastModified(resp, lastModified);</div><div class="line">	    doGet(req, resp);</div><div class="line">	&#125; <span class="keyword">else</span> &#123;</div><div class="line">	    resp.setStatus(HttpServletResponse.SC_NOT_MODIFIED);</div><div class="line">	&#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">&#125; <span class="keyword">else</span> <span class="keyword">if</span> (method.equals(METHOD_HEAD)) &#123;</div><div class="line">    <span class="keyword">long</span> lastModified = getLastModified(req);</div><div class="line">    maybeSetLastModified(resp, lastModified);</div><div class="line">    doHead(req, resp);</div><div class="line"></div><div class="line">&#125; <span class="keyword">else</span> <span class="keyword">if</span> (method.equals(METHOD_POST)) &#123;</div><div class="line">    doPost(req, resp);</div><div class="line">    </div><div class="line">&#125; <span class="keyword">else</span> <span class="keyword">if</span> (method.equals(METHOD_PUT)) &#123;</div><div class="line">    doPut(req, resp);	</div><div class="line">    </div><div class="line">&#125; <span class="keyword">else</span> <span class="keyword">if</span> (method.equals(METHOD_DELETE)) &#123;</div><div class="line">    doDelete(req, resp);</div><div class="line">    </div><div class="line">&#125; <span class="keyword">else</span> <span class="keyword">if</span> (method.equals(METHOD_OPTIONS)) &#123;</div><div class="line">    doOptions(req,resp);</div><div class="line">    </div><div class="line">&#125; <span class="keyword">else</span> <span class="keyword">if</span> (method.equals(METHOD_TRACE)) &#123;</div><div class="line">    doTrace(req,resp);</div><div class="line">    </div><div class="line">&#125; <span class="keyword">else</span> &#123;</div><div class="line">    <span class="comment">//</span></div><div class="line">    <span class="comment">// Note that this means NO servlet supports whatever</span></div><div class="line">    <span class="comment">// method was requested, anywhere on this server.</span></div><div class="line">    <span class="comment">//</span></div><div class="line"></div><div class="line">    String errMsg = lStrings.getString(<span class="string">"http.method_not_implemented"</span>);</div><div class="line">    Object[] errArgs = <span class="keyword">new</span> Object[<span class="number">1</span>];</div><div class="line">    errArgs[<span class="number">0</span>] = method;</div><div class="line">    errMsg = MessageFormat.format(errMsg, errArgs);</div><div class="line">    </div><div class="line">    resp.sendError(HttpServletResponse.SC_NOT_IMPLEMENTED, errMsg);</div><div class="line">&#125;</div><div class="line">   &#125;</div></pre></td></tr></table></figure></p>
+<p>　　</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/J2EE/" rel="tag">#J2EE</a>
+          
+            <a href="/tags/Servlet/" rel="tag">#Servlet</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/11/18/Java设计模式之工厂方法模式/" rel="next" title="Java����ģʽ֮��������ģʽ">
+                <i class="fa fa-chevron-left"></i> Java����ģʽ֮��������ģʽ
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/11/20/JSP运行原理及相关知识/" rel="prev" title="JSP运行原理及相关知识">
+                JSP运行原理及相关知识 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2016/11/20/Servlet生命周期以及工作原理/"
+           data-title="Servlet生命周期以及工作原理" data-url="http://yoursite.com/2016/11/20/Servlet生命周期以及工作原理/">
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/image/avatar.png"
+               alt="Alan" />
+          <p class="site-author-name" itemprop="name">Alan</p>
+          <p class="site-description motion-element" itemprop="description">Better late than never.</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">45</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">11</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">61</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/xiangwanpeng" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/u/2810288024/home" target="_blank" title="weibo">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  weibo
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Servlet响应客户端请求的过程"><span class="nav-number">1.</span> <span class="nav-text">Servlet响应客户端请求的过程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Servlet生命周期"><span class="nav-number">2.</span> <span class="nav-text">Servlet生命周期</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ServletConfig"><span class="nav-number">3.</span> <span class="nav-text">ServletConfig</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ServletContext"><span class="nav-number">4.</span> <span class="nav-text">ServletContext</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#GenericServlet"><span class="nav-number">5.</span> <span class="nav-text">GenericServlet</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#HttpServlet"><span class="nav-number">6.</span> <span class="nav-text">HttpServlet</span></a></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2016</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Alan</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Pisces
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/VEN/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/VEN/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/VEN/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/VEN/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/VEN/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/VEN/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.1"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.0.1"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.1"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"xiangwanpeng"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+    
+    <script src="/VEN/ua-parser-js/dist/ua-parser.min.js?v=0.7.9"></script>
+    <script src="/js/src/hook-duoshuo.js"></script>
+  
+
+
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
