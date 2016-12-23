@@ -1,0 +1,682 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/VEN/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/VEN/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="数据库,关联关系,mybatis," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.1" />
+
+
+
+
+
+
+<meta name="description" content="在《mybatis一对一关联关系》中，我们以班级和教师的例子介绍了一对一的关联关系，现在引入学生类，一个学生对应一个班级，一个班级对应多个学生，来介绍mybatis如何处理一对多的关联关系。　　　　首先创建表和实体类：
+teacher表：123456CREATE TABLE teacher(	t_id INT PRIMARY KEY AUTO_INCREMENT, 	t_name VARCHA">
+<meta property="og:type" content="article">
+<meta property="og:title" content="mybatis一对多关联关系">
+<meta property="og:url" content="http://yoursite.com/2016/12/20/mybatis一对多关联关系/index.html">
+<meta property="og:site_name" content="向万鹏的独立博客">
+<meta property="og:description" content="在《mybatis一对一关联关系》中，我们以班级和教师的例子介绍了一对一的关联关系，现在引入学生类，一个学生对应一个班级，一个班级对应多个学生，来介绍mybatis如何处理一对多的关联关系。　　　　首先创建表和实体类：
+teacher表：123456CREATE TABLE teacher(	t_id INT PRIMARY KEY AUTO_INCREMENT, 	t_name VARCHA">
+<meta property="og:image" content="http://static.zybuluo.com/xiangwanpeng/brwue0w8hxyhy8fuaxaunn9p/image_1b4d974o2lm7dfiser8qvj159.png">
+<meta property="og:image" content="http://static.zybuluo.com/xiangwanpeng/hvrcdbchp5v22eulfip5isb7/image_1b4d4baab1lar1uf61hfj2so1ge613.png">
+<meta property="og:image" content="http://static.zybuluo.com/xiangwanpeng/b0dacju4qvjgxtnm3ony8u3a/image_1b4d98u561fcn30bon314mp1k6vm.png">
+<meta property="og:image" content="http://static.zybuluo.com/xiangwanpeng/xpgjkn8hkrgl68bfwurgy2au/image_1b4d340jksb31n4511659qhbql9.png">
+<meta property="og:image" content="http://static.zybuluo.com/xiangwanpeng/pj54mme3kr0y7mh6ar0a2rr9/image_1b4d3uqo3hmueec1c961m57e7cm.png">
+<meta property="og:updated_time" content="2016-12-20T04:57:39.647Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="mybatis一对多关联关系">
+<meta name="twitter:description" content="在《mybatis一对一关联关系》中，我们以班级和教师的例子介绍了一对一的关联关系，现在引入学生类，一个学生对应一个班级，一个班级对应多个学生，来介绍mybatis如何处理一对多的关联关系。　　　　首先创建表和实体类：
+teacher表：123456CREATE TABLE teacher(	t_id INT PRIMARY KEY AUTO_INCREMENT, 	t_name VARCHA">
+<meta name="twitter:image" content="http://static.zybuluo.com/xiangwanpeng/brwue0w8hxyhy8fuaxaunn9p/image_1b4d974o2lm7dfiser8qvj159.png">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"always"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 0,
+      author: '博主'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2016/12/20/mybatis一对多关联关系/"/>
+
+  <title> mybatis一对多关联关系 | 向万鹏的独立博客 </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">向万鹏的独立博客</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle"></p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                mybatis一对多关联关系
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-12-20T10:55:41+08:00" content="2016-12-20">
+              2016-12-20
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/mybatis/" itemprop="url" rel="index">
+                    <span itemprop="name">mybatis</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2016/12/20/mybatis一对多关联关系/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/12/20/mybatis一对多关联关系/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>　　在<a href="http://blog.csdn.net/xiangwanpeng/article/details/53760251" target="_blank" rel="external">《mybatis一对一关联关系》</a>中，我们以班级和教师的例子介绍了一对一的关联关系，现在引入学生类，一个学生对应一个班级，一个班级对应多个学生，来介绍mybatis如何处理一对多的关联关系。<br>　　<br>　　首先创建表和实体类：</p>
+<p>teacher表：<br><figure class="highlight sql"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> teacher(</div><div class="line">	t_id <span class="built_in">INT</span> PRIMARY <span class="keyword">KEY</span> AUTO_INCREMENT, </div><div class="line">	t_name <span class="built_in">VARCHAR</span>(<span class="number">20</span>)</div><div class="line">);</div><div class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> teacher(t_name) <span class="keyword">VALUES</span>(<span class="string">'LS1'</span>);</div><div class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> teacher(t_name) <span class="keyword">VALUES</span>(<span class="string">'LS2'</span>);</div></pre></td></tr></table></figure></p>
+<p><img src="http://static.zybuluo.com/xiangwanpeng/brwue0w8hxyhy8fuaxaunn9p/image_1b4d974o2lm7dfiser8qvj159.png" alt="image_1b4d974o2lm7dfiser8qvj159.png-13.4kB"></p>
+<p>class表：<br><figure class="highlight sql"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> <span class="keyword">class</span>(</div><div class="line">	c_id <span class="built_in">INT</span> PRIMARY <span class="keyword">KEY</span> AUTO_INCREMENT, </div><div class="line">	c_name <span class="built_in">VARCHAR</span>(<span class="number">20</span>), </div><div class="line">	teacher_id <span class="built_in">INT</span></div><div class="line">);</div><div class="line"><span class="keyword">ALTER</span> <span class="keyword">TABLE</span> <span class="keyword">class</span> <span class="keyword">ADD</span> <span class="keyword">CONSTRAINT</span> fk_teacher_id FOREIGN <span class="keyword">KEY</span> (teacher_id) <span class="keyword">REFERENCES</span> teacher(t_id);	</div><div class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> <span class="keyword">class</span>(c_name, teacher_id) <span class="keyword">VALUES</span>(<span class="string">'bj_a'</span>, <span class="number">1</span>);</div><div class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> <span class="keyword">class</span>(c_name, teacher_id) <span class="keyword">VALUES</span>(<span class="string">'bj_b'</span>, <span class="number">2</span>);</div></pre></td></tr></table></figure></p>
+<p><img src="http://static.zybuluo.com/xiangwanpeng/hvrcdbchp5v22eulfip5isb7/image_1b4d4baab1lar1uf61hfj2so1ge613.png" alt="image_1b4d4baab1lar1uf61hfj2so1ge613.png-14kB"></p>
+<p>其中teacher_id是指向teacher表的外键：</p>
+<p><img src="http://static.zybuluo.com/xiangwanpeng/b0dacju4qvjgxtnm3ony8u3a/image_1b4d98u561fcn30bon314mp1k6vm.png" alt="image_1b4d98u561fcn30bon314mp1k6vm.png-23.3kB"></p>
+<p>student表：<br><figure class="highlight sql"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> student(</div><div class="line">	s_id <span class="built_in">INT</span> PRIMARY <span class="keyword">KEY</span> AUTO_INCREMENT, </div><div class="line">	s_name <span class="built_in">VARCHAR</span>(<span class="number">20</span>), </div><div class="line">	class_id <span class="built_in">INT</span></div><div class="line">);</div><div class="line"><span class="keyword">ALTER</span> <span class="keyword">TABLE</span> student <span class="keyword">ADD</span> <span class="keyword">CONSTRAINT</span> fk_class_id FOREIGN <span class="keyword">KEY</span> (class_id) <span class="keyword">REFERENCES</span> <span class="keyword">class</span>(c_id);   </div><div class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> student(s_name, class_id) <span class="keyword">VALUES</span>(<span class="string">'xs_A'</span>, <span class="number">1</span>);</div><div class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> student(s_name, class_id) <span class="keyword">VALUES</span>(<span class="string">'xs_B'</span>, <span class="number">1</span>);</div><div class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> student(s_name, class_id) <span class="keyword">VALUES</span>(<span class="string">'xs_C'</span>, <span class="number">1</span>);</div><div class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> student(s_name, class_id) <span class="keyword">VALUES</span>(<span class="string">'xs_D'</span>, <span class="number">2</span>);</div><div class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> student(s_name, class_id) <span class="keyword">VALUES</span>(<span class="string">'xs_E'</span>, <span class="number">2</span>);</div><div class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> student(s_name, class_id) <span class="keyword">VALUES</span>(<span class="string">'xs_F'</span>, <span class="number">2</span>);</div></pre></td></tr></table></figure></p>
+<p><img src="http://static.zybuluo.com/xiangwanpeng/xpgjkn8hkrgl68bfwurgy2au/image_1b4d340jksb31n4511659qhbql9.png" alt="image_1b4d340jksb31n4511659qhbql9.png-12.2kB"></p>
+<p>其中class_id是指向class表的外键：</p>
+<p><img src="http://static.zybuluo.com/xiangwanpeng/pj54mme3kr0y7mh6ar0a2rr9/image_1b4d3uqo3hmueec1c961m57e7cm.png" alt="image_1b4d3uqo3hmueec1c961m57e7cm.png-17.6kB"></p>
+<p>实体类Student，Teacher和Classes：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Student</span> </span>&#123;</div><div class="line">	<span class="keyword">private</span> <span class="keyword">int</span> id;</div><div class="line">	<span class="keyword">private</span> String name;</div><div class="line"></div><div class="line">    <span class="comment">//getters and setters</span></div><div class="line">    </div><div class="line">	<span class="meta">@Override</span></div><div class="line">	<span class="function"><span class="keyword">public</span> String <span class="title">toString</span><span class="params">()</span> </span>&#123;</div><div class="line">		<span class="keyword">return</span> <span class="string">"Student [id="</span> + id + <span class="string">", name="</span> + name + <span class="string">"]"</span>;</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="title">Student</span><span class="params">(<span class="keyword">int</span> id, String name)</span> </span>&#123;</div><div class="line">		<span class="keyword">super</span>();</div><div class="line">		<span class="keyword">this</span>.id = id;</div><div class="line">		<span class="keyword">this</span>.name = name;</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="title">Student</span><span class="params">()</span> </span>&#123;</div><div class="line">		<span class="keyword">super</span>();</div><div class="line">	&#125;</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Teacher</span> </span>&#123;</div><div class="line">	<span class="keyword">private</span> <span class="keyword">int</span> id;</div><div class="line">	<span class="keyword">private</span> String name;</div><div class="line"></div><div class="line">    <span class="comment">//getters and setters</span></div><div class="line">    </div><div class="line">	<span class="meta">@Override</span></div><div class="line">	<span class="function"><span class="keyword">public</span> String <span class="title">toString</span><span class="params">()</span> </span>&#123;</div><div class="line">		<span class="keyword">return</span> <span class="string">"Teacher [id="</span> + id + <span class="string">", name="</span> + name + <span class="string">"]"</span>;</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="title">Teacher</span><span class="params">(<span class="keyword">int</span> id, String name)</span> </span>&#123;</div><div class="line">		<span class="keyword">super</span>();</div><div class="line">		<span class="keyword">this</span>.id = id;</div><div class="line">		<span class="keyword">this</span>.name = name;</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="title">Teacher</span><span class="params">()</span> </span>&#123;</div><div class="line">		<span class="keyword">super</span>();</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Classes</span> </span>&#123;</div><div class="line">	<span class="keyword">private</span> <span class="keyword">int</span> id;</div><div class="line">	<span class="keyword">private</span> String name;</div><div class="line">	<span class="keyword">private</span> Teacher teacher;</div><div class="line">	<span class="keyword">private</span> List&lt;Student&gt; students;</div><div class="line"></div><div class="line">    <span class="comment">//getters and setters</span></div><div class="line">    </div><div class="line">	<span class="meta">@Override</span></div><div class="line">	<span class="function"><span class="keyword">public</span> String <span class="title">toString</span><span class="params">()</span> </span>&#123;</div><div class="line">		<span class="keyword">return</span> <span class="string">"Classes [id="</span> + id + <span class="string">", name="</span> + name + <span class="string">", teacher="</span> + teacher + <span class="string">", students="</span> + students + <span class="string">"]"</span>;</div><div class="line">	&#125;</div><div class="line">	</div><div class="line">	</div><div class="line"></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="title">Classes</span><span class="params">(<span class="keyword">int</span> id, String name, Teacher teacher, List&lt;Student&gt; students)</span> </span>&#123;</div><div class="line">		<span class="keyword">super</span>();</div><div class="line">		<span class="keyword">this</span>.id = id;</div><div class="line">		<span class="keyword">this</span>.name = name;</div><div class="line">		<span class="keyword">this</span>.teacher = teacher;</div><div class="line">		<span class="keyword">this</span>.students = students;</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="title">Classes</span><span class="params">()</span> </span>&#123;</div><div class="line">		<span class="keyword">super</span>();</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>编写映射文件classesMapper.xml（关键）<br><figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div></pre></td><td class="code"><pre><div class="line">&lt;?xml version="1.0" encoding="UTF-8" ?&gt;</div><div class="line"><span class="meta">&lt;!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd"&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">mapper</span> <span class="attr">namespace</span>=<span class="string">"com.mybatis.test6.classesMapper"</span>&gt;</span></div><div class="line"></div><div class="line">	<span class="comment">&lt;!-- </span></div><div class="line">	方法一: 嵌套结果: 使用嵌套结果映射来处理重复的联合结果的子集</div><div class="line">	SELECT * FROM class c, teacher t,student s WHERE c.teacher_id=t.t_id AND c.C_id=s.class_id AND  c.c_id=1</div><div class="line">	 --&gt;</div><div class="line">	<span class="comment">&lt;!-- </span></div><div class="line">		根据classId查询对应的班级信息,包括学生,老师</div><div class="line">	 --&gt;</div><div class="line">	<span class="tag">&lt;<span class="name">select</span> <span class="attr">id</span>=<span class="string">"getClassesById"</span> <span class="attr">parameterType</span>=<span class="string">"int"</span> <span class="attr">resultMap</span>=<span class="string">"classesResultMap"</span>&gt;</span></div><div class="line">		select * from class c,teacher t,student s where c.teacher_id=t.t_id</div><div class="line">		and</div><div class="line">		s.class_id=c.c_id and c.c_id=#&#123;id&#125;</div><div class="line">	<span class="tag">&lt;/<span class="name">select</span>&gt;</span></div><div class="line">	<span class="tag">&lt;<span class="name">resultMap</span> <span class="attr">type</span>=<span class="string">"Classes"</span> <span class="attr">id</span>=<span class="string">"classesResultMap"</span>&gt;</span></div><div class="line">		<span class="tag">&lt;<span class="name">id</span> <span class="attr">property</span>=<span class="string">"id"</span> <span class="attr">column</span>=<span class="string">"c_id"</span> /&gt;</span></div><div class="line">		<span class="tag">&lt;<span class="name">result</span> <span class="attr">property</span>=<span class="string">"name"</span> <span class="attr">column</span>=<span class="string">"c_name"</span> /&gt;</span></div><div class="line">		<span class="tag">&lt;<span class="name">association</span> <span class="attr">property</span>=<span class="string">"teacher"</span> <span class="attr">javaType</span>=<span class="string">"Teacher"</span>&gt;</span></div><div class="line">			<span class="tag">&lt;<span class="name">id</span> <span class="attr">property</span>=<span class="string">"id"</span> <span class="attr">column</span>=<span class="string">"t_id"</span> /&gt;</span></div><div class="line">			<span class="tag">&lt;<span class="name">result</span> <span class="attr">property</span>=<span class="string">"name"</span> <span class="attr">column</span>=<span class="string">"t_name"</span> /&gt;</span></div><div class="line">		<span class="tag">&lt;/<span class="name">association</span>&gt;</span></div><div class="line">		<span class="comment">&lt;!-- ofType指定students集合中的对象类型 --&gt;</span></div><div class="line">		<span class="tag">&lt;<span class="name">collection</span> <span class="attr">property</span>=<span class="string">"students"</span> <span class="attr">ofType</span>=<span class="string">"Student"</span>&gt;</span></div><div class="line">			<span class="tag">&lt;<span class="name">id</span> <span class="attr">property</span>=<span class="string">"id"</span> <span class="attr">column</span>=<span class="string">"s_id"</span> /&gt;</span></div><div class="line">			<span class="tag">&lt;<span class="name">result</span> <span class="attr">property</span>=<span class="string">"name"</span> <span class="attr">column</span>=<span class="string">"s_name"</span> /&gt;</span></div><div class="line">		<span class="tag">&lt;/<span class="name">collection</span>&gt;</span></div><div class="line">	<span class="tag">&lt;/<span class="name">resultMap</span>&gt;</span></div><div class="line"></div><div class="line">	<span class="comment">&lt;!-- </span></div><div class="line">		方法二：嵌套查询：通过执行另外一个SQL映射语句来返回预期的复杂类型</div><div class="line">			SELECT * FROM class WHERE c_id=1;</div><div class="line">			SELECT * FROM teacher WHERE t_id=1   //1 是上一个查询得到的teacher_id的值</div><div class="line">			SELECT * FROM student WHERE class_id=1  //1是第一个查询得到的c_id字段的值</div><div class="line">	 --&gt;</div><div class="line">	<span class="comment">&lt;!-- </span></div><div class="line">		查询所有的班级信息,包括学生,老师</div><div class="line">	 --&gt;</div><div class="line">	<span class="tag">&lt;<span class="name">select</span> <span class="attr">id</span>=<span class="string">"getAllClasses"</span> <span class="attr">resultMap</span>=<span class="string">"allClassesResultMap"</span>&gt;</span></div><div class="line">		select * from class</div><div class="line">	<span class="tag">&lt;/<span class="name">select</span>&gt;</span></div><div class="line">	<span class="tag">&lt;<span class="name">resultMap</span> <span class="attr">type</span>=<span class="string">"Classes"</span> <span class="attr">id</span>=<span class="string">"allClassesResultMap"</span>&gt;</span></div><div class="line">		<span class="tag">&lt;<span class="name">id</span> <span class="attr">property</span>=<span class="string">"id"</span> <span class="attr">column</span>=<span class="string">"c_id"</span> /&gt;</span></div><div class="line">		<span class="tag">&lt;<span class="name">result</span> <span class="attr">property</span>=<span class="string">"name"</span> <span class="attr">column</span>=<span class="string">"c_name"</span> /&gt;</span></div><div class="line">		<span class="tag">&lt;<span class="name">association</span> <span class="attr">property</span>=<span class="string">"teacher"</span> <span class="attr">column</span>=<span class="string">"teacher_id"</span></span></div><div class="line">			<span class="attr">select</span>=<span class="string">"getTeacherById"</span>&gt;</div><div class="line">		<span class="tag">&lt;/<span class="name">association</span>&gt;</span></div><div class="line">		<span class="tag">&lt;<span class="name">collection</span> <span class="attr">property</span>=<span class="string">"students"</span> <span class="attr">column</span>=<span class="string">"c_id"</span></span></div><div class="line">			<span class="attr">select</span>=<span class="string">"getStudentByClassId"</span>&gt;<span class="tag">&lt;/<span class="name">collection</span>&gt;</span></div><div class="line">	<span class="tag">&lt;/<span class="name">resultMap</span>&gt;</span></div><div class="line">	<span class="tag">&lt;<span class="name">select</span> <span class="attr">id</span>=<span class="string">"getTeacherById"</span> <span class="attr">parameterType</span>=<span class="string">"int"</span> <span class="attr">resultType</span>=<span class="string">"Teacher"</span>&gt;</span></div><div class="line">		select t_name name from teacher where t_id=#&#123;id&#125;</div><div class="line">	<span class="tag">&lt;/<span class="name">select</span>&gt;</span></div><div class="line">	<span class="tag">&lt;<span class="name">select</span> <span class="attr">id</span>=<span class="string">"getStudentByClassId"</span> <span class="attr">parameterType</span>=<span class="string">"int"</span> <span class="attr">resultType</span>=<span class="string">"Student"</span>&gt;</span></div><div class="line">		select s_id id,s_name name from student where class_id=#&#123;id&#125;</div><div class="line">	<span class="tag">&lt;/<span class="name">select</span>&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">mapper</span>&gt;</span></div></pre></td></tr></table></figure></p>
+<p>这里提供了两种方法处理一对多的关联关系，和一对一中类似，分别是联表查询和分两次查询。关键点在于resultMap节点中的collection节点，注意在联表查询时，需要通过collection节点的ofType属性指定返回的集合的元素类型。</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/数据库/" rel="tag">#数据库</a>
+          
+            <a href="/tags/关联关系/" rel="tag">#关联关系</a>
+          
+            <a href="/tags/mybatis/" rel="tag">#mybatis</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/12/20/mybatis一对一关联关系/" rel="next" title="mybatis一对一关联关系">
+                <i class="fa fa-chevron-left"></i> mybatis一对一关联关系
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/12/20/mybatis的动态SQL与模糊查询/" rel="prev" title="mybatis的动态SQL与模糊查询">
+                mybatis的动态SQL与模糊查询 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2016/12/20/mybatis一对多关联关系/"
+           data-title="mybatis一对多关联关系" data-url="http://yoursite.com/2016/12/20/mybatis一对多关联关系/">
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/image/avatar.png"
+               alt="Alan" />
+          <p class="site-author-name" itemprop="name">Alan</p>
+          <p class="site-description motion-element" itemprop="description">Better late than never.</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">61</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">11</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">74</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/xiangwanpeng" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/u/2810288024/home" target="_blank" title="weibo">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  weibo
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <p class="post-toc-empty">此文章未包含目录</p>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2016</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Alan</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Pisces
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/VEN/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/VEN/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/VEN/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/VEN/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/VEN/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/VEN/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.1"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.0.1"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.1"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"xiangwanpeng"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+    
+    <script src="/VEN/ua-parser-js/dist/ua-parser.min.js?v=0.7.9"></script>
+    <script src="/js/src/hook-duoshuo.js"></script>
+  
+
+
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

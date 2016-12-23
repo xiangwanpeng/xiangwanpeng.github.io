@@ -1,0 +1,709 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/VEN/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/VEN/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Hibernate,数据库,J2EE,检索策略," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.1" />
+
+
+
+
+
+
+<meta name="description" content="检索策略追求的两个目标是：（以客户和订单的例子说明）
+
+不浪费内存：当Hibernate从数据库中加载Customer对象时，如果同时加载所有关联的Order对象，而程序实际上仅仅需要访问Customer对象，那么这些关联的Order对象就白白浪费了许多内存。
+更高的查询效率：发送尽可能少的SQL语句。
+
+类级别的检索策略　　类级别可选的检索策略包括立即检索和延迟检索，默认为延迟检索。　　立即检索">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Hibernate检索策略">
+<meta property="og:url" content="http://yoursite.com/2016/12/07/Hibernate检索策略/index.html">
+<meta property="og:site_name" content="向万鹏的独立博客">
+<meta property="og:description" content="检索策略追求的两个目标是：（以客户和订单的例子说明）
+
+不浪费内存：当Hibernate从数据库中加载Customer对象时，如果同时加载所有关联的Order对象，而程序实际上仅仅需要访问Customer对象，那么这些关联的Order对象就白白浪费了许多内存。
+更高的查询效率：发送尽可能少的SQL语句。
+
+类级别的检索策略　　类级别可选的检索策略包括立即检索和延迟检索，默认为延迟检索。　　立即检索">
+<meta property="og:image" content="http://static.zybuluo.com/xiangwanpeng/bqu8il7ddgwl06rwhooo5cc1/image_1b3bqsmcrqsg1ndfvpm1s4uah9.png">
+<meta property="og:image" content="http://static.zybuluo.com/xiangwanpeng/qvedpw9064ysr71ifxnygwkr/image_1b3brrg3o1oqg5m11irogui1i1mm.png">
+<meta property="og:image" content="http://static.zybuluo.com/xiangwanpeng/0kpvpbxezag492v94flfq7pa/image_1b3bs3qahkeubm539c1fe51cli13.png">
+<meta property="og:updated_time" content="2016-12-07T05:39:30.236Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Hibernate检索策略">
+<meta name="twitter:description" content="检索策略追求的两个目标是：（以客户和订单的例子说明）
+
+不浪费内存：当Hibernate从数据库中加载Customer对象时，如果同时加载所有关联的Order对象，而程序实际上仅仅需要访问Customer对象，那么这些关联的Order对象就白白浪费了许多内存。
+更高的查询效率：发送尽可能少的SQL语句。
+
+类级别的检索策略　　类级别可选的检索策略包括立即检索和延迟检索，默认为延迟检索。　　立即检索">
+<meta name="twitter:image" content="http://static.zybuluo.com/xiangwanpeng/bqu8il7ddgwl06rwhooo5cc1/image_1b3bqsmcrqsg1ndfvpm1s4uah9.png">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"always"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 0,
+      author: '博主'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2016/12/07/Hibernate检索策略/"/>
+
+  <title> Hibernate检索策略 | 向万鹏的独立博客 </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">向万鹏的独立博客</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle"></p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                Hibernate检索策略
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-12-07T12:45:48+08:00" content="2016-12-07">
+              2016-12-07
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/Hibernate/" itemprop="url" rel="index">
+                    <span itemprop="name">Hibernate</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2016/12/07/Hibernate检索策略/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/12/07/Hibernate检索策略/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>检索策略追求的两个目标是：（以客户和订单的例子说明）</p>
+<ul>
+<li>不浪费内存：当Hibernate从数据库中加载Customer对象时，如果同时加载所有关联的Order对象，而程序实际上仅仅需要访问Customer对象，那么这些关联的Order对象就白白浪费了许多内存。</li>
+<li>更高的查询效率：发送尽可能少的SQL语句。</li>
+</ul>
+<h2 id="类级别的检索策略"><a href="#类级别的检索策略" class="headerlink" title="类级别的检索策略"></a>类级别的检索策略</h2><p>　　类级别可选的检索策略包括立即检索和延迟检索，默认为延迟检索。<br>　　<strong>立即检索:</strong> 立即加载检索方法指定的对象。<br>　　<strong>延迟检索:</strong> 延迟加载检索方法指定的对象。在使用具体的属性时，再进行加载。<br>　　类级别的检索策略可以通过在映射文件中的<strong>&lt;class&gt;</strong>元素的<strong>lazy</strong>属性进行设置，默认为true。<br>　　如果程序加载一个对象的目的是为了访问它的属性，可以采取立即检索。<br>　　如果程序加载一个持久化对象的目的是仅仅为了获得它的引用，可以采用延迟检索。注意延迟检索可能会出现懒加载异常。<br>　　无论&lt;class&gt;元素的lazy属性是true还是false， <strong>仅是只对Session的load方法起作用，因为Session的get方法及Query的list方法在类级别总是使用立即检索策略。</strong>若&lt;class&gt;元素的lazy属性为true或取默认值，Session的load()方法不会执行查询数据表的SELECT语句，仅返回代理类对象的实例，该代理类实例有如下特征：</p>
+<ol>
+<li>由Hibernate 在运行时采用CGLIB工具动态生成；</li>
+<li>Hibernate创建代理类实例时，仅初始化其 OID 属性；</li>
+<li>在应用程序第一次访问代理类实例的非OID属性时，Hibernate 会初始化代理类实例。</li>
+</ol>
+<p>　　
+　　</p>
+<h2 id="一对多和多对多的检索策略"><a href="#一对多和多对多的检索策略" class="headerlink" title="一对多和多对多的检索策略"></a>一对多和多对多的检索策略</h2><p>　　在映射文件中，用&lt;set&gt;元素来配置一对多关联及多对多关联关系，&lt;set&gt;元素有下面三个属性。<br><strong>lazy属性：</strong>主要决定orders集合被初始化的时机。即到底是在加载Customer对象时就被初始化，还是在程序访问orders集合时被初始化。<br><strong>batch-size属性：</strong>用来为延迟检索策略或立即检索策略设定批量检索的数量。批量检索能减少SELECT语句的数目，提高延迟检索或立即检索的运行性能。<br><strong>fetch属性：</strong><br>　　若取值为”select”或”subselect”，用来指定初始化orders的查询语句的形式，当fetch属性为”subselect”时，假定Session缓存中有n个orders集合代理类实例没有被初始化，Hibernate能够通过带子查询的select语句，来批量初始化n个orders集合代理类实例，此时，batch-size属性将被忽略，子查询中的select语句为查询CUSTOMERS表OID的SELECT语句。<br>　　若取值为”join”，则指定orders集合被初始化的时机。若把fetch设置为 “join”，则在检索Customer对象时，会采用迫切左外连接策略来检索所有关联的Order对象，此时，lazy属性将被忽略。迫切左外连接检索策略的优点在于使用更少的select语句。注意，Query的list方法会忽略映射文件中配置的迫切左外连接检索策略，而依旧采用延迟加载策略。</p>
+<p>lazy属性和fetch属性的可能组合如下图所示：</p>
+<p><img src="http://static.zybuluo.com/xiangwanpeng/bqu8il7ddgwl06rwhooo5cc1/image_1b3bqsmcrqsg1ndfvpm1s4uah9.png" alt="image_1b3bqsmcrqsg1ndfvpm1s4uah9.png-196.8kB"></p>
+<p><strong>关于延迟检索和增强延迟检索：</strong></p>
+<ul>
+<li>在<strong>延迟检索(lazy属性值为true)</strong>集合属性时，Hibernate在以下情况下初始化集合代理类实例：<ol>
+<li>应用程序第一次调用集合的iterator()，size()，isEmpty()， contains()等方法访问集合的属性时。</li>
+<li>通过Hibernate.initialize()静态方法显式初始化时。</li>
+</ol>
+</li>
+<li><strong>增强延迟检索(lazy属性为extra)</strong>，与lazy=”true”类似，主要区别是增强延迟检索策略能<strong>进一步延迟</strong> Customer对象的orders集合代理实例的初始化时机：<ol>
+<li>当程序第一次访问orders属性的iterator()方法来遍历元素时，会导致orders集合代理类实例的初始化。</li>
+<li>当程序第一次访问order属性的size()，contains()和isEmpty()方法时，Hibernate<strong>不会初始化</strong>orders集合类的实例，仅通过特定的select语句查询必要的信息，而不会检索所有的Order对象。</li>
+</ol>
+</li>
+</ul>
+<h2 id="多对一和一对一关联的检索策略"><a href="#多对一和一对一关联的检索策略" class="headerlink" title="多对一和一对一关联的检索策略"></a>多对一和一对一关联的检索策略</h2><p>　　和&lt;set&gt;一样，&lt;many-to-one&gt;节点也有一个lazy属性和一个fetch属性，如下图所示：<br>　　<img src="http://static.zybuluo.com/xiangwanpeng/qvedpw9064ysr71ifxnygwkr/image_1b3brrg3o1oqg5m11irogui1i1mm.png" alt="image_1b3brrg3o1oqg5m11irogui1i1mm.png-89.4kB"><br>　　<br>　　且同上述一样，若fetch设为join，那么lazy属性将被忽略。<br>　　<br>下面总结一下各种检索策略：<br>　<br><img src="http://static.zybuluo.com/xiangwanpeng/0kpvpbxezag492v94flfq7pa/image_1b3bs3qahkeubm539c1fe51cli13.png" alt="image_1b3bs3qahkeubm539c1fe51cli13.png-180.4kB">
+　　</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Hibernate/" rel="tag">#Hibernate</a>
+          
+            <a href="/tags/数据库/" rel="tag">#数据库</a>
+          
+            <a href="/tags/J2EE/" rel="tag">#J2EE</a>
+          
+            <a href="/tags/检索策略/" rel="tag">#检索策略</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/12/06/Hibernate的多对多关联关系（单向和双向）/" rel="next" title="Hibernate的多对多关联关系（单向和双向）">
+                <i class="fa fa-chevron-left"></i> Hibernate的多对多关联关系（单向和双向）
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/12/07/HQL检索方式/" rel="prev" title="HQL检索方式">
+                HQL检索方式 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2016/12/07/Hibernate检索策略/"
+           data-title="Hibernate检索策略" data-url="http://yoursite.com/2016/12/07/Hibernate检索策略/">
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/image/avatar.png"
+               alt="Alan" />
+          <p class="site-author-name" itemprop="name">Alan</p>
+          <p class="site-description motion-element" itemprop="description">Better late than never.</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">61</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">11</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">74</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/xiangwanpeng" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/u/2810288024/home" target="_blank" title="weibo">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  weibo
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#类级别的检索策略"><span class="nav-number">1.</span> <span class="nav-text">类级别的检索策略</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#一对多和多对多的检索策略"><span class="nav-number">2.</span> <span class="nav-text">一对多和多对多的检索策略</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#多对一和一对一关联的检索策略"><span class="nav-number">3.</span> <span class="nav-text">多对一和一对一关联的检索策略</span></a></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2016</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Alan</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Pisces
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/VEN/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/VEN/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/VEN/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/VEN/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/VEN/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/VEN/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.1"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.0.1"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.1"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"xiangwanpeng"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+    
+    <script src="/VEN/ua-parser-js/dist/ua-parser.min.js?v=0.7.9"></script>
+    <script src="/js/src/hook-duoshuo.js"></script>
+  
+
+
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

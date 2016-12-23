@@ -1,0 +1,718 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/VEN/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/VEN/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Hibernate,HQL,数据库,J2EE," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.1" />
+
+
+
+
+
+
+<meta name="description" content="Hibernate检索对象的方式　　Hibernate提供了以下集中检索对象的方式：
+
+导航对象图检索方式：即根据已经加载的对象导航到其他对象。
+OID检索方式：按照对象的OID来检索对象。
+HQL检索方式：使用面向对象的HQL查询语言。
+QBC检索方式：使用QBC（Query By Criteria）。 API来检索对象，这种API封装了基于字符串形式的查询语句，提供了更加面向对象的查询接口。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="HQL检索方式">
+<meta property="og:url" content="http://yoursite.com/2016/12/07/HQL检索方式/index.html">
+<meta property="og:site_name" content="向万鹏的独立博客">
+<meta property="og:description" content="Hibernate检索对象的方式　　Hibernate提供了以下集中检索对象的方式：
+
+导航对象图检索方式：即根据已经加载的对象导航到其他对象。
+OID检索方式：按照对象的OID来检索对象。
+HQL检索方式：使用面向对象的HQL查询语言。
+QBC检索方式：使用QBC（Query By Criteria）。 API来检索对象，这种API封装了基于字符串形式的查询语句，提供了更加面向对象的查询接口。">
+<meta property="og:image" content="http://static.zybuluo.com/xiangwanpeng/c6ezbtfpk73v0a332cjg75gu/image_1b3cb0l9js67eif1hno1988k1d9.png">
+<meta property="og:image" content="http://static.zybuluo.com/xiangwanpeng/ktv9a54ka2ewux5x1qk4ix72/image_1b3cdoinmq5a1oegikp8eulfam.png">
+<meta property="og:image" content="http://static.zybuluo.com/xiangwanpeng/2r0jelmwpesu6137ojx5814r/image_1b3celdo5l411kvka45bm1rup13.png">
+<meta property="og:image" content="http://static.zybuluo.com/xiangwanpeng/cmcdbwzlp441eq28y9qv22mh/image_1b3chmnlq30q12et1bi9hdo1erh1g.png">
+<meta property="og:image" content="http://static.zybuluo.com/xiangwanpeng/h4h77y62rn4j1vs4851ce9rf/image_1b3cia2m0ngg1lef1m9v52hoo11t.png">
+<meta property="og:image" content="http://static.zybuluo.com/xiangwanpeng/bz337qd0an8ittdaqpc6udfj/image_1b3cid5q18sfqeh19sl8sg1lfq2a.png">
+<meta property="og:image" content="http://static.zybuluo.com/xiangwanpeng/t9fm5a55nqgwn5erdsqbnhna/image_1b3cjvfdievbbg6uofjc91q5o3h.png">
+<meta property="og:image" content="http://static.zybuluo.com/xiangwanpeng/vsv4izkqn5hrpj6oeb6w19h5/image_1b3cjgbmn3381t4j14o01ctmqoj2n.png">
+<meta property="og:image" content="http://static.zybuluo.com/xiangwanpeng/35xr4f5819wwtqgn47u9xnc9/image_1b3cmq14eutk12b7175n1j6s180i4b.png">
+<meta property="og:image" content="http://static.zybuluo.com/xiangwanpeng/j5b9yyzsmfh22dgrb5uwm3ck/image_1b3cms4no1g1u1ihguvhnpd16us4o.png">
+<meta property="og:image" content="http://static.zybuluo.com/xiangwanpeng/4qmpxgpw7qof6f981d510xrs/image_1b3cmsc88rnrtpp1ro5uav1a8155.png">
+<meta property="og:image" content="http://static.zybuluo.com/xiangwanpeng/fdjkjs6erjwtn2381xkb6tat/image_1b3cng6hj1mc319vk7lfdr75j5i.png">
+<meta property="og:image" content="http://static.zybuluo.com/xiangwanpeng/7gj5y0ir50nr6gaacbtq9gao/image_1b3cniba6tfmm318hu1ar51djl5v.png">
+<meta property="og:updated_time" content="2016-12-07T13:30:18.403Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="HQL检索方式">
+<meta name="twitter:description" content="Hibernate检索对象的方式　　Hibernate提供了以下集中检索对象的方式：
+
+导航对象图检索方式：即根据已经加载的对象导航到其他对象。
+OID检索方式：按照对象的OID来检索对象。
+HQL检索方式：使用面向对象的HQL查询语言。
+QBC检索方式：使用QBC（Query By Criteria）。 API来检索对象，这种API封装了基于字符串形式的查询语句，提供了更加面向对象的查询接口。">
+<meta name="twitter:image" content="http://static.zybuluo.com/xiangwanpeng/c6ezbtfpk73v0a332cjg75gu/image_1b3cb0l9js67eif1hno1988k1d9.png">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"always"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 0,
+      author: '博主'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2016/12/07/HQL检索方式/"/>
+
+  <title> HQL检索方式 | 向万鹏的独立博客 </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">向万鹏的独立博客</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle"></p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                HQL检索方式
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-12-07T16:39:14+08:00" content="2016-12-07">
+              2016-12-07
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/Hibernate/" itemprop="url" rel="index">
+                    <span itemprop="name">Hibernate</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2016/12/07/HQL检索方式/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/12/07/HQL检索方式/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="Hibernate检索对象的方式"><a href="#Hibernate检索对象的方式" class="headerlink" title="Hibernate检索对象的方式"></a>Hibernate检索对象的方式</h2><p>　　Hibernate提供了以下集中检索对象的方式：</p>
+<ul>
+<li>导航对象图检索方式：即根据已经加载的对象导航到其他对象。</li>
+<li>OID检索方式：按照对象的OID来检索对象。</li>
+<li>HQL检索方式：使用面向对象的HQL查询语言。</li>
+<li>QBC检索方式：使用QBC（Query By Criteria）。 API来检索对象，这种API封装了基于字符串形式的查询语句，提供了更加面向对象的查询接口。</li>
+<li>本地SQL检索方式：使用本地数据库的SQL查询语句。</li>
+</ul>
+<h2 id="HQL检索方式"><a href="#HQL检索方式" class="headerlink" title="HQL检索方式"></a>HQL检索方式</h2><p>　　本文主要介绍HQL检索方式。<br>　　HQL（Hibernate Query Language）是面向对象的查询语言，它和SQL查询语言有些相似。在Hibernate提供的各种检索方式中，HQL是使用最广的一种检索方式。<strong>它有如下功能</strong>：<br>　　在查询语句中设定各种查询条件；<br>　　支持投影查询；<br>　　支持分页查询；<br>　　支持连接查询<br>　　支持分组查询，允许使用HAVING和GROUP BY关键字；<br>　　提供内置聚集函数，如sum()，min()和max()；<br>　　支持子查询；<br>　　支持动态绑定参数；<br>　　能够调用用户定义的SQL函数或标准的SQL函数。<br>　<br>　　<strong>HQL检索方式包括以下步骤：</strong><br>　　1.通过Session的createQuery()方法创建一个Query对象，它包括一个HQL查询语句，HQL语句中可以包含命名参数；<br>　　2.动态绑定参数；<br>　　3.调用Query相关方法执行查询语句。<br>　<br>　　Query接口支持方法链编程风格，它的setXxx()方法返回自身实例，而不是void类型。<br> 　　<strong>HQL VS SQL：</strong><br>　　HQL查询语句是面向对象的，Hibernate负责解析HQL查询语句，然后根据对象-关系映射文件中的映射信息，把HQL查询语句翻译成相应的SQL语句。HQL查询语句中的主体时域模型中的类及类的属性。<br>　　SQL查询语句是与关系数据库绑定在一起的。SQL查询语句中的主体时数据库表及表的字段。<br>　　<br>　　<strong>绑定参数：</strong><br>　　Hibernate的参数绑定机制依赖于JDBC API中的PreparedStatement的预定义SQL语句功能。<br>　　HQL的参数绑定有两种形式：<br>　　1.按参数名绑定：在HQL查询语句中定义命名参数，命名参数以”:”开头；<br>　　2.按参数位置绑定：在HQL查询语句中用”?”来定义参数位置。<br>　　<br>　　Hibernate可以通过setEntity()方法把参数与一个实体对象绑定，还可以通过setParameter()方法来绑定任意类型的参数。<br>　　<br>　　例如，可以通过下面的代码使用基于位置的参数来查询employee表中salary&gt;1000，email字段中包含字符A，且属于部门号为1的部门的记录，查询结果按照salary进行排序：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@Test</span></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">testHQL</span><span class="params">()</span></span>&#123;</div><div class="line">		</div><div class="line">		<span class="comment">//1. 创建 Query 对象</span></div><div class="line">		<span class="comment">//基于位置的参数. </span></div><div class="line">		String hql = <span class="string">"FROM Employee e WHERE e.salary &gt; ? AND e.email LIKE ? AND e.dept = ? "</span></div><div class="line">				+ <span class="string">"ORDER BY e.salary"</span>;</div><div class="line">		Query query = session.createQuery(hql);</div><div class="line">		</div><div class="line">		<span class="comment">//2. 绑定参数</span></div><div class="line">		<span class="comment">//Query 对象调用 setXxx 方法支持方法链的编程风格.</span></div><div class="line">		Department dept = <span class="keyword">new</span> Department();</div><div class="line">		dept.setId(<span class="number">1</span>); </div><div class="line">		query.setFloat(<span class="number">0</span>, <span class="number">1000</span>)</div><div class="line">		     .setString(<span class="number">1</span>, <span class="string">"%A%"</span>)</div><div class="line">		     .setEntity(<span class="number">2</span>, dept);</div><div class="line">		</div><div class="line">		<span class="comment">//3. 执行查询</span></div><div class="line">		List&lt;Employee&gt; emps = query.list();</div><div class="line">		System.out.println(emps.size());  </div><div class="line">	&#125;</div></pre></td></tr></table></figure></p>
+<p>　　在控制台打印的sql语句为：<br>　　<img src="http://static.zybuluo.com/xiangwanpeng/c6ezbtfpk73v0a332cjg75gu/image_1b3cb0l9js67eif1hno1988k1d9.png" alt="image_1b3cb0l9js67eif1hno1988k1d9.png-35.9kB"><br>　　<br>　　或者使用基于参数名的参数实现相同的功能：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@Test</span></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">testHQLNamedParameter</span><span class="params">()</span></span>&#123;</div><div class="line">		</div><div class="line">		<span class="comment">//1. 创建 Query 对象</span></div><div class="line">		<span class="comment">//基于命名参数. </span></div><div class="line">		String hql = <span class="string">"FROM Employee e WHERE e.salary &gt; :sal AND e.email LIKE :email AND e.dept = :dept "</span></div><div class="line">				+ <span class="string">"ORDER BY e.salary"</span>;</div><div class="line">		Query query = session.createQuery(hql);</div><div class="line">		</div><div class="line">		<span class="comment">//2. 绑定参数</span></div><div class="line">		<span class="comment">//Query 对象调用 setXxx 方法支持方法链的编程风格.</span></div><div class="line">		Department dept = <span class="keyword">new</span> Department();</div><div class="line">		dept.setId(<span class="number">1</span>); </div><div class="line">		query.setFloat(<span class="string">"sal"</span>, <span class="number">1000</span>)</div><div class="line">		     .setString(<span class="string">"email"</span>, <span class="string">"%A%"</span>)</div><div class="line">		     .setEntity(<span class="string">"dept"</span>, dept);</div><div class="line">		</div><div class="line">		<span class="comment">//3. 执行查询</span></div><div class="line">		List&lt;Employee&gt; emps = query.list();</div><div class="line">		System.out.println(emps.size());  </div><div class="line">	&#125;</div></pre></td></tr></table></figure></p>
+<h2 id="HQL分页查询"><a href="#HQL分页查询" class="headerlink" title="HQL分页查询"></a>HQL分页查询</h2><p>　　HQL主要通过下面两个方法来实现分页查询：<br>　　<strong>setFirstResult(int firstResult)：</strong>设定从哪一个对象开始检索，参数firstResult指定这个对象在查询结果中的索引位置。索引位置的起始值为0，默认情况下，Query从查询结果中的第一个对象开始检索。<br>　　<strong>setMaxResults(int maxResults)：</strong>设定一次最多检索出的对象的数目。默认情况下，Query和Criteria接口检索出查询结果中的所有的对象。<br>　　<br>　　下面的代码实现了将每5条记录分为一页，查询第4页的记录的功能：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@Test</span></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">testPageQuery</span><span class="params">()</span></span>&#123;</div><div class="line">		String hql = <span class="string">"FROM Employee"</span>;</div><div class="line">		Query query = session.createQuery(hql);</div><div class="line">		</div><div class="line">		<span class="keyword">int</span> pageNo = <span class="number">4</span>;</div><div class="line">		<span class="keyword">int</span> pageSize = <span class="number">5</span>;</div><div class="line">		</div><div class="line">		List&lt;Employee&gt; emps = </div><div class="line">								query.setFirstResult((pageNo - <span class="number">1</span>) * pageSize)</div><div class="line">								     .setMaxResults(pageSize)</div><div class="line">								     .list();</div><div class="line">		System.out.println(emps);</div><div class="line">	&#125;</div></pre></td></tr></table></figure></p>
+<p><img src="http://static.zybuluo.com/xiangwanpeng/ktv9a54ka2ewux5x1qk4ix72/image_1b3cdoinmq5a1oegikp8eulfam.png" alt="image_1b3cdoinmq5a1oegikp8eulfam.png-33.5kB"></p>
+<h2 id="HQL命名查询"><a href="#HQL命名查询" class="headerlink" title="HQL命名查询"></a>HQL命名查询</h2><p>　　可以在映射文件中定义命名查询语句，实现将HQL语句的外置化，以实现通过不修改源码达到修改功能的效果。下面进行演示：<br>　　<br>在Employee.hbm.xml文件中定义命名查询语句，其中query节点和class节点并列：<br><figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">query</span> <span class="attr">name</span>=<span class="string">"salaryEmps"</span>&gt;</span></div><div class="line">&lt;![CDATA[FROM Employee e WHERE e.salary &gt; :minSal AND e.salary &lt; :maxSal]]&gt;<span class="tag">&lt;/<span class="name">query</span>&gt;</span></div></pre></td></tr></table></figure></p>
+<p>通过session.getNamedQuery()方法查询，参数为上述query节点的name属性值：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@Test</span></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">testNamedQuery</span><span class="params">()</span></span>&#123;</div><div class="line">		Query query = session.getNamedQuery(<span class="string">"salaryEmps"</span>);</div><div class="line">		</div><div class="line">		List&lt;Employee&gt; emps = query.setFloat(<span class="string">"minSal"</span>, <span class="number">5000</span>)</div><div class="line">				                   .setFloat(<span class="string">"maxSal"</span>, <span class="number">10000</span>)</div><div class="line">				                   .list();</div><div class="line">		</div><div class="line">		System.out.println(emps.size()); </div><div class="line">	&#125;</div></pre></td></tr></table></figure></p>
+<h2 id="HQL投影查询"><a href="#HQL投影查询" class="headerlink" title="HQL投影查询"></a>HQL投影查询</h2><p>　　投影查询，即希望查询的结果仅包含实体的部分属性。通过SELECT关键字实现。下面的代码只希望查询指定部门员工的email，salary和dept属性。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@Test</span></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">testFieldQuery</span><span class="params">()</span></span>&#123;</div><div class="line">		String hql = <span class="string">"SELECT e.email, e.salary, e.dept FROM Employee e WHERE e.dept = :dept"</span>;</div><div class="line">		Query query = session.createQuery(hql);</div><div class="line">		</div><div class="line">		Department dept = <span class="keyword">new</span> Department();</div><div class="line">		dept.setId(<span class="number">1</span>);</div><div class="line">		List&lt;Object[]&gt; result = query.setEntity(<span class="string">"dept"</span>, dept)</div><div class="line">				                     .list();</div><div class="line">		</div><div class="line">		<span class="keyword">for</span>(Object [] objs: result)&#123;</div><div class="line">			System.out.println(Arrays.asList(objs));</div><div class="line">		&#125;</div><div class="line">	&#125;</div></pre></td></tr></table></figure></p>
+<p>这时候，返回的list中的元素是Object数组，其中每一个Object数组中存放了一条记录对应的属性值。<br><img src="http://static.zybuluo.com/xiangwanpeng/2r0jelmwpesu6137ojx5814r/image_1b3celdo5l411kvka45bm1rup13.png" alt="image_1b3celdo5l411kvka45bm1rup13.png-45.9kB"></p>
+<p>　　遍历元素为Object数组的list有点麻烦，可以通过另一种方式将查询的属性值存放在一个Employee对象中：先在Employee类中定义一个包含指定属性的构造器，然后通过下面的程序可以查询对应的属性：<br>　　<br>Employee.java<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> <span class="title">Employee</span><span class="params">(String email, <span class="keyword">float</span> salary, Department dept)</span> </span>&#123;</div><div class="line">		<span class="keyword">super</span>();</div><div class="line">		<span class="keyword">this</span>.salary = salary;</div><div class="line">		<span class="keyword">this</span>.email = email;</div><div class="line">		<span class="keyword">this</span>.dept = dept;</div><div class="line">	&#125;</div><div class="line">	</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="title">Employee</span><span class="params">()</span> </span>&#123;</div><div class="line">		<span class="comment">// TODO Auto-generated constructor stub</span></div><div class="line">	&#125;</div></pre></td></tr></table></figure></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@Test</span></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">testFieldQuery2</span><span class="params">()</span></span>&#123;</div><div class="line">		String hql = <span class="string">"SELECT new Employee(e.email, e.salary, e.dept) "</span></div><div class="line">				+ <span class="string">"FROM Employee e "</span></div><div class="line">				+ <span class="string">"WHERE e.dept = :dept"</span>;</div><div class="line">		Query query = session.createQuery(hql);</div><div class="line">		</div><div class="line">		Department dept = <span class="keyword">new</span> Department();</div><div class="line">		dept.setId(<span class="number">1</span>);</div><div class="line">		List&lt;Employee&gt; result = query.setEntity(<span class="string">"dept"</span>, dept)</div><div class="line">				                     .list();</div><div class="line">		</div><div class="line">		<span class="keyword">for</span>(Employee emp: result)&#123;</div><div class="line">			System.out.println(emp.getId() + <span class="string">", "</span> + emp.getEmail() </div><div class="line">					+ <span class="string">", "</span> + emp.getSalary() + <span class="string">", "</span> + emp.getDept());</div><div class="line">		&#125;</div><div class="line">	&#125;</div></pre></td></tr></table></figure>
+<p>　　注意构造器中属性顺序需和HQL语句中的属性顺序一致。
+　　</p>
+<h2 id="HQL报表查询"><a href="#HQL报表查询" class="headerlink" title="HQL报表查询"></a>HQL报表查询</h2><p>　　报表查询用于对数据分组和统计，与SQL一样，HQL利用GROUP BY关键字对数据分组，用HAVING关键字对分组数据设定约束条件。<br>　　在HQL查询语句中可以调用以下聚集函数：<br>　　count()<br>　　min()<br>　　max()<br>　　sum()<br>　　avg()<br>　　下面的代码演示了报表查询，根据department对employee进行分组，然后查询部门内最低工资大于3000的部门的最低工资和最高工资。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@Test</span></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">testGroupBy</span><span class="params">()</span></span>&#123;</div><div class="line">		String hql = <span class="string">"SELECT min(e.salary), max(e.salary) "</span></div><div class="line">				+ <span class="string">"FROM Employee e "</span></div><div class="line">				+ <span class="string">"GROUP BY e.dept "</span></div><div class="line">				+ <span class="string">"HAVING min(salary) &gt; :minSal"</span>;</div><div class="line">		</div><div class="line">		Query query = session.createQuery(hql)</div><div class="line">				             .setFloat(<span class="string">"minSal"</span>, <span class="number">3000</span>);</div><div class="line">		</div><div class="line">		List&lt;Object []&gt; result = query.list();</div><div class="line">		<span class="keyword">for</span>(Object [] objs: result)&#123;</div><div class="line">			System.out.println(Arrays.asList(objs));</div><div class="line">		&#125;</div><div class="line">	&#125;</div></pre></td></tr></table></figure></p>
+<p><img src="http://static.zybuluo.com/xiangwanpeng/cmcdbwzlp441eq28y9qv22mh/image_1b3chmnlq30q12et1bi9hdo1erh1g.png" alt="image_1b3chmnlq30q12et1bi9hdo1erh1g.png-29.3kB"></p>
+<h2 id="HQL（迫切）左外连接"><a href="#HQL（迫切）左外连接" class="headerlink" title="HQL（迫切）左外连接"></a>HQL（迫切）左外连接</h2><p><strong>迫切左外连接：</strong><br>　　在HQL中通过LEFT JOIN FETCH关键字表示迫切左外连接检索策略。<br>　　list()方法返回的集合<strong>存放实体对象的引用</strong>，<strong>每个Department对象关联的Employee集合都被初始化</strong>，存放所有关联的Employee的实体对象。<br>　　查询结果中可能会包含重复元素，可以通过一个HashSet来过滤重复元素，也可以在HQL语句中使用DISTINCT关键字来过滤。<br>　　下面的例子测试了迫切左外连接：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@Test</span></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">testLeftJoinFetch</span><span class="params">()</span></span>&#123;</div><div class="line">		String hql = <span class="string">"SELECT d FROM Department d LEFT JOIN FETCH d.emps"</span>;</div><div class="line">		Query query = session.createQuery(hql);</div><div class="line">		</div><div class="line">		List&lt;Department&gt; depts = query.list();</div><div class="line">		<span class="comment">//depts = new ArrayList&lt;&gt;(new LinkedHashSet(depts));</span></div><div class="line">		System.out.println(depts.size()); </div><div class="line">		</div><div class="line">		<span class="keyword">for</span>(Department dept: depts)&#123;</div><div class="line">			System.out.println(dept.getName() + <span class="string">"-"</span> + dept.getEmps().size());</div><div class="line">		&#125;</div><div class="line">	&#125;</div></pre></td></tr></table></figure></p>
+<p>　　<img src="http://static.zybuluo.com/xiangwanpeng/h4h77y62rn4j1vs4851ce9rf/image_1b3cia2m0ngg1lef1m9v52hoo11t.png" alt="image_1b3cia2m0ngg1lef1m9v52hoo11t.png-26.1kB"><br>　　这种情况下将查询出所有的26条记录（包含重复的department），如果将注释行打开，或者将hql改为”SELECT DISTINCT d FROM Department d LEFT JOIN FETCH d.emps”，可以过滤掉重复元素：<br>　　<img src="http://static.zybuluo.com/xiangwanpeng/bz337qd0an8ittdaqpc6udfj/image_1b3cid5q18sfqeh19sl8sg1lfq2a.png" alt="image_1b3cid5q18sfqeh19sl8sg1lfq2a.png-23.9kB"><br>　　<br><strong>左外连接：</strong><br>　　HQL使用LEFT JOIN关键字表示左外连接查询。<br>　　list()方法返回的集合中<strong>存放的是对象数组类型</strong>。（存放了一个Department对象和一个Employee对象）。<br>　　由于list()方法返回的集合中存放的是一个Department对象和一个Employee对象构成的对象数组，所以不能用hashset来去重，因为每一个对象数组其实是不一样的。<br>　　如果需要去重，可以通过SELECT关键字使list()方法返回的集合中仅包含Department对象，然后用DISTINCT来去重。<br>　　可以根据配置文件来决定Employee集合的检索策略。默认情况下是lazy=true，所以当不使用Employee集合时是不会初始化Employee集合的。但是实际上，当查询Department时，Employee集合已经被查出来了，但是没有被初始化，非要等到使用Employee集合的时候再重新去查一遍。所以通常情况下，如果需要使用到表的左外连接，<strong>建议使用迫切的左外连接</strong>，因为反正查department的时候都要把employee集合都查出来，不如直接一次初始化完毕。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@Test</span></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">testLeftJoin</span><span class="params">()</span></span>&#123;</div><div class="line">		String hql = <span class="string">"FROM Department d LEFT JOIN d.emps"</span>;</div><div class="line">		Query query = session.createQuery(hql);</div><div class="line">		</div><div class="line">		List&lt;Object []&gt; result = query.list(); </div><div class="line">		System.out.println(result); </div><div class="line">	</div><div class="line">		<span class="keyword">for</span>(Object [] objs: result)&#123;</div><div class="line">			System.out.println(Arrays.asList(objs));</div><div class="line">		&#125;</div><div class="line">	&#125;</div></pre></td></tr></table></figure></p>
+<p>　　<img src="http://static.zybuluo.com/xiangwanpeng/t9fm5a55nqgwn5erdsqbnhna/image_1b3cjvfdievbbg6uofjc91q5o3h.png" alt="image_1b3cjvfdievbbg6uofjc91q5o3h.png-43kB"><br>　　<br>　　可以看到，在查询department后已经将employee都查出来了，但是没有初始化employee集合。<br>　　下面的程序演示了使用SELECT DISTINCT关键字去重。但是，每当使用到employee集合，还要重新select一遍。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@Test</span></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">testLeftJoin</span><span class="params">()</span></span>&#123;</div><div class="line">		String hql = <span class="string">"SELECT DISTINCT d FROM Department d LEFT JOIN d.emps"</span>;</div><div class="line">		Query query = session.createQuery(hql);</div><div class="line">		</div><div class="line">		List&lt;Department&gt; depts = query.list();</div><div class="line">		System.out.println(depts.size());</div><div class="line">		</div><div class="line">		<span class="keyword">for</span>(Department dept: depts)&#123;</div><div class="line">			System.out.println(dept.getName() + <span class="string">", "</span> + dept.getEmps().size()); </div><div class="line">		&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p><img src="http://static.zybuluo.com/xiangwanpeng/vsv4izkqn5hrpj6oeb6w19h5/image_1b3cjgbmn3381t4j14o01ctmqoj2n.png" alt="image_1b3cjgbmn3381t4j14o01ctmqoj2n.png-33.7kB"></p>
+<h2 id="HQL（迫切）内连接"><a href="#HQL（迫切）内连接" class="headerlink" title="HQL（迫切）内连接"></a>HQL（迫切）内连接</h2><p><strong>迫切内连接：</strong><br>　　HQL使用INNER JOIN FETCH关键字表示迫切内连接，也可以省略INNER关键字。<br>　　list()方法返回的集合中存放<strong>Department对象</strong>的引用，每个Department对象的Employee集合都被初始化，存放所有关联的Employee对象。<br>　　如果希望list()方法返回的集合仅包含Department对象，可以在HQL查询语句中使用SELECT关键字。<br>　　<br><strong>内连接：</strong><br>　　INNER JOIN关键字表示内连接，也可以省略INNER关键字。<br>　　list()方法返回的集合中存放的每个元素对应查询结果的一条记录，每个元素都是<strong>对象数组类型</strong>。<br>　　<br>　　（迫切）内连接和（迫切）左外连接的区别仅在于，（迫切）内连接不会返回从表中没有信息与主表对应的记录。例如，在上面的例子中，有的部门员工数为0，即该部门不存在记录department.id=employee.dept_id，但是（迫切）左外连接仍然会返回该记录，但是（迫切）内连接则不会。如下：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@Test</span></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">testLeftJoin</span><span class="params">()</span></span>&#123;</div><div class="line">		String hql = <span class="string">"SELECT DISTINCT d FROM Department d INNER JOIN d.emps"</span>;</div><div class="line">		Query query = session.createQuery(hql);</div><div class="line">		</div><div class="line">		List&lt;Department&gt; depts = query.list();</div><div class="line">		System.out.println(depts.size());</div><div class="line">		</div><div class="line">		<span class="keyword">for</span>(Department dept: depts)&#123;</div><div class="line">			System.out.println(dept.getName() + <span class="string">", "</span> + dept.getEmps().size()); </div><div class="line">		&#125;</div></pre></td></tr></table></figure></p>
+<p><img src="http://static.zybuluo.com/xiangwanpeng/35xr4f5819wwtqgn47u9xnc9/image_1b3cmq14eutk12b7175n1j6s180i4b.png" alt="image_1b3cmq14eutk12b7175n1j6s180i4b.png-29.8kB"><br>　　打印的depts.size()不再是上面的10，而是8，因为有6号部门和10号部门没有员工：<br>　　<img src="http://static.zybuluo.com/xiangwanpeng/j5b9yyzsmfh22dgrb5uwm3ck/image_1b3cms4no1g1u1ihguvhnpd16us4o.png" alt="image_1b3cms4no1g1u1ihguvhnpd16us4o.png-44.9kB"><br>　　<img src="http://static.zybuluo.com/xiangwanpeng/4qmpxgpw7qof6f981d510xrs/image_1b3cmsc88rnrtpp1ro5uav1a8155.png" alt="image_1b3cmsc88rnrtpp1ro5uav1a8155.png-7.9kB"><br>　　<br>　　如果用SELECT来查询employee，道理也和上面讲述的时一样的，加FETCH会立即初始化department，不加FETCH则会等到使用department时才分别初始化对应的department。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@Test</span></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">testLeftJoinFetch2</span><span class="params">()</span></span>&#123;</div><div class="line">		String hql = <span class="string">"SELECT e FROM Employee e INNER JOIN FETCH e.dept"</span>;</div><div class="line">		Query query = session.createQuery(hql);</div><div class="line">		</div><div class="line">		List&lt;Employee&gt; emps = query.list();</div><div class="line">		System.out.println(emps.size()); </div><div class="line">		</div><div class="line">		<span class="keyword">for</span>(Employee emp: emps)&#123;</div><div class="line">			System.out.println(emp.getName() + <span class="string">", "</span> + emp.getDept().getName());</div><div class="line">		&#125;</div><div class="line">	&#125;</div></pre></td></tr></table></figure></p>
+<p><img src="http://static.zybuluo.com/xiangwanpeng/fdjkjs6erjwtn2381xkb6tat/image_1b3cng6hj1mc319vk7lfdr75j5i.png" alt="image_1b3cng6hj1mc319vk7lfdr75j5i.png-25.7kB"><br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@Test</span></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">testLeftJoinFetch2</span><span class="params">()</span></span>&#123;</div><div class="line">		String hql = <span class="string">"SELECT e FROM Employee e INNER JOIN e.dept"</span>;</div><div class="line">		Query query = session.createQuery(hql);</div><div class="line">		</div><div class="line">		List&lt;Employee&gt; emps = query.list();</div><div class="line">		System.out.println(emps.size()); </div><div class="line">		</div><div class="line">		<span class="keyword">for</span>(Employee emp: emps)&#123;</div><div class="line">			System.out.println(emp.getName() + <span class="string">", "</span> + emp.getDept().getName());</div><div class="line">		&#125;</div><div class="line">	&#125;</div></pre></td></tr></table></figure></p>
+<p><img src="http://static.zybuluo.com/xiangwanpeng/7gj5y0ir50nr6gaacbtq9gao/image_1b3cniba6tfmm318hu1ar51djl5v.png" alt="image_1b3cniba6tfmm318hu1ar51djl5v.png-41kB"></p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Hibernate/" rel="tag">#Hibernate</a>
+          
+            <a href="/tags/HQL/" rel="tag">#HQL</a>
+          
+            <a href="/tags/数据库/" rel="tag">#数据库</a>
+          
+            <a href="/tags/J2EE/" rel="tag">#J2EE</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/12/07/Hibernate检索策略/" rel="next" title="Hibernate检索策略">
+                <i class="fa fa-chevron-left"></i> Hibernate检索策略
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/12/07/QBC检索方式/" rel="prev" title="QBC检索方式">
+                QBC检索方式 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2016/12/07/HQL检索方式/"
+           data-title="HQL检索方式" data-url="http://yoursite.com/2016/12/07/HQL检索方式/">
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/image/avatar.png"
+               alt="Alan" />
+          <p class="site-author-name" itemprop="name">Alan</p>
+          <p class="site-description motion-element" itemprop="description">Better late than never.</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">61</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">11</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">74</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/xiangwanpeng" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/u/2810288024/home" target="_blank" title="weibo">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  weibo
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Hibernate检索对象的方式"><span class="nav-number">1.</span> <span class="nav-text">Hibernate检索对象的方式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#HQL检索方式"><span class="nav-number">2.</span> <span class="nav-text">HQL检索方式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#HQL分页查询"><span class="nav-number">3.</span> <span class="nav-text">HQL分页查询</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#HQL命名查询"><span class="nav-number">4.</span> <span class="nav-text">HQL命名查询</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#HQL投影查询"><span class="nav-number">5.</span> <span class="nav-text">HQL投影查询</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#HQL报表查询"><span class="nav-number">6.</span> <span class="nav-text">HQL报表查询</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#HQL（迫切）左外连接"><span class="nav-number">7.</span> <span class="nav-text">HQL（迫切）左外连接</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#HQL（迫切）内连接"><span class="nav-number">8.</span> <span class="nav-text">HQL（迫切）内连接</span></a></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2016</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Alan</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Pisces
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/VEN/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/VEN/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/VEN/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/VEN/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/VEN/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/VEN/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.1"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.0.1"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.1"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"xiangwanpeng"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+    
+    <script src="/VEN/ua-parser-js/dist/ua-parser.min.js?v=0.7.9"></script>
+    <script src="/js/src/hook-duoshuo.js"></script>
+  
+
+
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

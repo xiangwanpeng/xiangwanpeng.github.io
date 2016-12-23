@@ -1,0 +1,691 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/VEN/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/VEN/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Hibernate,SessionFactory,二级缓存," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.1" />
+
+
+
+
+
+
+<meta name="description" content="Hibernate二级缓存简介　　在《Hibernate一级缓存——Session》中介绍了Session级别的一级缓存，例如，当如下的代码执行时，由于一级缓存的作用，只会发送一条select语句：123456789@Test	public void testCache()&amp;#123;				Employee employee1 = (Employee) session.get(Employee.">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Hibernate二级缓存——SessionFactory">
+<meta property="og:url" content="http://yoursite.com/2016/12/08/Hibernate二级缓存——SessionFactory/index.html">
+<meta property="og:site_name" content="向万鹏的独立博客">
+<meta property="og:description" content="Hibernate二级缓存简介　　在《Hibernate一级缓存——Session》中介绍了Session级别的一级缓存，例如，当如下的代码执行时，由于一级缓存的作用，只会发送一条select语句：123456789@Test	public void testCache()&amp;#123;				Employee employee1 = (Employee) session.get(Employee.">
+<meta property="og:image" content="http://static.zybuluo.com/xiangwanpeng/av7uolxrylvwm0bnyyok1w52/image_1b3e0uaih1m5o1oqu1q3g18r1ksc13.png">
+<meta property="og:image" content="http://static.zybuluo.com/xiangwanpeng/mpmx38y7m9ke32p7cpm15wlk/image_1b3e116cat3g1gk1fv4brlje1g.png">
+<meta property="og:image" content="http://static.zybuluo.com/xiangwanpeng/n34qwo9sqjqnvlhj6vsr7j9h/image_1b3dvptab23t1vc1v1g26c1cei9.png">
+<meta property="og:image" content="http://static.zybuluo.com/xiangwanpeng/xhbkdp4ybbp8e23umec6xqmz/image_1b3dvuhed16r4ci0ghv1aj3f4m.png">
+<meta property="og:image" content="http://static.zybuluo.com/xiangwanpeng/48li2if3ogcht0uuoljvr125/image_1b3e2cv2vad01ntl1rt71oac7o41t.png">
+<meta property="og:image" content="http://static.zybuluo.com/xiangwanpeng/2sxnp4t00twu5qsn579jf0eq/image_1b3e2epr8r731smq4t0scfca62a.png">
+<meta property="og:image" content="http://static.zybuluo.com/xiangwanpeng/v01g0t17ve9vk8b8uulewebm/image_1b3e39bve1vg91r2t12i65c91n782n.png">
+<meta property="og:image" content="http://static.zybuluo.com/xiangwanpeng/9c941z5p6fxhofiee5cj0hvq/image_1b3e3bndj184be4f1mga1gi81baq34.png">
+<meta property="og:image" content="http://static.zybuluo.com/xiangwanpeng/y4x79wavot7kuxm28v8vr8be/image_1b3e56hbmjqu3n719ono39k8m3h.png">
+<meta property="og:updated_time" content="2016-12-08T02:53:25.138Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Hibernate二级缓存——SessionFactory">
+<meta name="twitter:description" content="Hibernate二级缓存简介　　在《Hibernate一级缓存——Session》中介绍了Session级别的一级缓存，例如，当如下的代码执行时，由于一级缓存的作用，只会发送一条select语句：123456789@Test	public void testCache()&amp;#123;				Employee employee1 = (Employee) session.get(Employee.">
+<meta name="twitter:image" content="http://static.zybuluo.com/xiangwanpeng/av7uolxrylvwm0bnyyok1w52/image_1b3e0uaih1m5o1oqu1q3g18r1ksc13.png">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"always"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 0,
+      author: '博主'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2016/12/08/Hibernate二级缓存——SessionFactory/"/>
+
+  <title> Hibernate二级缓存——SessionFactory | 向万鹏的独立博客 </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">向万鹏的独立博客</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle"></p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                Hibernate二级缓存——SessionFactory
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-12-08T00:03:43+08:00" content="2016-12-08">
+              2016-12-08
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/Hibernate/" itemprop="url" rel="index">
+                    <span itemprop="name">Hibernate</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2016/12/08/Hibernate二级缓存——SessionFactory/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/12/08/Hibernate二级缓存——SessionFactory/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="Hibernate二级缓存简介"><a href="#Hibernate二级缓存简介" class="headerlink" title="Hibernate二级缓存简介"></a>Hibernate二级缓存简介</h2><p>　　在<a href="http://blog.csdn.net/xiangwanpeng/article/details/53443781" target="_blank" rel="external">《Hibernate一级缓存——Session》</a>中介绍了Session级别的一级缓存，例如，当如下的代码执行时，由于一级缓存的作用，只会发送一条select语句：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@Test</span></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">testCache</span><span class="params">()</span></span>&#123;</div><div class="line">		</div><div class="line">		Employee employee1 = (Employee) session.get(Employee.class, <span class="number">1</span>);</div><div class="line">		System.out.println(employee1);</div><div class="line">		</div><div class="line">		Employee employee2 = (Employee) session.get(Employee.class, <span class="number">1</span>);</div><div class="line">		System.out.println(employee2);</div><div class="line">	&#125;</div></pre></td></tr></table></figure></p>
+<p><img src="http://static.zybuluo.com/xiangwanpeng/av7uolxrylvwm0bnyyok1w52/image_1b3e0uaih1m5o1oqu1q3g18r1ksc13.png" alt="image_1b3e0uaih1m5o1oqu1q3g18r1ksc13.png-19kB"></p>
+<p>　　现在，我们在两次加载代码之间，先关闭当前的session和事务，再重新开启一个session和事务，那么不难理解，由于开启了新的session，所以会打印两条select语句：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@Test</span></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">testCache</span><span class="params">()</span></span>&#123;</div><div class="line">		</div><div class="line">		Employee employee1 = (Employee) session.get(Employee.class, <span class="number">1</span>);</div><div class="line">		System.out.println(employee1);</div><div class="line">		</div><div class="line">		<span class="comment">//提交事务，关session</span></div><div class="line">		transaction.commit();</div><div class="line">		session.close();</div><div class="line">		</div><div class="line">		<span class="comment">//开启一个新的session和事务</span></div><div class="line">		session = sessionFactory.openSession();</div><div class="line">		transaction = session.beginTransaction();</div><div class="line">		</div><div class="line">		Employee employee2 = (Employee) session.get(Employee.class, <span class="number">1</span>);</div><div class="line">		System.out.println(employee2);</div><div class="line">	&#125;</div></pre></td></tr></table></figure></p>
+<p><img src="http://static.zybuluo.com/xiangwanpeng/mpmx38y7m9ke32p7cpm15wlk/image_1b3e116cat3g1gk1fv4brlje1g.png" alt="image_1b3e116cat3g1gk1fv4brlje1g.png-34.8kB"><br>　　那么，有没有办法使就算session关闭，也能缓存employee对象的办法呢？这就是我们现在要介绍的，SessionFactory级别的，Hibernate二级缓存。<br>　　<br>　　缓存(Cache )是计算机领域非常通用的概念。它介于应用程序和永久性数据存储源(如硬盘上的文件或者数据库)之间，其作用是降低应用程序直接读写永久性数据存储源的频率，从而提高应用的运行性能。缓存中的数据是数据存储源中数据的拷贝，应用程序在运行时直接读写缓存中的数据，只在某些特定时刻按照缓存中的数据来同步更新数据存储源。缓存的物理介质通常是内存。<br>　　<br>　　Hibernate中提供了两个级别的缓存：<br>　　1.<strong>第一级别的缓存是Session级别的缓存</strong>，它是属于<strong>事务范围</strong>的缓存，即缓存只能被当前事务访问，每个事务都有独自的缓存。缓存的生命周期依赖于事务的生命周期，当事务结束时，缓存也就结束生命周期。在此范围下，缓存的介质是内存。这一级别的缓存是由hibernate管理的，一般情况下无须进行干预。<br>　　2.<strong>第二级别的缓存是SessionFactory级别的缓存</strong>，它是属于<strong>进程范围</strong>的缓存。缓存被进程内的所有事务共享。这些事务有可能是并发访问缓存，因此必须对缓存采取必要的事务隔离机制。缓存的生命周期依赖于进程的生命周期，进程结束时，缓存也就结束了生命周期。进程范围的缓存可能会存放大量的数据，所以存放的介质可以是内存或硬盘。这一级别的缓存可以进行配置和更改，并且可以动态加载和卸载。<br>　　<br>　　SessionFactory 的缓存可以分为两类：<br>　　<strong>内置缓存：</strong> Hibernate自带的，不可卸载。通常在Hibernate的初始化阶段，Hibernate会把映射元数据和预定义的SQL语句放到SessionFactory的缓存中，映射元数据是映射文件中数据的复制，而预定义SQL语句是Hibernate根据映射元数据推到出来的。该内置缓存是只读的。<br>　　<strong>外置缓存（二级缓存）：</strong>一个可配置的缓存插件。在默认情况下，SessionFactory不会启用这个缓存插件。外置缓存中的数据是数据库中数据的复制，外置缓存的物理介质可以是内存，也可以是硬盘。<br>　　<br>　　缓存的物理介质通常是内存，而永久性数据存储源的物理介质通常是硬盘或磁盘，应用程序读写内在的速度显然比读写硬盘的速度快，如果缓存中存放的数据量非常大，也会用硬盘作为缓存的物理介质。缓存的实现不仅需要作为物理介质的硬件，同时还需要用于管理缓存的并发访问和过期等策略的软件。因此，缓存是通过软件和硬件共同实现的。<br>　　<br>　　适合放入二级缓存中的数据：<br>　　1.很少被修改；<br>　　2.不是很重要的数据，允许出现偶尔的并发问题。<br>　　<br>　　不适合放入二级缓存中的数据：<br>　　1.经常被修改；<br>　　2.财务数据，绝对不允许出现并发问题；<br>　　3.与其他应用程序共享的数据。<br>　　<br>　　<strong>二级缓存的并发访问策略：</strong><br>　　两个并发的事务同时访问持久层的缓存的相同数据时，也有可能出现各类并发问题。<br>　　二级缓存可以设定以下4种类型的并发访问策略，每一种访问策略对应一种事务隔离级别。<br>　　<strong>非严格读写（Nonstrict-read-write）：</strong>不保证缓存与数据库种数据的一致性。提供read uncommitted事务隔离级别。对于极少被修改，而且允许脏读的数据，可以采用这种策略。<br>　　<strong>读写型（Read-write）</strong>：提供read committed事务隔离级别。对于经常读但是很少被修改的数据，可以采用这种隔离类型，它可以防止脏读。（通常选用的策略）<br>　　<strong>事务型（Transactional）：</strong>仅在受管理环境下适用。它提供了repeatable read的事务隔离级别。对于经常读，但是很少被修改的数据，可以采用这种隔离类型，它可以防止脏读和不可重复读。<br>　　<strong>只读型（Read-Only）：</strong>提供serializable事务隔离级别，对于从来不会修改的数据，可以采用这种访问策略，可以避免脏读，不可重复读和幻读。<br>　　<br>　　<strong>管理Hibernate的二级缓存：</strong><br>　　Hibernate的二级缓存是进程或者集群范围内的缓存。<br>　　二级缓存是可配置的插件，Hibernate允许选用以下类型的缓存插件：<br>　　EhCache：可作为进程范围的缓存，存放数据的物理介质可以是内存或硬盘，对Hibernate的查询缓存提供了支持。<br>　　OSCache：可作为进程范围的缓存，存放数据的物理介质可以是内存或硬盘，提供了丰富的缓存数据过期策略，对Hibernate的查询缓存提供了支持。<br>　　SwarmCache：可作为群集范围内的缓存，但不支持Hibernate的查询缓存。 　　JBossCache：可作为群集范围内的缓存，支持事务型并发访问策略，对Hibernate的查询缓存提供了支持。<br>　　<br><img src="http://static.zybuluo.com/xiangwanpeng/n34qwo9sqjqnvlhj6vsr7j9h/image_1b3dvptab23t1vc1v1g26c1cei9.png" alt="image_1b3dvptab23t1vc1v1g26c1cei9.png-49.7kB"></p>
+<h2 id="使用Hibernate二级缓存的步骤"><a href="#使用Hibernate二级缓存的步骤" class="headerlink" title="使用Hibernate二级缓存的步骤"></a>使用Hibernate二级缓存的步骤</h2><p>　　<br><strong>一、加入二级缓存的jar包及配置文件</strong><br>　　<br>1.加入jar包<br>　　<img src="http://static.zybuluo.com/xiangwanpeng/xhbkdp4ybbp8e23umec6xqmz/image_1b3dvuhed16r4ci0ghv1aj3f4m.png" alt="image_1b3dvuhed16r4ci0ghv1aj3f4m.png-5.1kB"><br>　　<br>2.添加配置文件ehcache.xml到src目录下<br><figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">ehcache</span>&gt;</span></div><div class="line"></div><div class="line">    <span class="comment">&lt;!-- Sets the path to the directory where cache .data files are created.</span></div><div class="line"></div><div class="line">         If the path is a Java System Property it is replaced by</div><div class="line">         its value in the running VM.</div><div class="line"></div><div class="line">         The following properties are translated:</div><div class="line">         user.home - User's home directory</div><div class="line">         user.dir - User's current working directory</div><div class="line">         java.io.tmpdir - Default temp file path --&gt;</div><div class="line">    <span class="tag">&lt;<span class="name">diskStore</span> <span class="attr">path</span>=<span class="string">"java.io.tmpdir"</span>/&gt;</span></div><div class="line"></div><div class="line"></div><div class="line">    <span class="comment">&lt;!--Default Cache configuration. These will applied to caches programmatically created through</span></div><div class="line">        the CacheManager.</div><div class="line"></div><div class="line">        The following attributes are required for defaultCache:</div><div class="line"></div><div class="line">        maxInMemory       - Sets the maximum number of objects that will be created in memory</div><div class="line">        eternal           - Sets whether elements are eternal. If eternal,  timeouts are ignored and the element</div><div class="line">                            is never expired.</div><div class="line">        timeToIdleSeconds - Sets the time to idle for an element before it expires. Is only used</div><div class="line">                            if the element is not eternal. Idle time is now - last accessed time</div><div class="line">        timeToLiveSeconds - Sets the time to live for an element before it expires. Is only used</div><div class="line">                            if the element is not eternal. TTL is now - creation time</div><div class="line">        overflowToDisk    - Sets whether elements can overflow to disk when the in-memory cache</div><div class="line">                            has reached the maxInMemory limit.</div><div class="line"></div><div class="line">        --&gt;</div><div class="line">    <span class="tag">&lt;<span class="name">defaultCache</span></span></div><div class="line">        <span class="attr">maxElementsInMemory</span>=<span class="string">"10000"</span></div><div class="line">        <span class="attr">eternal</span>=<span class="string">"false"</span></div><div class="line">        <span class="attr">timeToIdleSeconds</span>=<span class="string">"120"</span></div><div class="line">        <span class="attr">timeToLiveSeconds</span>=<span class="string">"120"</span></div><div class="line">        <span class="attr">overflowToDisk</span>=<span class="string">"true"</span></div><div class="line">        /&gt;</div><div class="line"></div><div class="line">    <span class="comment">&lt;!--Predefined caches.  Add your cache configuration settings here.</span></div><div class="line">        If you do not have a configuration for your cache a WARNING will be issued when the</div><div class="line">        CacheManager starts</div><div class="line"></div><div class="line">        The following attributes are required for defaultCache:</div><div class="line"></div><div class="line">        name              - Sets the name of the cache. This is used to identify the cache. It must be unique.</div><div class="line">        maxInMemory       - Sets the maximum number of objects that will be created in memory</div><div class="line">        eternal           - Sets whether elements are eternal. If eternal,  timeouts are ignored and the element</div><div class="line">                            is never expired.</div><div class="line">        timeToIdleSeconds - Sets the time to idle for an element before it expires. Is only used</div><div class="line">                            if the element is not eternal. Idle time is now - last accessed time</div><div class="line">        timeToLiveSeconds - Sets the time to live for an element before it expires. Is only used</div><div class="line">                            if the element is not eternal. TTL is now - creation time</div><div class="line">        overflowToDisk    - Sets whether elements can overflow to disk when the in-memory cache</div><div class="line">                            has reached the maxInMemory limit.</div><div class="line"></div><div class="line">        --&gt;</div><div class="line"></div><div class="line">    <span class="comment">&lt;!-- Sample cache named sampleCache1</span></div><div class="line">        This cache contains a maximum in memory of 10000 elements, and will expire</div><div class="line">        an element if it is idle for more than 5 minutes and lives for more than</div><div class="line">        10 minutes.</div><div class="line"></div><div class="line">        If there are more than 10000 elements it will overflow to the</div><div class="line">        disk cache, which in this configuration will go to wherever java.io.tmp is</div><div class="line">        defined on your system. On a standard Linux system this will be /tmp"</div><div class="line">        --&gt;</div><div class="line">    <span class="tag">&lt;<span class="name">cache</span> <span class="attr">name</span>=<span class="string">"sampleCache1"</span></span></div><div class="line">        <span class="attr">maxElementsInMemory</span>=<span class="string">"10000"</span></div><div class="line">        <span class="attr">eternal</span>=<span class="string">"false"</span></div><div class="line">        <span class="attr">timeToIdleSeconds</span>=<span class="string">"300"</span></div><div class="line">        <span class="attr">timeToLiveSeconds</span>=<span class="string">"600"</span></div><div class="line">        <span class="attr">overflowToDisk</span>=<span class="string">"true"</span></div><div class="line">        /&gt;</div><div class="line"></div><div class="line">    <span class="comment">&lt;!-- Sample cache named sampleCache2</span></div><div class="line">        This cache contains 1000 elements. Elements will always be held in memory.</div><div class="line">        They are not expired. --&gt;</div><div class="line">    <span class="tag">&lt;<span class="name">cache</span> <span class="attr">name</span>=<span class="string">"sampleCache2"</span></span></div><div class="line">        <span class="attr">maxElementsInMemory</span>=<span class="string">"1000"</span></div><div class="line">        <span class="attr">eternal</span>=<span class="string">"true"</span></div><div class="line">        <span class="attr">timeToIdleSeconds</span>=<span class="string">"0"</span></div><div class="line">        <span class="attr">timeToLiveSeconds</span>=<span class="string">"0"</span></div><div class="line">        <span class="attr">overflowToDisk</span>=<span class="string">"false"</span></div><div class="line">        /&gt; --&gt;</div><div class="line"></div><div class="line">    <span class="comment">&lt;!-- Place configuration for your caches following --&gt;</span></div><div class="line"></div><div class="line"><span class="tag">&lt;/<span class="name">ehcache</span>&gt;</span></div></pre></td></tr></table></figure></p>
+<p><strong>二、配置hibernate.cfg.xml</strong><br>　<br>1.配置启用hibernate的二级缓存<br><figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"cache.use_second_level_cache"</span>&gt;</span>true<span class="tag">&lt;/<span class="name">property</span>&gt;</span></div></pre></td></tr></table></figure></p>
+<p>2.配置hibernate二级缓存使用的产品<br><figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"hibernate.cache.region.factory_class"</span>&gt;</span>org.hibernate.cache.ehcache.EhCacheRegionFactory<span class="tag">&lt;/<span class="name">property</span>&gt;</span></div></pre></td></tr></table></figure></p>
+<p>3.配置对哪些类（或属性）使用 hibernate 的二级缓存</p>
+<p>第一种情况，类级别的二级缓存：（配置对Employee类使用二级缓存）<br><figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">class-cache</span> <span class="attr">usage</span>=<span class="string">"read-write"</span> <span class="attr">class</span>=<span class="string">"com.atguigu.hibernate.entities.Employee"</span>/&gt;</span></div></pre></td></tr></table></figure></p>
+<p>第二种情况，集合级别的二级缓存：（配置对Department类中的Employee集合属性emps使用二级缓存）<br><figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">collection-cache</span> <span class="attr">usage</span>=<span class="string">"read-write"</span> <span class="attr">collection</span>=<span class="string">"com.atguigu.hibernate.entities.Department.emps"</span>/&gt;</span></div></pre></td></tr></table></figure></p>
+<p>注意，当配置对集合属性使用二级缓存时，还需要对集合所属的类，集合中元素的类型使用二级缓存，例如，对于上述集合属性，则还需配置对Department类和Employee类使用二级缓存：（如果不对Employee类配置二级缓存，则会多出n条SQL语句，得不偿失。因为这种情况下缓存的是一个一个的employee的id，当要使用到employee对象时，需要再根据id一条一条地去数据库查询记录）<br><figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">class-cache</span> <span class="attr">usage</span>=<span class="string">"read-write"</span> <span class="attr">class</span>=<span class="string">"com.atguigu.hibernate.entities.Department"</span>/&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">class-cache</span> <span class="attr">usage</span>=<span class="string">"read-write"</span> <span class="attr">class</span>=<span class="string">"com.atguigu.hibernate.entities.Employee"</span>/&gt;</span></div></pre></td></tr></table></figure></p>
+<p>另外，配置对哪些类（或属性）使用二级缓存，还可以在映射文件中配置，例如：<br>类级别（在class节点下）：<br><figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">cache</span> <span class="attr">usage</span>=<span class="string">"read-write"</span>/&gt;</span></div></pre></td></tr></table></figure></p>
+<p>集合级别：（在department映射文件的set节点下）<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">&lt;cache usage=&quot;read-write&quot;/&gt;</div></pre></td></tr></table></figure></p>
+<p>　　现在，测试上面的testCache方法，只会打印一条select语句：<br>　　<img src="http://static.zybuluo.com/xiangwanpeng/48li2if3ogcht0uuoljvr125/image_1b3e2cv2vad01ntl1rt71oac7o41t.png" alt="image_1b3e2cv2vad01ntl1rt71oac7o41t.png-18kB"><br>　　对于集合的测试也是一样，只会打印两条select语句，一条用于查询department，一条用于查询employee：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@Test</span></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">testCollectionSecondLevelCache</span><span class="params">()</span></span>&#123;</div><div class="line">		Department dept = (Department) session.get(Department.class, <span class="number">1</span>);</div><div class="line">		System.out.println(dept.getName());</div><div class="line">		System.out.println(dept.getEmps().size()); </div><div class="line">		</div><div class="line">		transaction.commit();</div><div class="line">		session.close();</div><div class="line">		</div><div class="line">		session = sessionFactory.openSession();</div><div class="line">		transaction = session.beginTransaction();</div><div class="line">		</div><div class="line">		Department dept2 = (Department) session.get(Department.class, <span class="number">1</span>);</div><div class="line">		System.out.println(dept2.getName());</div><div class="line">		System.out.println(dept2.getEmps().size()); </div><div class="line">	&#125;</div></pre></td></tr></table></figure></p>
+<p><img src="http://static.zybuluo.com/xiangwanpeng/2sxnp4t00twu5qsn579jf0eq/image_1b3e2epr8r731smq4t0scfca62a.png" alt="image_1b3e2epr8r731smq4t0scfca62a.png-30.6kB"></p>
+<h2 id="二级缓存配置文件"><a href="#二级缓存配置文件" class="headerlink" title="二级缓存配置文件"></a>二级缓存配置文件</h2><p>　　下面使用一个修改过的二级缓存配置文件介绍其中各个属性的作用:<br><figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">ehcache</span>&gt;</span></div><div class="line"></div><div class="line">    <span class="comment">&lt;!-- Sets the path to the directory where cache .data files are created.</span></div><div class="line"></div><div class="line">         If the path is a Java System Property it is replaced by</div><div class="line">         its value in the running VM.</div><div class="line"></div><div class="line">         The following properties are translated:</div><div class="line">         user.home - User's home directory</div><div class="line">         user.dir - User's current working directory</div><div class="line">         java.io.tmpdir - Default temp file path --&gt;</div><div class="line">    <span class="comment">&lt;!--  </span></div><div class="line">    	指定一个目录：当 EHCache 把数据写到硬盘上时, 将把数据写到这个目录下.</div><div class="line">    --&gt;     </div><div class="line">    <span class="tag">&lt;<span class="name">diskStore</span> <span class="attr">path</span>=<span class="string">"d:\\tempDirectory"</span>/&gt;</span></div><div class="line"></div><div class="line"></div><div class="line">    <span class="comment">&lt;!--Default Cache configuration. These will applied to caches programmatically created through</span></div><div class="line">        the CacheManager.</div><div class="line"></div><div class="line">        The following attributes are required for defaultCache:</div><div class="line"></div><div class="line">        maxInMemory       - Sets the maximum number of objects that will be created in memory</div><div class="line">        eternal           - Sets whether elements are eternal. If eternal,  timeouts are ignored and the element</div><div class="line">                            is never expired.</div><div class="line">        timeToIdleSeconds - Sets the time to idle for an element before it expires. Is only used</div><div class="line">                            if the element is not eternal. Idle time is now - last accessed time</div><div class="line">        timeToLiveSeconds - Sets the time to live for an element before it expires. Is only used</div><div class="line">                            if the element is not eternal. TTL is now - creation time</div><div class="line">        overflowToDisk    - Sets whether elements can overflow to disk when the in-memory cache</div><div class="line">                            has reached the maxInMemory limit.</div><div class="line"></div><div class="line">        --&gt;</div><div class="line">    <span class="comment">&lt;!--  </span></div><div class="line">    	设置缓存的默认数据过期策略 </div><div class="line">    --&gt;    </div><div class="line">    <span class="tag">&lt;<span class="name">defaultCache</span></span></div><div class="line">        <span class="attr">maxElementsInMemory</span>=<span class="string">"10000"</span></div><div class="line">        <span class="attr">eternal</span>=<span class="string">"false"</span></div><div class="line">        <span class="attr">timeToIdleSeconds</span>=<span class="string">"120"</span></div><div class="line">        <span class="attr">timeToLiveSeconds</span>=<span class="string">"120"</span></div><div class="line">        <span class="attr">overflowToDisk</span>=<span class="string">"true"</span></div><div class="line">        /&gt;</div><div class="line"></div><div class="line">   	<span class="comment">&lt;!--  </span></div><div class="line">   		设定具体的命名缓存的数据过期策略。每个命名缓存代表一个缓存区域</div><div class="line">   		缓存区域(region)：一个具有名称的缓存块，可以给每一个缓存块设置不同的缓存策略。</div><div class="line">   		如果没有设置任何的缓存区域，则所有被缓存的对象，都将使用默认的缓存策略。即：&lt;defaultCache.../&gt;</div><div class="line">   		Hibernate 在不同的缓存区域保存不同的类/集合。</div><div class="line">			对于类而言，区域的名称是类名。如:com.atguigu.domain.Customer</div><div class="line">			对于集合而言，区域的名称是类名加属性名。如com.atguigu.domain.Customer.orders</div><div class="line">   	--&gt;</div><div class="line">   	<span class="comment">&lt;!--  </span></div><div class="line">   		name: 设置缓存的名字,它的取值为类的全限定名或类的集合的名字 </div><div class="line">		maxElementsInMemory: 设置基于内存的缓存中可存放的对象最大数目 </div><div class="line">		</div><div class="line">		eternal: 设置对象是否为永久的, true表示永不过期,</div><div class="line">		此时将忽略timeToIdleSeconds 和 timeToLiveSeconds属性; 默认值是false </div><div class="line">		timeToIdleSeconds:设置对象空闲最长时间,以秒为单位, 超过这个时间,对象过期。</div><div class="line">		当对象过期时,EHCache会把它从缓存中清除。如果此值为0,表示对象可以无限期地处于空闲状态。 </div><div class="line">		timeToLiveSeconds:设置对象生存最长时间,超过这个时间,对象过期。</div><div class="line">		如果此值为0,表示对象可以无限期地存在于缓存中. 该属性值必须大于或等于 timeToIdleSeconds 属性值 </div><div class="line">		</div><div class="line">		overflowToDisk:设置基于内存的缓存中的对象数目达到上限后,是否把溢出的对象写到基于硬盘的缓存中 </div><div class="line">   	--&gt;</div><div class="line">    <span class="tag">&lt;<span class="name">cache</span> <span class="attr">name</span>=<span class="string">"com.atguigu.hibernate.entities.Employee"</span></span></div><div class="line">        <span class="attr">maxElementsInMemory</span>=<span class="string">"1"</span></div><div class="line">        <span class="attr">eternal</span>=<span class="string">"false"</span></div><div class="line">        <span class="attr">timeToIdleSeconds</span>=<span class="string">"300"</span></div><div class="line">        <span class="attr">timeToLiveSeconds</span>=<span class="string">"600"</span></div><div class="line">        <span class="attr">overflowToDisk</span>=<span class="string">"true"</span></div><div class="line">        /&gt;</div><div class="line"></div><div class="line">    <span class="tag">&lt;<span class="name">cache</span> <span class="attr">name</span>=<span class="string">"com.atguigu.hibernate.entities.Department.emps"</span></span></div><div class="line">        <span class="attr">maxElementsInMemory</span>=<span class="string">"1000"</span></div><div class="line">        <span class="attr">eternal</span>=<span class="string">"true"</span></div><div class="line">        <span class="attr">timeToIdleSeconds</span>=<span class="string">"0"</span></div><div class="line">        <span class="attr">timeToLiveSeconds</span>=<span class="string">"0"</span></div><div class="line">        <span class="attr">overflowToDisk</span>=<span class="string">"false"</span></div><div class="line">        /&gt;</div><div class="line"></div><div class="line"><span class="tag">&lt;/<span class="name">ehcache</span>&gt;</span></div></pre></td></tr></table></figure></p>
+<h2 id="查询缓存"><a href="#查询缓存" class="headerlink" title="查询缓存"></a>查询缓存</h2><p>　　对于经常使用的查询语句，如果启用了查询缓存，当第一次执行查询语句时，Hibernate会把查询结果存放在查询缓存中，以后再次执行该查询语句时，只需从缓存中获得查询结果，从而提高查询性能。<br>　　默认情况下，Hibernate设置的缓存对HQL和QBC查询是无效的，但可以通过以下步骤使其有效：<br>　　1.配置二级缓存，因为查询缓存依赖于二级缓存.<br>　　2.在hibernate配置文件中声明开启查询缓存。<br><figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"cache.use_query_cache"</span>&gt;</span>true<span class="tag">&lt;/<span class="name">property</span>&gt;</span></div></pre></td></tr></table></figure></p>
+<p>　　3.调用Query或者Criteria的setCachable(true)。<br>　　<br>例如，在没有配置查询缓存的情况下，下面的代码会打印两条select语句:<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@Test</span></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">testQueryCache</span><span class="params">()</span></span>&#123;</div><div class="line">		Query query = session.createQuery(<span class="string">"FROM Employee"</span>);</div><div class="line">		</div><div class="line">		List&lt;Employee&gt; emps = query.list();</div><div class="line">		System.out.println(emps.size());</div><div class="line">		</div><div class="line">		emps = query.list();</div><div class="line">		System.out.println(emps.size());</div><div class="line">		</div><div class="line">	&#125;</div></pre></td></tr></table></figure></p>
+<p><img src="http://static.zybuluo.com/xiangwanpeng/v01g0t17ve9vk8b8uulewebm/image_1b3e39bve1vg91r2t12i65c91n782n.png" alt="image_1b3e39bve1vg91r2t12i65c91n782n.png-30.6kB"><br>　　<br>　　进行了相关配置之后，并且在方法中设置query.setCacheable(true);则只会打印一条select语句：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@Test</span></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">testQueryCache</span><span class="params">()</span></span>&#123;</div><div class="line">		Query query = session.createQuery(<span class="string">"FROM Employee"</span>);</div><div class="line">		query.setCacheable(<span class="keyword">true</span>);</div><div class="line">		</div><div class="line">		List&lt;Employee&gt; emps = query.list();</div><div class="line">		System.out.println(emps.size());</div><div class="line">		</div><div class="line">		emps = query.list();</div><div class="line">		System.out.println(emps.size());</div><div class="line">		</div><div class="line">	&#125;</div></pre></td></tr></table></figure></p>
+<p><img src="http://static.zybuluo.com/xiangwanpeng/9c941z5p6fxhofiee5cj0hvq/image_1b3e3bndj184be4f1mga1gi81baq34.png" alt="image_1b3e3bndj184be4f1mga1gi81baq34.png-18.5kB"></p>
+<p>　　查询缓存适用于如下场合：<br>　　1.应用程序运行时经常使用查询语句<br>　　2.很少对与查询语句检索到的数据进行插入，删除或更新操作</p>
+<h2 id="时间戳缓存区域"><a href="#时间戳缓存区域" class="headerlink" title="时间戳缓存区域"></a>时间戳缓存区域</h2><p>　　时间戳缓存区域存放了对于查询结果相关的表进行插入，更新或者删除操作的时间戳。Hibernate通过时间戳缓存区域来判断被缓存的查询结果是否过期，其运行过程如下：<br>　　T1时刻执行查询操作，把结果存放在QueryCache区域，记录该区域的时间戳为T1；<br>　　T2时刻（可能在T1之前，也可能在T1之后）对查询结果相关的表进行更新操作，Hibernate把T2时刻存放在UpdateTimestampCache区域。<br>　　T3时刻（在T1，T2之后）执行查询结果前，先比较QueryCache区域的时间戳和UpdateTimestampCache区域的时间戳。若T2&gt;T1，则丢弃原先存放在QueryCache区域的查询结果，重新到数据库中查询数据并放入QueryCache区域；若T2<t1，则直接从querycache中获得查询结果。 　　下面的代码演示了时间戳缓存的作用：="" <figure="" class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@Test</span></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">testUpdateTimeStampCache</span><span class="params">()</span></span>&#123;</div><div class="line">		Query query = session.createQuery(<span class="string">"FROM Employee"</span>);</div><div class="line">		query.setCacheable(<span class="keyword">true</span>);</div><div class="line">		</div><div class="line">		List&lt;Employee&gt; emps = query.list();</div><div class="line">		System.out.println(emps.size());</div><div class="line">		</div><div class="line">		Employee employee = (Employee) session.get(Employee.class, <span class="number">1</span>);</div><div class="line">		employee.setSalary(<span class="number">30000</span>);</div><div class="line">		</div><div class="line">		emps = query.list();</div><div class="line">		System.out.println(emps.size());</div><div class="line">	&#125;</div></pre></td></tr></table></t1，则直接从querycache中获得查询结果。></p>
+<p>　　在第二次查询的时候，会重新用select去数据库中查找最新的记录。<br>　　<img src="http://static.zybuluo.com/xiangwanpeng/y4x79wavot7kuxm28v8vr8be/image_1b3e56hbmjqu3n719ono39k8m3h.png" alt="image_1b3e56hbmjqu3n719ono39k8m3h.png-40.9kB"></p>
+<h2 id="Query接口的iterate-方法"><a href="#Query接口的iterate-方法" class="headerlink" title="Query接口的iterate()方法"></a>Query接口的iterate()方法</h2><p>　　Query的list方法返回实体类对应表的所有字段，而Query的iterate方法仅返回数据包的ID字段。当使用了iterate方法，然后遍历访问结果集时，先到Session缓存及二级缓存中查看是否存在特定OID的对象，如果存在，直接返回，否则就通过相应的SQL SELECT语句到数据库中查找特定的记录。<br>　　在大多数情况下，应该考虑使用list方法执行查询操作，iterate方法仅在下述情况下可以稍微提高查询性能：<br>　　1.要查询的数据表中包含大量字段；<br>　　2.启用了二级缓存，且二级缓存中可能已经包含了待查询的对象。</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Hibernate/" rel="tag">#Hibernate</a>
+          
+            <a href="/tags/SessionFactory/" rel="tag">#SessionFactory</a>
+          
+            <a href="/tags/二级缓存/" rel="tag">#二级缓存</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/12/07/本地SQL检索方式/" rel="next" title="本地SQL检索方式">
+                <i class="fa fa-chevron-left"></i> 本地SQL检索方式
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/12/08/Hibernate管理Session和批量操作/" rel="prev" title="Hibernate管理Session和批量操作">
+                Hibernate管理Session和批量操作 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2016/12/08/Hibernate二级缓存——SessionFactory/"
+           data-title="Hibernate二级缓存——SessionFactory" data-url="http://yoursite.com/2016/12/08/Hibernate二级缓存——SessionFactory/">
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/image/avatar.png"
+               alt="Alan" />
+          <p class="site-author-name" itemprop="name">Alan</p>
+          <p class="site-description motion-element" itemprop="description">Better late than never.</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">61</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">11</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">74</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/xiangwanpeng" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/u/2810288024/home" target="_blank" title="weibo">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  weibo
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Hibernate二级缓存简介"><span class="nav-number">1.</span> <span class="nav-text">Hibernate二级缓存简介</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#使用Hibernate二级缓存的步骤"><span class="nav-number">2.</span> <span class="nav-text">使用Hibernate二级缓存的步骤</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#二级缓存配置文件"><span class="nav-number">3.</span> <span class="nav-text">二级缓存配置文件</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#查询缓存"><span class="nav-number">4.</span> <span class="nav-text">查询缓存</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#时间戳缓存区域"><span class="nav-number">5.</span> <span class="nav-text">时间戳缓存区域</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Query接口的iterate-方法"><span class="nav-number">6.</span> <span class="nav-text">Query接口的iterate()方法</span></a></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2016</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Alan</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Pisces
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/VEN/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/VEN/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/VEN/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/VEN/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/VEN/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/VEN/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.1"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.0.1"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.1"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"xiangwanpeng"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+    
+    <script src="/VEN/ua-parser-js/dist/ua-parser.min.js?v=0.7.9"></script>
+    <script src="/js/src/hook-duoshuo.js"></script>
+  
+
+
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

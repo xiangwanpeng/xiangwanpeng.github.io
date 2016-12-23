@@ -1,0 +1,685 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/VEN/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/VEN/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="二级缓存,mybatis,一级缓存," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.1" />
+
+
+
+
+
+
+<meta name="description" content="mybatis一级缓存　　mybatis一级缓存是SqlSession级别的缓存。　　一级缓存的作用域是同一个SqlSession，在同一个sqlSession中两次执行相同的sql语句，第一次执行完毕会将数据库中查询的数据写到缓存（内存），第二次会从缓存中获取数据将不再从数据库查询，从而提高查询效率。当一个sqlSession结束后该sqlSession中的一级缓存也就不存在了。　　mybati">
+<meta property="og:type" content="article">
+<meta property="og:title" content="mybatis一级缓存和二级缓存">
+<meta property="og:url" content="http://yoursite.com/2016/12/21/mybatis一级缓存和二级缓存/index.html">
+<meta property="og:site_name" content="向万鹏的独立博客">
+<meta property="og:description" content="mybatis一级缓存　　mybatis一级缓存是SqlSession级别的缓存。　　一级缓存的作用域是同一个SqlSession，在同一个sqlSession中两次执行相同的sql语句，第一次执行完毕会将数据库中查询的数据写到缓存（内存），第二次会从缓存中获取数据将不再从数据库查询，从而提高查询效率。当一个sqlSession结束后该sqlSession中的一级缓存也就不存在了。　　mybati">
+<meta property="og:image" content="http://static.zybuluo.com/xiangwanpeng/42nnn39uopwpt4zp1kec5gqb/image_1b4gr4fo2gn518ihfd2eli1tbg9.png">
+<meta property="og:image" content="http://static.zybuluo.com/xiangwanpeng/6u8e9v14goadxr6ofuc66c7x/image_1b4i6di3n5501kg4mr41llu169l13.png">
+<meta property="og:image" content="http://static.zybuluo.com/xiangwanpeng/pfjw1l894i9echmrssc7ayd4/image_1b4i6f5ficbv48boiolk0hge1g.png">
+<meta property="og:image" content="http://static.zybuluo.com/xiangwanpeng/tke0xaxn32g33t9f2xf3v4lc/image_1b4i7d5tj1ijc1me26rppilfgl1t.png">
+<meta property="og:image" content="http://static.zybuluo.com/xiangwanpeng/xuene43ndzdmj2r9nqaconpe/image_1b4i83is91t08135r1nbs103cee42a.png">
+<meta property="og:updated_time" content="2016-12-22T03:31:18.580Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="mybatis一级缓存和二级缓存">
+<meta name="twitter:description" content="mybatis一级缓存　　mybatis一级缓存是SqlSession级别的缓存。　　一级缓存的作用域是同一个SqlSession，在同一个sqlSession中两次执行相同的sql语句，第一次执行完毕会将数据库中查询的数据写到缓存（内存），第二次会从缓存中获取数据将不再从数据库查询，从而提高查询效率。当一个sqlSession结束后该sqlSession中的一级缓存也就不存在了。　　mybati">
+<meta name="twitter:image" content="http://static.zybuluo.com/xiangwanpeng/42nnn39uopwpt4zp1kec5gqb/image_1b4gr4fo2gn518ihfd2eli1tbg9.png">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"always"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 0,
+      author: '博主'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2016/12/21/mybatis一级缓存和二级缓存/"/>
+
+  <title> mybatis一级缓存和二级缓存 | 向万鹏的独立博客 </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">向万鹏的独立博客</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle"></p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                mybatis一级缓存和二级缓存
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-12-21T21:18:31+08:00" content="2016-12-21">
+              2016-12-21
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/mybatis/" itemprop="url" rel="index">
+                    <span itemprop="name">mybatis</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2016/12/21/mybatis一级缓存和二级缓存/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/12/21/mybatis一级缓存和二级缓存/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="mybatis一级缓存"><a href="#mybatis一级缓存" class="headerlink" title="mybatis一级缓存"></a>mybatis一级缓存</h2><p>　　mybatis一级缓存是SqlSession级别的缓存。<br>　　一级缓存的作用域是同一个SqlSession，在同一个sqlSession中两次执行相同的sql语句，第一次执行完毕会将数据库中查询的数据写到缓存（内存），第二次会从缓存中获取数据将不再从数据库查询，从而提高查询效率。当一个sqlSession结束后该sqlSession中的一级缓存也就不存在了。<br>　　mybatis默认开启一级缓存。<br>　　<br>　　下面测试一级缓存，首先创建数据库表c_user并插入两条数据：<br><figure class="highlight sql"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> c_user(</div><div class="line">	<span class="keyword">id</span> <span class="built_in">INT</span> PRIMARY <span class="keyword">KEY</span> AUTO_INCREMENT, </div><div class="line">	<span class="keyword">NAME</span> <span class="built_in">VARCHAR</span>(<span class="number">20</span>), </div><div class="line">	age <span class="built_in">INT</span></div><div class="line">);</div><div class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> c_user(<span class="keyword">NAME</span>, age) <span class="keyword">VALUES</span>(<span class="string">'Tom'</span>, <span class="number">12</span>);</div><div class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> c_user(<span class="keyword">NAME</span>, age) <span class="keyword">VALUES</span>(<span class="string">'Jack'</span>, <span class="number">11</span>);</div></pre></td></tr></table></figure></p>
+<p><img src="http://static.zybuluo.com/xiangwanpeng/42nnn39uopwpt4zp1kec5gqb/image_1b4gr4fo2gn518ihfd2eli1tbg9.png" alt="image_1b4gr4fo2gn518ihfd2eli1tbg9.png-13.9kB"></p>
+<p>创建实体类CUser：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">CUser</span> </span>&#123;</div><div class="line">	<span class="keyword">private</span> <span class="keyword">int</span> id;</div><div class="line">	<span class="keyword">private</span> String name;</div><div class="line">	<span class="keyword">private</span> <span class="keyword">int</span> age;</div><div class="line"></div><div class="line">　　<span class="comment">//getters and setters</span></div><div class="line">　　</div><div class="line">	<span class="meta">@Override</span></div><div class="line">	<span class="function"><span class="keyword">public</span> String <span class="title">toString</span><span class="params">()</span> </span>&#123;</div><div class="line">		<span class="keyword">return</span> <span class="string">"CUser [id="</span> + id + <span class="string">", name="</span> + name + <span class="string">", age="</span> + age + <span class="string">"]"</span>;</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="title">CUser</span><span class="params">(<span class="keyword">int</span> id, String name, <span class="keyword">int</span> age)</span> </span>&#123;</div><div class="line">		<span class="keyword">super</span>();</div><div class="line">		<span class="keyword">this</span>.id = id;</div><div class="line">		<span class="keyword">this</span>.name = name;</div><div class="line">		<span class="keyword">this</span>.age = age;</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="title">CUser</span><span class="params">()</span> </span>&#123;</div><div class="line">		<span class="keyword">super</span>();</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>编写配置文件userMapper.xml：<br><figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">&lt;?xml version="1.0" encoding="UTF-8" ?&gt;</div><div class="line"><span class="meta">&lt;!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd"&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">mapper</span> <span class="attr">namespace</span>=<span class="string">"com.mybatis.test9.userMapper"</span>&gt;</span></div><div class="line">	<span class="tag">&lt;<span class="name">select</span> <span class="attr">id</span>=<span class="string">"getCUser"</span> <span class="attr">parameterType</span>=<span class="string">"int"</span> <span class="attr">resultType</span>=<span class="string">"CUser"</span>&gt;</span></div><div class="line">		select * from c_user where id=#&#123;id&#125;</div><div class="line">	<span class="tag">&lt;/<span class="name">select</span>&gt;</span></div><div class="line">	</div><div class="line">	<span class="tag">&lt;<span class="name">update</span> <span class="attr">id</span>=<span class="string">"updateCUser"</span> <span class="attr">parameterType</span>=<span class="string">"CUser"</span>&gt;</span></div><div class="line">		update c_user set name = #&#123;name&#125;,age = #&#123;age&#125; where id = #&#123;id&#125;</div><div class="line">	<span class="tag">&lt;/<span class="name">update</span>&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">mapper</span>&gt;</span></div></pre></td></tr></table></figure></p>
+<p>首先测试一级缓存的作用：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@org</span>.junit.<span class="function">Test</span></div><div class="line">	<span class="keyword">public</span> <span class="keyword">void</span> <span class="title">testCache1</span><span class="params">()</span> &#123;</div><div class="line">        String resource = <span class="string">"conf.xml"</span>;</div><div class="line">        InputStream is = <span class="keyword">this</span>.getClass().getClassLoader().getResourceAsStream(resource);</div><div class="line"></div><div class="line">        SqlSessionFactory sessionFactory = <span class="keyword">new</span> SqlSessionFactoryBuilder().build(is);</div><div class="line">        SqlSession session = sessionFactory.openSession();</div><div class="line"></div><div class="line">        String statement = <span class="string">"com.mybatis.test9.userMapper"</span>+<span class="string">".getCUser"</span>;</div><div class="line">        CUser user1 = session.selectOne(statement, <span class="number">1</span>);</div><div class="line">        System.out.println(user1);</div><div class="line">        </div><div class="line">        CUser user2 = session.selectOne(statement, <span class="number">1</span>);</div><div class="line">        System.out.println(user2);</div><div class="line">	&#125;</div></pre></td></tr></table></figure></p>
+<p>运行结果：</p>
+<p><img src="http://static.zybuluo.com/xiangwanpeng/6u8e9v14goadxr6ofuc66c7x/image_1b4i6di3n5501kg4mr41llu169l13.png" alt="image_1b4i6di3n5501kg4mr41llu169l13.png-39.8kB"></p>
+<p>　　从运行结果中发现，虽然执行了两次selectOne函数，但是只执行了一条SELECT语句。这是由于两次查找的条件相同，即都是查询id为1的记录，所以缓存起了作用，第二次执行selectOne方法并没有重新去数据库查询记录。<br>　　那么，哪些情况下会重新去数据库执行查询操作呢？有下面几种情况：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@org</span>.junit.<span class="function">Test</span></div><div class="line">	<span class="keyword">public</span> <span class="keyword">void</span> <span class="title">testClearCache1</span><span class="params">()</span> &#123;</div><div class="line">        String resource = <span class="string">"conf.xml"</span>;</div><div class="line">        InputStream is = <span class="keyword">this</span>.getClass().getClassLoader().getResourceAsStream(resource);</div><div class="line"></div><div class="line">        SqlSessionFactory sessionFactory = <span class="keyword">new</span> SqlSessionFactoryBuilder().build(is);</div><div class="line">        SqlSession session = sessionFactory.openSession();</div><div class="line"></div><div class="line">        String statement1 = <span class="string">"com.mybatis.test9.userMapper"</span>+<span class="string">".getCUser"</span>;</div><div class="line">        String statement2 = <span class="string">"com.mybatis.test9.userMapper"</span>+<span class="string">".updateCUser"</span>;</div><div class="line">        CUser user1 = session.selectOne(statement1, <span class="number">1</span>);</div><div class="line">        System.out.println(user1);</div><div class="line">        </div><div class="line">        <span class="comment">//1. 如果查询条件改变，会重新查询</span></div><div class="line">        CUser user2 = session.selectOne(statement1, <span class="number">2</span>);</div><div class="line">        System.out.println(user2);</div><div class="line">        </div><div class="line">        <span class="comment">//2. 如果SqlSession执行了commit，clearCache或者close，会重新查询</span></div><div class="line">        <span class="comment">//提交后会清空缓存</span></div><div class="line">        session.commit();</div><div class="line">        user2 = session.selectOne(statement1, <span class="number">1</span>);</div><div class="line">        </div><div class="line">        <span class="comment">//执行clearCache清空缓存</span></div><div class="line">        session.clearCache();</div><div class="line">        user2 = session.selectOne(statement1, <span class="number">1</span>);</div><div class="line">        </div><div class="line">        <span class="comment">//关闭session后再开启，也会清空缓存</span></div><div class="line">        session.close();</div><div class="line">        session = sessionFactory.openSession();</div><div class="line">        user2 = session.selectOne(statement1, <span class="number">1</span>);</div><div class="line">        </div><div class="line">        <span class="comment">//3. 执行增删改操作，即使还没有commit，也会清空缓存</span></div><div class="line">        CUser newCUser = <span class="keyword">new</span> CUser(<span class="number">2</span>,<span class="string">"Jerry"</span>,<span class="number">12</span>);</div><div class="line">        session.update(statement2,newCUser);</div><div class="line">        user2 = session.selectOne(statement1, <span class="number">1</span>);</div><div class="line">        System.out.println(user2);</div><div class="line">	&#125;</div></pre></td></tr></table></figure></p>
+<p>运行结果：</p>
+<p><img src="http://static.zybuluo.com/xiangwanpeng/pfjw1l894i9echmrssc7ayd4/image_1b4i6f5ficbv48boiolk0hge1g.png" alt="image_1b4i6f5ficbv48boiolk0hge1g.png-120.7kB"></p>
+<h2 id="mybatis二级缓存"><a href="#mybatis二级缓存" class="headerlink" title="mybatis二级缓存"></a>mybatis二级缓存</h2><p>　　mybatis二级缓存是mapper级别的缓存，多个SqlSession去操作同一个Mapper的sql语句，多个SqlSession去操作数据库得到数据会存在二级缓存区域，多个SqlSession可以共用二级缓存，二级缓存是跨SqlSession的。<br>　　二级缓存是多个SqlSession共享的，其作用域是mapper的同一个namespace，不同的sqlSession两次执行相同namespace下的sql操作且向sql中传递参数也相同，即最终执行相同的sql语句，第一次执行完毕会将数据库中查询的数据写到缓存（内存），第二次会从缓存中获取数据将不再从数据库查询，从而提高查询效率。<br>　　在mybatis的配置文件中，二级缓存的总开关默认已经开启，但是对应的映射文件中没有配置开启二级缓存，所以需要在具体的mapper.xml中开启二级缓存。<br>　　下面测试mybatis二级缓存，首先需要在对应的映射文件中开启二级缓存：<br><figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line">&lt;?xml version="1.0" encoding="UTF-8" ?&gt;</div><div class="line"><span class="meta">&lt;!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd"&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">mapper</span> <span class="attr">namespace</span>=<span class="string">"com.mybatis.test10.userMapper"</span>&gt;</span></div><div class="line"></div><div class="line">	<span class="comment">&lt;!-- 开启二级缓存 --&gt;</span></div><div class="line">	<span class="tag">&lt;<span class="name">cache</span>&gt;</span><span class="tag">&lt;/<span class="name">cache</span>&gt;</span></div><div class="line">	</div><div class="line">	<span class="tag">&lt;<span class="name">select</span> <span class="attr">id</span>=<span class="string">"getCUser"</span> <span class="attr">parameterType</span>=<span class="string">"int"</span> <span class="attr">resultType</span>=<span class="string">"CUser"</span>&gt;</span></div><div class="line">		select *</div><div class="line">		from c_user where id=#&#123;id&#125;</div><div class="line">	<span class="tag">&lt;/<span class="name">select</span>&gt;</span></div><div class="line"></div><div class="line">	<span class="tag">&lt;<span class="name">update</span> <span class="attr">id</span>=<span class="string">"updateCUser"</span> <span class="attr">parameterType</span>=<span class="string">"CUser"</span>&gt;</span></div><div class="line">		update c_user set name =</div><div class="line">		#&#123;name&#125;,age = #&#123;age&#125; where id = #&#123;id&#125;</div><div class="line">	<span class="tag">&lt;/<span class="name">update</span>&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">mapper</span>&gt;</span></div></pre></td></tr></table></figure></p>
+<p>而且需要是被缓存的实体类实现Serializable接口：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">CUser</span> <span class="keyword">implements</span> <span class="title">Serializable</span></span>&#123;</div><div class="line">        ...</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>编写测试类测试二级缓存：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Test</span> </span>&#123;</div><div class="line"></div><div class="line">	<span class="meta">@org</span>.junit.<span class="function">Test</span></div><div class="line">	<span class="keyword">public</span> <span class="keyword">void</span> <span class="title">testCache2</span><span class="params">()</span> &#123;</div><div class="line">        String resource = <span class="string">"conf.xml"</span>;</div><div class="line">        InputStream is = <span class="keyword">this</span>.getClass().getClassLoader().getResourceAsStream(resource);</div><div class="line"></div><div class="line">        SqlSessionFactory sessionFactory = <span class="keyword">new</span> SqlSessionFactoryBuilder().build(is);</div><div class="line">        </div><div class="line">        <span class="comment">//获取两个不同的SqlSession</span></div><div class="line">        SqlSession session1 = sessionFactory.openSession();</div><div class="line">        SqlSession session2 = sessionFactory.openSession();</div><div class="line"></div><div class="line">        String statement1 = <span class="string">"com.mybatis.test10.userMapper"</span>+<span class="string">".getCUser"</span>;</div><div class="line">        </div><div class="line">        CUser user1 = session1.selectOne(statement1, <span class="number">1</span>);</div><div class="line">        <span class="comment">//前一个session执行commit后，二级缓存才会生效</span></div><div class="line">        session1.commit();</div><div class="line">        CUser user2 = session2.selectOne(statement1, <span class="number">1</span>);</div><div class="line">        </div><div class="line">        System.out.println(user1);</div><div class="line">        System.out.println(user2);</div><div class="line">        </div><div class="line">	&#125;</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>运行结果：</p>
+<p><img src="http://static.zybuluo.com/xiangwanpeng/tke0xaxn32g33t9f2xf3v4lc/image_1b4i7d5tj1ijc1me26rppilfgl1t.png" alt="image_1b4i7d5tj1ijc1me26rppilfgl1t.png-42.9kB"></p>
+<p>可以看到，虽然是通过两个不同的SqlSession查询记录，但是只执行了一次SELECT语句，这正是mybatis二级缓存的作用。</p>
+<p>注意点：</p>
+<ol>
+<li>需要在对应的映射文件中配置开启二级缓存。</li>
+<li>被缓存的实体类需要实现Serializable接口。</li>
+<li>SqlSession必须执行commit或者close方法后，其中的数据才会被写入到二级缓存。</li>
+<li>当执行了增删改操作后，会刷新二级缓存：<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@org</span>.junit.<span class="function">Test</span></div><div class="line">	<span class="keyword">public</span> <span class="keyword">void</span> <span class="title">testClearCache2</span><span class="params">()</span> &#123;</div><div class="line">        String resource = <span class="string">"conf.xml"</span>;</div><div class="line">        InputStream is = <span class="keyword">this</span>.getClass().getClassLoader().getResourceAsStream(resource);</div><div class="line"></div><div class="line">        SqlSessionFactory sessionFactory = <span class="keyword">new</span> SqlSessionFactoryBuilder().build(is);</div><div class="line">        </div><div class="line">        <span class="comment">//获取两个不同的SqlSession</span></div><div class="line">        SqlSession session1 = sessionFactory.openSession();</div><div class="line">        SqlSession session2 = sessionFactory.openSession();</div><div class="line"></div><div class="line">        String statement1 = <span class="string">"com.mybatis.test10.userMapper"</span>+<span class="string">".getCUser"</span>;</div><div class="line">        String statement2 = <span class="string">"com.mybatis.test10.userMapper"</span>+<span class="string">".updateCUser"</span>;</div><div class="line">        </div><div class="line">        CUser user1 = session1.selectOne(statement1, <span class="number">1</span>);</div><div class="line">        </div><div class="line">        <span class="comment">//当执行了增删改操作后，会刷新二级缓存</span></div><div class="line">        CUser newUser = <span class="keyword">new</span> CUser(<span class="number">2</span>, <span class="string">"Bob"</span>, <span class="number">14</span>);</div><div class="line">        session1.update(statement2,newUser);</div><div class="line">        session1.commit();</div><div class="line">        </div><div class="line">        CUser user2 = session2.selectOne(statement1, <span class="number">1</span>);</div><div class="line">        </div><div class="line">        System.out.println(user1);</div><div class="line">        System.out.println(user2);</div><div class="line">        </div><div class="line">	&#125;</div></pre></td></tr></table></figure>
+</li>
+</ol>
+<p>运行结果如下：<br><img src="http://static.zybuluo.com/xiangwanpeng/xuene43ndzdmj2r9nqaconpe/image_1b4i83is91t08135r1nbs103cee42a.png" alt="image_1b4i83is91t08135r1nbs103cee42a.png-76.4kB"></p>
+<p>　　在映射文件中配置开启二级缓存时，cache节点还可以配置如下属性：<br><figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="comment">&lt;!-- 开启二级缓存 --&gt;</span></div><div class="line">	<span class="comment">&lt;!-- eviction="FIFO"指定回收策略为先进先出 --&gt;</span></div><div class="line">	<span class="comment">&lt;!-- flushInterval="60000"指定自动刷新时间为60s --&gt;</span></div><div class="line">	<span class="comment">&lt;!-- size="512"指定最多缓存512个引用对象 --&gt;</span></div><div class="line">	<span class="comment">&lt;!-- readOnly="true"表示返回的对象是只读的 --&gt;</span></div><div class="line">	<span class="tag">&lt;<span class="name">cache</span> <span class="attr">eviction</span>=<span class="string">"FIFO"</span> <span class="attr">flushInterval</span>=<span class="string">"60000"</span> <span class="attr">size</span>=<span class="string">"512"</span> <span class="attr">readOnly</span>=<span class="string">"true"</span>&gt;</span><span class="tag">&lt;/<span class="name">cache</span>&gt;</span></div></pre></td></tr></table></figure></p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/二级缓存/" rel="tag">#二级缓存</a>
+          
+            <a href="/tags/mybatis/" rel="tag">#mybatis</a>
+          
+            <a href="/tags/一级缓存/" rel="tag">#一级缓存</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/12/21/mybatis调用存储过程/" rel="next" title="mybatis调用存储过程">
+                <i class="fa fa-chevron-left"></i> mybatis调用存储过程
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2016/12/21/mybatis一级缓存和二级缓存/"
+           data-title="mybatis一级缓存和二级缓存" data-url="http://yoursite.com/2016/12/21/mybatis一级缓存和二级缓存/">
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/image/avatar.png"
+               alt="Alan" />
+          <p class="site-author-name" itemprop="name">Alan</p>
+          <p class="site-description motion-element" itemprop="description">Better late than never.</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">61</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">11</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">74</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/xiangwanpeng" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/u/2810288024/home" target="_blank" title="weibo">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  weibo
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#mybatis一级缓存"><span class="nav-number">1.</span> <span class="nav-text">mybatis一级缓存</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#mybatis二级缓存"><span class="nav-number">2.</span> <span class="nav-text">mybatis二级缓存</span></a></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2016</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Alan</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Pisces
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/VEN/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/VEN/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/VEN/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/VEN/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/VEN/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/VEN/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.1"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.0.1"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.1"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"xiangwanpeng"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+    
+    <script src="/VEN/ua-parser-js/dist/ua-parser.min.js?v=0.7.9"></script>
+    <script src="/js/src/hook-duoshuo.js"></script>
+  
+
+
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
